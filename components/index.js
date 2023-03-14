@@ -11,6 +11,7 @@ import BillingApproveAlert from "./elements/BillingApproveAlert"
 import ViewRejectDetail from "./elements/ViewRejectDetail"
 import ViewApproveDetail from "./elements/ViewApproveDetail"
 import StepTimeLine from "./elements/StepTimeLine"
+import Stepper from "./elements/Stepper"
 
 export {
     SideBar,
@@ -25,5 +26,6 @@ export {
     BillingApproveAlert,
     ViewRejectDetail,
     ViewApproveDetail,
-    StepTimeLine
+    StepTimeLine,
+    Stepper
 }
