@@ -124,23 +124,90 @@ const FetchWhs = () => {
 };
 
 const FetchPart = (limit = 15) => {
-  let l = [faker.phone.number("7###-####-##"), faker.phone.number("7###-####"), faker.phone.number("18########")]
+  let l = [
+    faker.phone.number("7###-####-##"),
+    faker.phone.number("7###-####"),
+    faker.phone.number("18########"),
+  ];
   let p = [];
   for (let i = 0; i < limit; i++) {
     p.push({
       id: i + 1,
-      title: l[faker.datatype.number({min: 0, max: l.length - 1})],
+      title: l[faker.datatype.number({ min: 0, max: l.length - 1 })],
       description: faker.name.fullName(),
-      qty: faker.datatype.number({min: 1000, max: 99999}),
-      ctn: faker.datatype.number({min:0, max: 999}),
+      qty: faker.datatype.number({ min: 1000, max: 99999 }),
+      ctn: faker.datatype.number({ min: 0, max: 999 }),
       shelve: "-",
-      pallet_no: "-"
+      pallet_no: "-",
     });
   }
   return p;
 };
 
-const RandomLastUpdate = () => DateTime(faker.date.between("2020-01-01T00:00:00.000Z", new Date().toISOString()).toISOString())
+const RandomDateString = () => {
+  const monthNames = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
+  let d = new Date(
+    DateTime(
+      faker.date
+        .between("2020-01-01T00:00:00.000Z", new Date().toISOString())
+        .toISOString()
+    )
+  );
+  return `${("0" + d.getDate()).slice(-2)} ${monthNames[d.getMonth()]} ${d.getFullYear()}`;
+};
+
+const RandomLastUpdate = () =>
+  DateTime(
+    faker.date
+      .between("2020-01-01T00:00:00.000Z", new Date().toISOString())
+      .toISOString()
+  );
+
+const RandomAmount = () => faker.datatype.number({ min: 10000, max: 1000000 })
+const RandomVendorcode = () => ("00000000" + faker.datatype.number({ min: 1, max: 18 })).slice(-8)
+const RandomName = () => faker.name.fullName();
+
+const RandomPosition = () => {
+  let p = [
+    'Marketing Coordinator',
+    'Medical Assistant',
+    'Web Designer',
+    'Dog Trainer',
+    'President of Sales',
+    'Nursing Assistant',
+    'Project Manager',
+    'Librarian',
+    'Project Manager',
+    'Account Executive',
+    'Accounting'
+  ]
+
+  return p[faker.datatype.number({ min: 0, max: p.length - 1})]
+}
+
+const RandomTotalStatus = () => {
+  let status = []
+  for (let i = 0; i < 4; i++) {
+    status.push(faker.datatype.number({ min: 0, max: 1000 }))
+  }
+  return status
+}
+
+const RandomDocumentName = () => "DOC" + ("00000000" + faker.datatype.number({ min: 0, max: 9999999 })).slice(-8) 
 
 export {
   DateTime,
@@ -152,4 +219,11 @@ export {
   FetchWhs,
   FetchPart,
   RandomLastUpdate,
+  RandomDateString,
+  RandomAmount,
+  RandomVendorcode,
+  RandomName,
+  RandomPosition,
+  RandomTotalStatus,
+  RandomDocumentName,
 };

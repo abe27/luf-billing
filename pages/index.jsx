@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import { MainLayOut, AddNewBilling, EditBilling } from "@/components";
 import { Input, Button, Pagination } from "@nextui-org/react";
-import { RandomLastUpdate } from "@/hooks";
+import { RandomDateString,RandomAmount,RandomVendorcode } from "@/hooks";
 
 const IndexPage = () => {
   const inputRef = useRef();
@@ -16,10 +16,10 @@ const IndexPage = () => {
       doc.push({
         id: i + 1,
         billing_no: ("0000000" + (i + 1)).slice(-8), // Billing No.
-        billing_date: RandomLastUpdate(), // Billing Date
-        due_date: RandomLastUpdate(), // Due Date
-        amount: 1000, // Amount
-        vendor_code: 12344556, // Vendor Code
+        billing_date: RandomDateString(), // Billing Date
+        due_date: RandomDateString(), // Due Date
+        amount: RandomAmount(), // Amount
+        vendor_code: RandomVendorcode(), // Vendor Code
         vender_name: "XXXXXXX", // Vendor Name
         vendor_group: "G" + ("000" + (i + 1)).slice(-3), // Vendor Group
       });
@@ -143,7 +143,7 @@ const IndexPage = () => {
                         <td>{i.billing_no}</td>
                         <td>{i.billing_date}</td>
                         <td>{i.due_date}</td>
-                        <td>{i.amount}</td>
+                        <td>{i.amount.toLocaleString()}</td>
                         <td>{i.vendor_code}</td>
                         <td>{i.vender_name}</td>
                         <td>{i.vendor_group}</td>

@@ -1,18 +1,28 @@
 /* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { RandomName,RandomPosition } from "@/hooks";
 
 const NavBarTop = () => {
   const [show, setShow] = useState(false);
   const [product, setProduct] = useState(false);
   const [deliverables, setDeliverables] = useState(false);
   const [profile, setProfile] = useState(false);
+  const [fullName, setFullName] = useState("");
+  const [positionName, setPositionName] = useState("");
+
+  useEffect(() => {
+    let n = RandomName()
+    setFullName(n)
+    let p = RandomPosition()
+    setPositionName(p)
+  }, [])
   return (
     <>
       {/* Navigation starts */}
       <nav className="w-full mx-auto bg-white shadow">
         <div className="justify-between h-16 flex items-center lg:items-stretch mx-auto">
-          <div className="h-full flex items-center bg-gray-100">
+          <div className="h-full flex items-center ">
             <div className="pl-2 mr-2 flex items-center">
               <svg
                 aria-label="Home"
@@ -42,7 +52,7 @@ const NavBarTop = () => {
                 <div
                   aria-haspopup="true"
                   className="cursor-pointer w-full flex items-center justify-end relative"
-                  onClick={() => setProfile(!profile)}
+                  onClick={() => setProfile(true)}
                   onMouseOver={() => setProfile(true)}
                 >
                   {profile ? (
@@ -140,12 +150,12 @@ const NavBarTop = () => {
                     ""
                   )}
                   <div className="pr-4">
-                    <p className="text-gray-800 text-sm ml-2">Jane Doe</p>
-                    <p className="text-gray-800 text-sm ml-2">Accounting</p>
+                    <p className="text-gray-800 text-sm ml-2">{fullName}</p>
+                    <p className="text-gray-800 text-sm ml-2">{positionName}</p>
                   </div>
                   <img
                     className="rounded h-10 w-10 object-cover"
-                    src="https://tuk-cdn.s3.amazonaws.com/assets/components/boxed_layout/bl_1.png"
+                    src="https://i.pravatar.cc/300"
                     alt="logo"
                   />
                 </div>

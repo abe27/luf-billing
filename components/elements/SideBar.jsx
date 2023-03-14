@@ -32,7 +32,7 @@ const navbarLink = [
 const SideBar = () => {
   const router = useRouter();
   const NavClass = obj => {
-    if (router.pathname === obj.href) {
+    if (router.pathname.substring(0, 3) === obj.href.substring(0, 3)) {
       return "items-center w-full bg-gray-200 rounded-lg cursor-pointer text-sm leading-3 tracking-normal pb-4 pt-5 text-indigo-700 focus:text-indigo-700 focus:outline-none"
     }
     return "items-center w-full hover:bg-gray-200 hover:rounded-lg cursor-pointer text-sm leading-3 tracking-normal pb-4 pt-5 hover:text-indigo-700 focus:text-indigo-700 focus:outline-none"
