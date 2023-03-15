@@ -16,6 +16,7 @@ import BillingReportTable from "./elements/BillingReportTable"
 import UserActionTable from "./elements/UserActionTable"
 import AddNewUser from "./elements/AddNewUser"
 import AddEditRole from "./elements/AddEditRole"
+import ConfirmDialog from "./elements/ConfirmDialog"
 
 export {
     SideBar,
@@ -35,5 +36,6 @@ export {
     BillingReportTable,
     UserActionTable,
     AddNewUser,
-    AddEditRole
+    AddEditRole,
+    ConfirmDialog
 }

@@ -59,10 +59,10 @@ const SideBar = () => {
         <div className="flex items-center justify-center">
           <ul aria-orientation="vertical" className="py-6">
             {navbarLink.map((i) => (
-              <li key={i.id} className={NavClass(i.href)}>
+              <li key={i.id} className={NavClass(i.href)} onClick={()=>router.push(i.href)}>
                 <div className="flex items-center">
                   <span className="ml-2 pl-4 pr-4">
-                    <Link href={i.href}>{i.title}</Link>
+                    {i.title}
                   </span>
                 </div>
               </li>
