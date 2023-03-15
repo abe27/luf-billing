@@ -78,7 +78,7 @@ const SideBar = () => {
                     <Radio value="u" size="xs">
                       <Link
                         href="/member"
-                        className={memberMenu === "u" && "text-indigo-500"}
+                        className={memberMenu === "u" ? "text-indigo-500" : ""}
                       >
                         User
                       </Link>
@@ -86,7 +86,7 @@ const SideBar = () => {
                     <Radio value="r" size="xs">
                       <Link
                         href="/member/roles"
-                        className={memberMenu === "r" && "text-indigo-500"}
+                        className={memberMenu === "r" ? "text-indigo-500" : ""}
                       >
                         Roles
                       </Link>
@@ -94,7 +94,7 @@ const SideBar = () => {
                     <Radio value="p" size="xs">
                       <Link
                         href="/member/permisions"
-                        className={memberMenu === "p" && "text-indigo-500"}
+                        className={memberMenu === "p" ? "text-indigo-500" : ""}
                       >
                         Permisions
                       </Link>
@@ -102,7 +102,7 @@ const SideBar = () => {
                     <Radio value="v" size="xs">
                       <Link
                         href="/member/vendor"
-                        className={memberMenu === "v" && "text-indigo-500"}
+                        className={memberMenu === "v" ? "text-indigo-500" : ""}
                       >
                         Vendor Group
                       </Link>

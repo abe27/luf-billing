@@ -225,6 +225,20 @@ const RandomDocumentName = () =>
   "DOC" +
   ("00000000" + faker.datatype.number({ min: 0, max: 9999999 })).slice(-8);
 
+const RandomUserName = () => {
+  let s = ["User", "Admin", "Vendor"]
+  return {
+    avatar: faker.internet.avatar(),
+    user_id: ("00000000" + faker.datatype.number({ min: 0, max: 9999999})).slice(-8),
+    user_name: faker.internet.userName(),
+    email: faker.internet.email(),
+    role: s[faker.datatype.number({min: 0, max: s.length - 1})],
+    company: faker.internet.domainName(),
+    created_at: RandomDateString(),
+    status: RandomStatus(),
+  }
+}
+
 export {
   DateTime,
   DateOnly,
@@ -243,4 +257,5 @@ export {
   RandomTotalStatus,
   RandomDocumentName,
   RandomStatus,
+  RandomUserName,
 };
