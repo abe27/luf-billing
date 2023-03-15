@@ -239,6 +239,14 @@ const RandomUserName = () => {
   }
 }
 
+const RandomPermision = () => {
+  return {
+    name: faker.lorem.word(),
+    detail: faker.lorem.slug(),
+    created_at: RandomDateString(),
+  }
+}
+
 export {
   DateTime,
   DateOnly,
@@ -258,4 +266,5 @@ export {
   RandomDocumentName,
   RandomStatus,
   RandomUserName,
+  RandomPermision
 };

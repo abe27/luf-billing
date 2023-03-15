@@ -14,7 +14,7 @@ const VerifyBillingAlert = () => {
 
   const handleClick = () => {
     Swal.fire({
-      text: "Would you like to comfirm?",
+      text: "Would you like to Confirm?",
       icon: "warning",
       showCancelButton: true,
       cancelButtonText: "Cancel",

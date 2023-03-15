@@ -17,6 +17,8 @@ import UserActionTable from "./elements/UserActionTable"
 import AddNewUser from "./elements/AddNewUser"
 import AddEditRole from "./elements/AddEditRole"
 import ConfirmDialog from "./elements/ConfirmDialog"
+import AddNewPermisions from "./elements/AddNewPermisions"
+import PermisionTable from "./elements/PermisionTable"
 
 export {
     SideBar,
@@ -37,5 +39,7 @@ export {
     UserActionTable,
     AddNewUser,
     AddEditRole,
-    ConfirmDialog
+    ConfirmDialog,
+    AddNewPermisions,
+    PermisionTable
 }

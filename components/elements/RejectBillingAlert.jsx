@@ -33,7 +33,7 @@ const RejectBillingAlert = () => {
   const handlerReject = () => {
     setVisible(false);
     Swal.fire({
-      text: "Would you like to comfirm?",
+      text: "Would you like to Confirm?",
       icon: "warning",
       showCancelButton: true,
       cancelButtonText: "Cancel",

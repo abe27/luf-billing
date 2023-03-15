@@ -22,7 +22,7 @@ const ConfirmDialog = ({
 
   const handlerConfirm = () => {
     Swal.fire({
-      text: `Would you like to comfirm delete ${id}?`,
+      text: `Would you like to confirm delete ${id}?`,
       icon: "warning",
       showCancelButton: true,
       cancelButtonText: "Cancel",
