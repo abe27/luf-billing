@@ -14,6 +14,8 @@ import StepTimeLine from "./elements/StepTimeLine"
 import Stepper from "./elements/Stepper"
 import BillingReportTable from "./elements/BillingReportTable"
 import UserActionTable from "./elements/UserActionTable"
+import AddNewUser from "./elements/AddNewUser"
+import AddEditRole from "./elements/AddEditRole"
 
 export {
     SideBar,
@@ -31,5 +33,7 @@ export {
     StepTimeLine,
     Stepper,
     BillingReportTable,
-    UserActionTable
+    UserActionTable,
+    AddNewUser,
+    AddEditRole
 }

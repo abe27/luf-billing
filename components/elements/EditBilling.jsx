@@ -44,7 +44,6 @@ const EditBilling = () => {
       <Modal
         closeButton
         preventClose
-        
         open={visible}
         onClose={closeHandler}
       >
