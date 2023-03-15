@@ -12,6 +12,7 @@ import ViewRejectDetail from "./elements/ViewRejectDetail"
 import ViewApproveDetail from "./elements/ViewApproveDetail"
 import StepTimeLine from "./elements/StepTimeLine"
 import Stepper from "./elements/Stepper"
+import BillingReportTable from "./elements/BillingReportTable"
 
 export {
     SideBar,
@@ -27,5 +28,6 @@ export {
     ViewRejectDetail,
     ViewApproveDetail,
     StepTimeLine,
-    Stepper
+    Stepper,
+    BillingReportTable
 }

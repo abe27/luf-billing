@@ -63,7 +63,7 @@ const BillingApproveAlert = () => {
       <Modal
         closeButton
         blur
-        aria-labelledby="modal-title"
+        
         open={visible}
         onClose={closeHandler}
       >

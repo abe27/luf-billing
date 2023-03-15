@@ -40,7 +40,7 @@ const ViewBillingPDF = ({ filename = "example.pdf" }) => {
       <Modal
         closeButton
         blur
-        aria-labelledby="modal-title"
+        
         open={visible}
         onClose={closeHandler}
       >

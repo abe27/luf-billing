@@ -22,6 +22,7 @@ const AddNewBilling = () => {
         flat
         color="warning"
         auto
+        size={"sm"}
         icon={
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -45,7 +46,7 @@ const AddNewBilling = () => {
       <Modal
         closeButton
         preventClose
-        aria-labelledby="modal-title"
+        
         open={visible}
         onClose={closeHandler}
       >

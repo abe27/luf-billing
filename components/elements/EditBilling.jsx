@@ -44,7 +44,7 @@ const EditBilling = () => {
       <Modal
         closeButton
         preventClose
-        aria-labelledby="modal-title"
+        
         open={visible}
         onClose={closeHandler}
       >

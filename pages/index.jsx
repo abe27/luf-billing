@@ -52,7 +52,7 @@ const IndexPage = () => {
             <div className="flex justify-start space-x-4">
               <Input clearable placeholder="Billing No." />
               <Input width="186px" type="date" placeholder="Billing Date" />
-              <select className="select select-ghost max-w-xs">
+              <select className="select select-ghostv max-w-xs bg-gray-100">
                 <option disabled selected>
                   Vendor Group
                 </option>
@@ -67,6 +67,7 @@ const IndexPage = () => {
                   flat
                   color="primary"
                   auto
+                  size={"sm"}
                   icon={
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -91,6 +92,7 @@ const IndexPage = () => {
                   flat
                   color="success"
                   auto
+                  size={"sm"}
                   icon={
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
