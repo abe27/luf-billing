@@ -2,8 +2,8 @@ import { Button, Modal, useModal, Input, Text } from "@nextui-org/react";
 import Swal from "sweetalert2/dist/sweetalert2.js";
 import "sweetalert2/src/sweetalert2.scss";
 
-const AddNewPermisions = ({
-  title = "Add Permisions",
+const AddNewPermissions = ({
+  title = "Add Permissions",
   isEdit = false,
   flat = true,
   color = "error",
@@ -157,4 +157,4 @@ const AddNewPermisions = ({
   );
 };
 
-export default AddNewPermisions;
+export default AddNewPermissions;

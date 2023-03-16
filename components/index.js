@@ -17,7 +17,7 @@ import UserActionTable from "./elements/UserActionTable";
 import AddNewUser from "./elements/AddNewUser";
 import AddEditRole from "./elements/AddEditRole";
 import ConfirmDialog from "./elements/ConfirmDialog";
-import AddNewPermisions from "./elements/AddNewPermisions";
+import AddNewPermissions from "./elements/AddNewPermissions";
 import PermisionTable from "./elements/PermisionTable";
 import AddEditVendorGroup from "./elements/AddEditVendorGroup";
 
@@ -41,7 +41,7 @@ export {
   AddNewUser,
   AddEditRole,
   ConfirmDialog,
-  AddNewPermisions,
+  AddNewPermissions,
   PermisionTable,
   AddEditVendorGroup,
 };

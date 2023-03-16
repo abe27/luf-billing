@@ -1,5 +1,5 @@
 import { Pagination } from "@nextui-org/react";
-import AddNewPermisions from "./AddNewPermisions";
+import AddNewPermisions from "./AddNewPermissions";
 import ConfirmDialog from "./ConfirmDialog";
 
 const PermisionTable = ({
