@@ -26,7 +26,7 @@ const OverdueBillingTable = ({ status = "Open" }) => {
     const t = setTimeout(() => {
       setLoading(false);
       setData(doc);
-    }, 1500);
+    }, 1000);
 
     return () => clearTimeout(t);
   };

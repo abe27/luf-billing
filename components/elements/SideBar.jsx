@@ -59,7 +59,7 @@ const navbarLink = [
   },
   {
     id: 6,
-    title: "Billing Report",
+    title: "Billing Report For User",
     name: "billing",
     href: "/billing",
     children: [],

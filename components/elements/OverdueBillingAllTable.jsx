@@ -41,7 +41,7 @@ const OverdueBillingAllTable = () => {
       setLoading(false);
       setData(doc);
       setStatusData(s);
-    }, 1500);
+    }, 1000);
 
     return () => clearTimeout(t);
   };

@@ -33,7 +33,7 @@ const BillingReportingPage = () => {
     setData(doc);
     let t = setTimeout(() => {
       setLoading(false);
-    }, 1500);
+    }, 1000);
     return () => clearTimeout(t);
   };
 

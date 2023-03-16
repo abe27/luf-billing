@@ -1,6 +1,12 @@
 import { Button, Input, Loading, Pagination } from "@nextui-org/react";
 
-const BillingReportTable = ({ data, limit = 10, page = 3, changeLimit=false }) => {
+const BillingReportTable = ({
+  data,
+  limit = 10,
+  page = 3,
+  changeLimit = false,
+  isAdmin = true,
+}) => {
   return (
     <>
       <div className="mt-4">
@@ -12,9 +18,13 @@ const BillingReportTable = ({ data, limit = 10, page = 3, changeLimit=false }) =
               <th className="normal-case">Billing Date</th>
               <th className="normal-case">Due Date</th>
               <th className="normal-case">Amount</th>
-              <th className="normal-case">Vendor Code</th>
-              <th className="normal-case">Vendor Name</th>
-              <th className="normal-case">Vendor Group</th>
+              {isAdmin ? (
+                <>
+                  <th className="normal-case">Vendor Code</th>
+                  <th className="normal-case">Vendor Name</th>
+                  <th className="normal-case">Vendor Group</th>
+                </>
+              ) : null}
               <th className="normal-case">Status</th>
             </tr>
           </thead>
@@ -26,9 +36,13 @@ const BillingReportTable = ({ data, limit = 10, page = 3, changeLimit=false }) =
                 <td>{i.billing_date}</td>
                 <td>{i.due_date}</td>
                 <td>{i.amount.toLocaleString()}</td>
-                <td>{i.vendor_code}</td>
-                <td>{i.vender_name}</td>
-                <td>{i.vendor_group}</td>
+                {isAdmin ? (
+                  <>
+                    <td>{i.vendor_code}</td>
+                    <td>{i.vender_name}</td>
+                    <td>{i.vendor_group}</td>
+                  </>
+                ) : null}
                 <td>
                   <Button flat color={i.status.color} auto size={"sm"}>
                     {i.status.name}

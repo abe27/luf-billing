@@ -42,9 +42,9 @@ const OverdueBillingDetailPage = () => {
           <div className="w-full">
             <div className="grid rounded shadow p-4 bg-white">
               <span className="text-4xm">Status</span>
-              <StepTimeLine isComplete={false} />
+              <StepTimeLine isComplete={statusTitle === "Approved"} />
             </div>
-            <RequiredDocuments fileType={fileType}/>
+            <RequiredDocuments fileType={fileType} status={statusTitle}/>
           </div>
         </div>
       </MainLayOut>

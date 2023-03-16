@@ -26,7 +26,7 @@ const MemberPermisionPage = () => {
     const t = setTimeout(() => {
       setData(doc);
       setLoading(false);
-    }, 1500);
+    }, 1000);
     return () => clearTimeout(t);
   };
 

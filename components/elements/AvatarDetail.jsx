@@ -1,8 +1,9 @@
 import { Avatar, Badge } from "@nextui-org/react";
 import { useRouter } from "next/router";
 import { RandomAmount, RandomDateString } from "@/hooks";
+import { useEffect, useState } from "react";
 const AvatarDetail = ({
-  id=1,
+  id = 1,
   isShowBilling = false,
   fullName = "First Last",
   totalOpen = 10,
@@ -10,6 +11,19 @@ const AvatarDetail = ({
   totalApprove = 1,
   totalReject = 35,
 }) => {
+  const [billDate, setBillDate] = useState("");
+  const [dueDate, setDueDate] = useState("");
+  const [amount, setAmount] = useState(0);
+
+  useEffect(() => {
+    let b = RandomDateString();
+    let d = RandomDateString();
+    let a = RandomAmount();
+
+    setBillDate(b);
+    setDueDate(d);
+    setAmount(a);
+  }, []);
   return (
     <>
       <div className="justify-center bg-white rounded-lg">
@@ -40,35 +54,35 @@ const AvatarDetail = ({
                 </>
               </div>
               <div className="mt-4 grid grid-rows-1">
-              <>
-                <span className="text-sm text-bold">Billing Date</span>
-              </>
-              <>
-                <div className="text-gray-600 bg-gray-50 rounded p-2 w-auto text-sm">
-                  {RandomDateString()}
-                </div>
-              </>
-            </div>
+                <>
+                  <span className="text-sm text-bold">Billing Date</span>
+                </>
+                <>
+                  <div className="text-gray-600 bg-gray-50 rounded p-2 w-auto text-sm">
+                    {billDate}
+                  </div>
+                </>
+              </div>
               <div className="mt-4 grid grid-rows-1">
                 <>
                   <span className="text-sm text-bold">Due Date</span>
                 </>
                 <>
                   <div className="text-gray-600 bg-gray-50 rounded p-2 w-auto text-sm">
-                    {RandomDateString()}
+                    {dueDate}
                   </div>
                 </>
               </div>
               <div className="mt-4 grid grid-rows-1">
-              <>
-                <span className="text-sm text-bold">Amount</span>
-              </>
-              <>
-                <div className="text-gray-600 bg-gray-50 rounded p-2 w-auto text-sm">
-                  {RandomAmount().toLocaleString()}
-                </div>
-              </>
-            </div>
+                <>
+                  <span className="text-sm text-bold">Amount</span>
+                </>
+                <>
+                  <div className="text-gray-600 bg-gray-50 rounded p-2 w-auto text-sm">
+                    {amount.toLocaleString()}
+                  </div>
+                </>
+              </div>
             </>
           ) : (
             <></>
