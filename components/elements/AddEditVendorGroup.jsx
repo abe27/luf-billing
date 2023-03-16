@@ -4,7 +4,7 @@ import {
 import Swal from "sweetalert2/dist/sweetalert2.js";
 import "sweetalert2/src/sweetalert2.scss";
 
-const AddEditVendorGroup = ({ isEdit = false, role_id = null }) => {
+const AddEditVendorGroup = ({ isEdit = false, vendor_id = null }) => {
   const { setVisible, bindings } = useModal();
 
   const handleSuccess = () => {
