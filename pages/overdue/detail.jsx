@@ -4,6 +4,7 @@ import {
   RequiredDocuments,
   StepTimeLine,
 } from "@/components";
+import { Textarea } from "@nextui-org/react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -17,11 +18,11 @@ const fileType = [
 
 const OverdueBillingDetailPage = () => {
   const router = useRouter();
-  const [statusTitle, setStatusTitle] = useState("")
+  const [statusTitle, setStatusTitle] = useState("");
 
   useEffect(() => {
-    setStatusTitle(router.query["status"])
-  }, [router])
+    setStatusTitle(router.query["status"]);
+  }, [router]);
 
   return (
     <>
@@ -31,9 +32,7 @@ const OverdueBillingDetailPage = () => {
             <Link href={`/overdue`}>Overdue Billing</Link>
           </span>
           <span className="text-4xm font-bold">/</span>
-          <span className="text-4xm text-gray-500">
-            {statusTitle}
-          </span>
+          <span className="text-4xm text-gray-500">{statusTitle}</span>
         </div>
         <div className="flex justify-between mt-4 space-x-4">
           <div className="flex justify-start w-fit rounded shadow bg-white">
@@ -44,7 +43,13 @@ const OverdueBillingDetailPage = () => {
               <span className="text-4xm">Status</span>
               <StepTimeLine isComplete={statusTitle === "Approved"} />
             </div>
-            <RequiredDocuments fileType={fileType} status={statusTitle}/>
+            {statusTitle === "Approved" ? (
+              <div className="grid rounded shadow p-4 bg-white mt-4 mb-4">
+                <span className="text-4xm">Detail</span>
+                <Textarea fullWidth placeholder="Enter Detail" />
+              </div>
+            ) : null}
+            <RequiredDocuments fileType={fileType} status={statusTitle} />
           </div>
         </div>
       </MainLayOut>
