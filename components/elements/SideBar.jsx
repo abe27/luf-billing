@@ -111,6 +111,13 @@ const SideBar = () => {
                 </span>
               </div>
             </li>
+            <li className={NavClass("/login")} onClick={()=>router.push("/login")}>
+                <div className="flex items-center">
+                  <span className="ml-2 pl-4 pr-4">
+                    Login
+                  </span>
+                </div>
+              </li>
           </ul>
         </div>
       </div>

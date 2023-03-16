@@ -1,8 +1,20 @@
 import {
-  Button, Checkbox, Input, Modal, Text, useModal
+  Button,
+  Checkbox,
+  Input,
+  Modal,
+  Text,
+  useModal,
 } from "@nextui-org/react";
 import Swal from "sweetalert2/dist/sweetalert2.js";
 import "sweetalert2/src/sweetalert2.scss";
+
+const vendorList = [
+  "Purchase Order",
+  "Tax Invoice/delivery order.",
+  "Receipt",
+  "Bill",
+];
 
 const AddEditVendorGroup = ({ isEdit = false, vendor_id = null }) => {
   const { setVisible, bindings } = useModal();
@@ -14,7 +26,7 @@ const AddEditVendorGroup = ({ isEdit = false, vendor_id = null }) => {
       confirmButtonText: "OK",
       confirmButtonColor: "#19B5FE",
     });
-  }
+  };
 
   const handlerSave = () => {
     setVisible(false);
@@ -27,7 +39,7 @@ const AddEditVendorGroup = ({ isEdit = false, vendor_id = null }) => {
       confirmButtonColor: "#19B5FE",
       preConfirm: () => handleSuccess(),
     });
-  }
+  };
   return (
     <>
       {isEdit ? (
@@ -78,13 +90,13 @@ const AddEditVendorGroup = ({ isEdit = false, vendor_id = null }) => {
           }
           onPress={() => setVisible(true)}
         >
-          New Vendor Group
+          <div className="p-4">New Vendor Group</div>
         </Button>
       )}
       <Modal closeButton preventClose {...bindings}>
         <Modal.Header>
           <Text id="modal-title" size={18}>
-            {isEdit ? "Edit Role" : "Add New Role"}
+            {isEdit ? "Edit Vendor Group" : "Add New Vendor Group"}
           </Text>
         </Modal.Header>
         <Modal.Body>
@@ -93,74 +105,20 @@ const AddEditVendorGroup = ({ isEdit = false, vendor_id = null }) => {
               <Input
                 fullWidth
                 clearable
-                label="Role Name"
-                placeholder="Role Name"
+                label="Group Name"
+                placeholder="Group Name"
               />
             </div>
             <div className="mt-4">
-              <Input fullWidth clearable label="Detail" placeholder="Detail" />
-            </div>
-            <div className="mt-4">
-              <span className="text-sm">Role Permisions</span>
+              <span className="text-sm">Document List</span>
               <div className="grid mt-2">
-                <div className="flex w-full">
-                  <div className="w-40">
-                    <span className="text-sm">Administrator Access</span>
-                  </div>
-                  <div>
+                {vendorList?.map((i, x) => (
+                  <div key={x}>
                     <Checkbox defaultSelected size="sm">
-                      <span className="text-sm">Select All</span>
+                      <span className="text-sm">{i}</span>
                     </Checkbox>
                   </div>
-                </div>
-                <div className="flex justify-between w-full mt-2">
-                  <div className="flex justify-start w-40">
-                    <span className="text-sm">Billing Monitor</span>
-                  </div>
-                  <div className="flex justify-end space-x-2">
-                    <Checkbox defaultSelected size="sm">
-                      <span className="text-sm">Read</span>
-                    </Checkbox>
-                    <Checkbox defaultSelected size="sm">
-                      <span className="text-sm">Write</span>
-                    </Checkbox>
-                    <Checkbox defaultSelected size="sm">
-                      <span className="text-sm">Create</span>
-                    </Checkbox>
-                  </div>
-                </div>
-                <div className="flex justify-between w-full mt-2">
-                  <div className="flex justify-start w-40">
-                    <span className="text-sm">Overdue Billing</span>
-                  </div>
-                  <div className="flex justify-end space-x-2">
-                    <Checkbox defaultSelected size="sm">
-                      <span className="text-sm">Read</span>
-                    </Checkbox>
-                    <Checkbox defaultSelected size="sm">
-                      <span className="text-sm">Write</span>
-                    </Checkbox>
-                    <Checkbox defaultSelected size="sm">
-                      <span className="text-sm">Create</span>
-                    </Checkbox>
-                  </div>
-                </div>
-                <div className="flex justify-between w-full mt-2">
-                  <div className="flex justify-start w-40">
-                    <span className="text-sm">User Manangement</span>
-                  </div>
-                  <div className="flex justify-end space-x-2">
-                    <Checkbox defaultSelected size="sm">
-                      <span className="text-sm">Read</span>
-                    </Checkbox>
-                    <Checkbox defaultSelected size="sm">
-                      <span className="text-sm">Write</span>
-                    </Checkbox>
-                    <Checkbox defaultSelected size="sm">
-                      <span className="text-sm">Create</span>
-                    </Checkbox>
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
           </div>

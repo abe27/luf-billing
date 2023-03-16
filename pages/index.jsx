@@ -53,7 +53,7 @@ const IndexPage = () => {
               <Input clearable placeholder="Billing No." />
               <Input width="186px" type="date" placeholder="Billing Date" />
               <select className="select select-ghostv max-w-xs bg-gray-100">
-                <option disabled selected>
+                <option disabled >
                   Vendor Group
                 </option>
                 <option>Grp. A</option>
