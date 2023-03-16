@@ -10,48 +10,71 @@ const BillingReportTable = ({
   return (
     <>
       <div className="mt-4">
-        <table className="table table-hover table-compact w-full">
-          <thead>
-            <tr>
-              <th className="normal-case">No.</th>
-              <th className="normal-case">Billing No.</th>
-              <th className="normal-case">Billing Date</th>
-              <th className="normal-case">Due Date</th>
-              <th className="normal-case">Amount</th>
-              {isAdmin ? (
-                <>
-                  <th className="normal-case">Vendor Code</th>
-                  <th className="normal-case">Vendor Name</th>
-                  <th className="normal-case">Vendor Group</th>
-                </>
-              ) : null}
-              <th className="normal-case">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.map((i, x) => (
-              <tr key={i.id}>
-                <td>{i.id}</td>
-                <td>{i.billing_no}</td>
-                <td>{i.billing_date}</td>
-                <td>{i.due_date}</td>
-                <td>{i.amount.toLocaleString()}</td>
-                {isAdmin ? (
-                  <>
-                    <td>{i.vendor_code}</td>
-                    <td>{i.vender_name}</td>
-                    <td>{i.vendor_group}</td>
-                  </>
-                ) : null}
-                <td>
-                  <Button flat color={i.status.color} auto size={"sm"}>
-                    {i.status.name}
-                  </Button>
-                </td>
+        {isAdmin ? (
+          <table className="table table-hover table-compact w-full">
+            <thead>
+              <tr>
+                <th className="normal-case">No.</th>
+                <th className="normal-case">Billing No.</th>
+                <th className="normal-case">Billing Date</th>
+                <th className="normal-case">Due Date</th>
+                <th className="normal-case">Amount</th>
+                <th className="normal-case">Vendor Code</th>
+                <th className="normal-case">Vendor Name</th>
+                <th className="normal-case">Vendor Group</th>
+                <th className="normal-case">Status</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {data.map((i, x) => (
+                <tr key={i.id}>
+                  <td>{i.id}</td>
+                  <td>{i.billing_no}</td>
+                  <td>{i.billing_date}</td>
+                  <td>{i.due_date}</td>
+                  <td>{i.amount.toLocaleString()}</td>
+                  <td>{i.vendor_code}</td>
+                  <td>{i.vender_name}</td>
+                  <td>{i.vendor_group}</td>
+                  <td>
+                    <Button flat color={i.status.color} auto size={"sm"}>
+                      {i.status.name}
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <table className="table table-hover table-compact w-full">
+            <thead>
+              <tr>
+                <th className="normal-case">No.</th>
+                <th className="normal-case">Billing No.</th>
+                <th className="normal-case">Billing Date</th>
+                <th className="normal-case">Due Date</th>
+                <th className="normal-case">Amount</th>
+                <th className="normal-case">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.map((i, x) => (
+                <tr key={i.id}>
+                  <td>{i.id}</td>
+                  <td>{i.billing_no}</td>
+                  <td>{i.billing_date}</td>
+                  <td>{i.due_date}</td>
+                  <td>{i.amount.toLocaleString()}</td>
+                  <td>
+                    <Button flat color={i.status.color} auto size={"sm"}>
+                      {i.status.name}
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
       <div className="mt-4 flex justify-between">
         <div className="flex justify-start">
