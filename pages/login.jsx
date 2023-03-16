@@ -21,7 +21,7 @@ const LoginPage = () => {
             <div className="flex items-start">
               <Image
                 src="/bg.jpg"
-                className="rounded-l-lg"
+                className="rounded-l"
                 width={650}
                 height={850}
               />
