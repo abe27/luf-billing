@@ -52,7 +52,7 @@ const navbarLink = [
   },
   {
     id: 5,
-    title: "Orverdue Billing",
+    title: "Overdue Billing",
     name: "overdue",
     href: "/overdue",
     children: [],
@@ -90,7 +90,7 @@ const SideBar = () => {
 
   return (
     <>
-      <div className="absolute lg:relative w-72 h-screen shadow bg-gray-100 hidden lg:block">
+      <div className="absolute lg:relative w-64 h-screen shadow bg-gray-100 hidden lg:block">
         <div className="flex items-center justify-center">
           <ul aria-orientation="vertical" className="py-6">
             {navbarLink.map((i) => (

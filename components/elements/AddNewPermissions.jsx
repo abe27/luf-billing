@@ -86,7 +86,7 @@ const AddNewPermissions = ({
         </Modal.Header>
         <Modal.Body>
           <div className="mb-8">
-            <div className="">
+            <div >
               <Input
                 fullWidth
                 clearable

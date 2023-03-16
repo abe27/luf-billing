@@ -57,7 +57,7 @@ const BillingApprovePage = () => {
             <div className="justify-center bg-white rounded-lg">
               <div className="grid justify-center items-center m-10">
                 <Avatar
-                  src="https://i.pravatar.cc/150"
+                  src="/emp.png"
                   css={{ size: "$150" }}
                 />
                 <div className="text-center">

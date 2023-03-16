@@ -13,7 +13,7 @@ const ConfirmDialog = ({
 
   const handleSuccess = () => {
     Swal.fire({
-      text: "Delete Success!",
+      text: `${title} Success!`,
       icon: "success",
       confirmButtonText: "OK",
       confirmButtonColor: "#19B5FE",
@@ -22,7 +22,7 @@ const ConfirmDialog = ({
 
   const handlerConfirm = () => {
     Swal.fire({
-      text: `Would you like to confirm delete ${id}?`,
+      text: `Would you like to confirm ${title} ${id}?`,
       icon: "warning",
       showCancelButton: true,
       cancelButtonText: "Cancel",

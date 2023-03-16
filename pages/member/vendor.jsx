@@ -85,7 +85,7 @@ const MemberVendorGroupPage = () => {
                   viewBox="0 0 24 24"
                   strokeWidth="1.5"
                   stroke="currentColor"
-                  class="w-36 h-36 text-indigo-500"
+                  className="w-36 h-36 text-indigo-500"
                 >
                   <path
                     strokeLinecap="round"

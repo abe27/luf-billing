@@ -9,7 +9,7 @@ let doc = [
   "Wait For Success",
   "Payment Date Set",
 ];
-const StepTimeLine = () => {
+const StepTimeLine = ({isComplete=true}) => {
   const [data, setData] = useState([]);
 
   const fetchData = async () => {
@@ -31,7 +31,7 @@ const StepTimeLine = () => {
     <>
       <div className="flex justify-between mt-4">
         {data?.map((i, x) => (
-          <div key={x} className="step-item complete">
+          <div key={x} className={`step-item ${isComplete ? "complete" : "not-complete"}`}>
             <div className="step">
               {i.id === 0 && <MdUploadFile size={26} />}
               {i.id === 1 && <MdEditDocument size={26} />}

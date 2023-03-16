@@ -123,7 +123,7 @@ const NavBarTop = () => {
                       <li className="cursor-pointer text-gray-600 text-sm leading-3 tracking-normal mt-2 py-2 hover:text-indigo-700 flex items-center focus:text-indigo-700 focus:outline-none">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
-                          class="icon icon-tabler icon-tabler-logout"
+                          className="icon icon-tabler icon-tabler-logout"
                           width={20}
                           height={20}
                           viewBox="0 0 24 24"
@@ -155,7 +155,7 @@ const NavBarTop = () => {
                   </div>
                   <img
                     className="rounded h-10 w-10 object-cover"
-                    src="https://i.pravatar.cc/300"
+                    src="/emp.png"
                     alt="logo"
                   />
                 </div>

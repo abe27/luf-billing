@@ -20,6 +20,12 @@ import ConfirmDialog from "./elements/ConfirmDialog";
 import AddNewPermissions from "./elements/AddNewPermissions";
 import PermisionTable from "./elements/PermisionTable";
 import AddEditVendorGroup from "./elements/AddEditVendorGroup";
+import AvatarDetail from "./elements/AvatarDetail";
+import OverdueBillingTable from "./elements/OverdueBillingTable";
+import OverdueBillingAllTable from "./elements/OverdueBillingAllTable";
+import OverdueBillingUploadFile from "./elements/OverdueBillingUploadFile";
+import RequiredDocuments from "./elements/RequiredDocuments";
+import IconStatus from "./elements/IconStatus";
 
 export {
   SideBar,
@@ -44,4 +50,10 @@ export {
   AddNewPermissions,
   PermisionTable,
   AddEditVendorGroup,
+  AvatarDetail,
+  OverdueBillingTable,
+  OverdueBillingAllTable,
+  OverdueBillingUploadFile,
+  RequiredDocuments,
+  IconStatus,
 };

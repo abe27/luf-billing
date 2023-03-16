@@ -94,7 +94,7 @@ const AddEditRole = ({ isEdit = false, role_id = null }) => {
         </Modal.Header>
         <Modal.Body>
           <div className="mb-8">
-            <div className="">
+            <div>
               <Input
                 fullWidth
                 clearable

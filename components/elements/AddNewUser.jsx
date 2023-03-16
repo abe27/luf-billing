@@ -197,7 +197,7 @@ const AddNewUser = ({ isEdit = false }) => {
             icon={
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                class="icon icon-tabler icon-tabler-device-floppy"
+                className="icon icon-tabler icon-tabler-device-floppy"
                 width={24}
                 height={24}
                 viewBox="0 0 24 24"

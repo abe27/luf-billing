@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Link from "next/link"
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { MainLayOut, BillingActionDetailTable } from "@/components";
 import { Avatar, Input, Badge } from "@nextui-org/react";
@@ -25,7 +25,10 @@ const BillingMonitorDetailPage = () => {
   }, []);
   return (
     <>
-      <MainLayOut title={`${router.query["id"]} Detail`} description="Show Billing Detail">
+      <MainLayOut
+        title={`${router.query["id"]} Detail`}
+        description="Show Billing Detail"
+      >
         <div className="flex justify-start space-x-1">
           <span className="text-4xm font-bold">
             <Link href={`/monitor`}>Billing Monitor</Link>
@@ -40,10 +43,9 @@ const BillingMonitorDetailPage = () => {
             <div className="flex justify-start w-fit">
               <div className="justify-center bg-white rounded-lg">
                 <div className="grid justify-center items-center m-10">
-                  <Avatar
-                    src="https://i.pravatar.cc/150"
-                    css={{ size: "$150" }}
-                  />
+                  <div className="flex justify-center">
+                    <Avatar src="/emp.png" css={{ size: "$20" }} />
+                  </div>
                   <div className="text-center">
                     <span className="text-4xm font-bold">{fullName}</span>
                   </div>
