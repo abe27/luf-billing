@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Input, Button, Loading } from "@nextui-org/react";
-import { MainLayOut, AddNewPermisions, PermisionTable } from "@/components";
+import { MainLayOut, AddNewPermissions, PermisionTable } from "@/components";
 import { RandomPermision } from "@/hooks";
 
 const MemberPermisionPage = () => {
@@ -84,7 +84,7 @@ const MemberPermisionPage = () => {
                 >
                   Search
                 </Button>
-                <AddNewPermisions flat={false} color="primary" />
+                <AddNewPermissions flat={false} color="primary" />
               </div>
             </div>
           </div>
