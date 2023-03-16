@@ -1,10 +1,5 @@
 import {
-  Button,
-  Modal,
-  useModal,
-  Text,
-  Input,
-  Checkbox,
+  Button, Checkbox, Input, Modal, Text, useModal
 } from "@nextui-org/react";
 import Swal from "sweetalert2/dist/sweetalert2.js";
 import "sweetalert2/src/sweetalert2.scss";
