@@ -2,15 +2,17 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { Radio, Button } from "@nextui-org/react";
 import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 
 /* eslint-disable jsx-a11y/role-supports-aria-props */
-const navbarLink = [
+const navbarLinkAdmin = [
   {
     id: 0,
     title: "Import Data Billing",
     name: "index",
     href: "/",
     children: [],
+    isAdmin: true,
   },
   {
     id: 1,
@@ -18,6 +20,7 @@ const navbarLink = [
     name: "monitor",
     href: "/monitor",
     children: [],
+    isAdmin: true,
   },
   {
     id: 2,
@@ -25,6 +28,7 @@ const navbarLink = [
     name: "report",
     href: "/report",
     children: [],
+    isAdmin: true,
   },
   {
     id: 3,
@@ -42,31 +46,31 @@ const navbarLink = [
       },
       { id: 3, title: "Vendor Groups", name: "vendor", href: "/vendor" },
     ],
-  },
+    isAdmin: true,
+  }
+];
+
+const navbarLinkForUser = [
   {
     id: 4,
-    title: "Login",
-    name: "login",
-    href: "/login",
-    children: [],
-  },
-  {
-    id: 5,
     title: "Overdue Billing",
     name: "overdue",
     href: "/overdue",
     children: [],
+    isAdmin: false,
   },
   {
-    id: 6,
+    id: 5,
     title: "Billing Report For User",
     name: "billing",
     href: "/billing",
     children: [],
+    isAdmin: false,
   },
 ];
 
 const SideBar = () => {
+  const { data: session } = useSession();
   const router = useRouter();
   const [memberMenu, setMemberMenu] = useState("u");
   const [active, setActive] = useState(false);
@@ -93,7 +97,8 @@ const SideBar = () => {
       <div className="absolute lg:relative w-64 h-screen shadow bg-gray-100 hidden lg:block">
         <div className="flex items-center justify-center">
           <ul aria-orientation="vertical" className="py-6">
-            {navbarLink.map((i) => (
+          {session?.user.isAdmin ? (
+            navbarLinkAdmin.map((i) => (
               <section key={i.id}>
                 <li
                   className={NavClass(i.href)}
@@ -137,7 +142,7 @@ const SideBar = () => {
                           </Radio>
                           <Radio value="p" size="xs">
                             <Link
-                              href="/member/permisions"
+                              href="/member/permissions"
                               className={
                                 memberMenu === "p" ? "text-indigo-500" : ""
                               }
@@ -163,7 +168,21 @@ const SideBar = () => {
                   <></>
                 )}
               </section>
-            ))}
+            ))
+          ) : (
+            navbarLinkForUser.map((i) => (
+              <section key={i.id}>
+                <li
+                  className={NavClass(i.href)}
+                  onClick={() => router.push(i.href)}
+                >
+                  <div className="flex items-center">
+                    <span className="ml-2 pl-4 pr-4">{i.title}</span>
+                  </div>
+                </li>
+              </section>
+            ))
+          )}
           </ul>
         </div>
       </div>

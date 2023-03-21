@@ -44,7 +44,12 @@ export const authOptions = {
           body: urlencoded,
           redirect: "follow",
         };
-        const res = await fetch(`${process.env.API_HOST}/login`, httpConfig);
+
+        console.log(`${process.env.API_HOST}/auth/login`);
+        const res = await fetch(
+          `${process.env.API_HOST}/auth/login`,
+          httpConfig
+        );
 
         if (res.status === 200) {
           const data = await res.json();
@@ -52,7 +57,7 @@ export const authOptions = {
             return data;
           }
         } else {
-          console.dir(res)
+          console.dir(res);
         }
         return null;
       },
@@ -71,22 +76,16 @@ export const authOptions = {
   callbacks: {
     async jwt({ token, user, account }) {
       if (account && user) {
-        console.dir(user)
+        console.dir(user.data.user.role);
         return {
           ...token,
-          userId: user.data.user_id.id,
-          // userName: user.data.user_id.user_name,
-          // email: user.data.user_id.email,
-          // imgUrl: user.data.profile.avatar_url,
-          // isAdmin: user.data.is_admin,
-          // accessToken: `${user.data.jwt_type} ${user.data.jwt_token}`,
-          // Area: user.data.profile.area,
-          // Whs: user.data.profile.whs,
-          // Factory: user.data.profile.factory,
-          // Position: user.data.profile.position,
-          // Department: user.data.profile.department,
-          // PrefixName: user.data.profile.prefix_name,
-          // fullName: `${user.data.profile.first_name} ${user.data.profile.last_name}`,
+          userId: user.data.user.id,
+          userName: user.data.user.username,
+          fullName: user.data.user.full_name,
+          email: user.data.user.email,
+          role: user.data.user.role,
+          avatar_url: user.data.user.avatar_url,
+          accessToken: `${user.data.type} ${user.data.token}`,
         };
       }
 
@@ -94,20 +93,17 @@ export const authOptions = {
     },
 
     async session({ session, token }) {
-      // session.user.userId = token.userId;
-      // session.user.userName = token.userName;
-      // session.user.email = token.email;
-      // session.user.imgUrl = token.imgUrl;
-      // session.user.isAdmin = token.isAdmin;
-      // session.user.accessToken = token.accessToken;
-      // session.user.fullName = token.fullName;
-      // session.user.Area = token.Area.title;
-      // session.user.Whs = token.Whs.title;
-      // session.user.WhsDescription = token.Whs.description;
-      // session.user.Factory = token.Factory.title;
-      // session.Position = token.Position.title;
-      // session.Department = token.Department.title;
-      // session.PrefixName = token.PrefixName.title;
+      session.user.userId = token.userId;
+      session.user.userName = token.userName;
+      session.user.fullName = token.fullName;
+      session.user.email = token.email;
+      session.user.role = token.role;
+      session.user.isAdmin = true;
+      if (token.role) {
+        session.user.isAdmin = false;
+      }
+      session.user.avatar_url = token.avatar_url;
+      session.user.accessToken = token.accessToken;
       return session;
     },
   },

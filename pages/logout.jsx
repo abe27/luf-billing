@@ -1,15 +1,17 @@
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { signOut } from "next-auth/react";
 import { useState, useEffect } from "react";
 
 const LogOutPage = () => {
-  const router = useRouter();
+  // const router = useRouter();
   const [countDown, setCountDown] = useState(5);
 
   useEffect(() => {
     if (countDown <= 0) {
-      router.push("/login");
+      signOut()
+      // router.push("/login");
     }
 
     const timer = setTimeout(() => {
@@ -39,12 +41,12 @@ const LogOutPage = () => {
             <p className="mb-8 text-center text-gray-500 md:text-lg">
               The system is being logged out.
             </p>
-            <Link href="/login">
+            <span role={"button"} onClick={() => signOut()}>
               <span className="px-6 py-2 text-sm font-semibold bg-blue-100">
                 <span className="text-blue-800">Login</span>(
                 <span className="text-rose-800">{countDown}</span>)
               </span>
-            </Link>
+            </span>
           </div>
         </div>
       </div>

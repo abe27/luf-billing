@@ -1,27 +1,16 @@
 /* eslint-disable @next/next/no-img-element */
-import Link from "next/link";
-import { useEffect, useState } from "react";
-import { RandomName,RandomPosition } from "@/hooks";
+import { signOut, useSession } from "next-auth/react";
+import { useState } from "react";
 
 const NavBarTop = () => {
-  const [show, setShow] = useState(false);
-  const [product, setProduct] = useState(false);
-  const [deliverables, setDeliverables] = useState(false);
+  const { data: session } = useSession();
   const [profile, setProfile] = useState(false);
-  const [fullName, setFullName] = useState("");
-  const [positionName, setPositionName] = useState("");
 
-  useEffect(() => {
-    let n = RandomName()
-    setFullName(n)
-    let p = RandomPosition()
-    setPositionName(p)
-  }, [])
   return (
     <>
       {/* Navigation starts */}
       <nav className="w-full mx-auto bg-white shadow">
-        <div className="justify-between h-16 flex items-center lg:items-stretch mx-auto">
+        <div className="justify-between h-16 flex items-center items-stretch mx-auto">
           <div className="h-full flex items-center ">
             <div className="pl-2 mr-2 flex items-center">
               <svg
@@ -54,6 +43,7 @@ const NavBarTop = () => {
                   className="cursor-pointer w-full flex items-center justify-end relative"
                   onClick={() => setProfile(true)}
                   onMouseOver={() => setProfile(true)}
+                  onMouseLeave={() => setProfile(false)}
                 >
                   {profile ? (
                     <ul
@@ -120,7 +110,10 @@ const NavBarTop = () => {
                         </svg>
                         <span className="ml-2">Account Settings</span>
                       </li>
-                      <li className="cursor-pointer text-gray-600 text-sm leading-3 tracking-normal mt-2 py-2 hover:text-indigo-700 flex items-center focus:text-indigo-700 focus:outline-none">
+                      <li
+                        className="cursor-pointer text-gray-600 text-sm leading-3 tracking-normal mt-2 py-2 hover:text-indigo-700 flex items-center focus:text-indigo-700 focus:outline-none"
+                        onClick={(e) => signOut()}
+                      >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           className="icon icon-tabler icon-tabler-logout"
@@ -141,8 +134,9 @@ const NavBarTop = () => {
                           <path d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2"></path>
                           <path d="M7 12h14l-3 -3m0 6l3 -3"></path>
                         </svg>
-                        <span className="ml-2">
-                          <Link href="/login">Sign Out</Link>
+                        <span className="ml-2" role={"button"}>
+                          {/* <Link href="/logout">Sign Out</Link> */}
+                          Sign Out
                         </span>
                       </li>
                     </ul>
@@ -150,12 +144,22 @@ const NavBarTop = () => {
                     ""
                   )}
                   <div className="pr-4">
-                    <p className="text-gray-800 text-sm ml-2">{fullName}</p>
-                    <p className="text-gray-800 text-sm ml-2">{positionName}</p>
+                    <p className="text-gray-800 text-sm ml-2">
+                      {session?.user.fullName}
+                    </p>
+                    <p className="text-gray-800 text-sm ml-2">
+                      {session?.user.role === null
+                        ? "Unknow"
+                        : session?.user.role.title}
+                    </p>
                   </div>
                   <img
                     className="rounded h-10 w-10 object-cover"
-                    src="/emp.png"
+                    src={
+                      session?.user.avatar_url
+                        ? session?.user.avatar_url
+                        : "/emp.png"
+                    }
                     alt="logo"
                   />
                 </div>
