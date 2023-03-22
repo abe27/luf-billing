@@ -10,7 +10,7 @@ const NavBarTop = () => {
     <>
       {/* Navigation starts */}
       <nav className="w-full mx-auto bg-white shadow">
-        <div className="justify-between h-16 flex items-center items-stretch mx-auto">
+        <div className="justify-between h-16 flex items-stretch mx-auto">
           <div className="h-full flex items-center ">
             <div className="pl-2 mr-2 flex items-center">
               <svg
@@ -30,12 +30,12 @@ const NavBarTop = () => {
                   />
                 </g>
               </svg>
-              <h3 className="text-base text-gray-800 font-bold tracking-normal leading-tight ml-3 hidden lg:block">
+              <h3 className="text-base text-gray-800 font-bold tracking-normal leading-tight ml-3 block">
                 {process.env.APP_NAME}
               </h3>
             </div>
           </div>
-          <div className="h-full xl:flex items-center justify-end hidden">
+          <div className="h-full xl:flex items-center justify-end">
             <div className="w-full h-full flex items-center">
               <div className="w-full h-full flex pr-4">
                 <div
@@ -167,7 +167,7 @@ const NavBarTop = () => {
             </div>
           </div>
           {/* <div className="visible xl:hidden flex items-center relative">
-            <ul className="p-2 pr-8 w-64 border-r bg-white absolute top-0 -ml-2 rounded right-0 shadow mt-12 lg:mt-16 hidden">
+            <ul className="p-2 pr-8 w-64 border-r bg-white absolute top-0 -ml-2 rounded right-0 shadow mt-12 mt-16 hidden">
               <li className="cursor-pointer text-gray-600 text-sm leading-3 tracking-normal py-2 hover:text-indigo-700 focus:text-indigo-700 focus:outline-none">
                 <div className="flex items-center">
                   <svg

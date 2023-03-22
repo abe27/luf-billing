@@ -1,8 +1,6 @@
-import Head from "next/head";
-import Link from "next/link";
-import { useRouter } from "next/router";
 import { signOut } from "next-auth/react";
-import { useState, useEffect } from "react";
+import Head from "next/head";
+import { useEffect, useState } from "react";
 
 const LogOutPage = () => {
   // const router = useRouter();

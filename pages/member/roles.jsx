@@ -1,7 +1,39 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { AddEditRole, MainLayOut } from "@/components";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 
 const MemberRolePage = () => {
+  const { data: session } = useSession();
+  const [data, setData] = useState([]);
+
+  const fetchData = async () => {
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", session?.user.accessToken);
+
+    var requestOptions = {
+      method: "GET",
+      headers: myHeaders,
+      redirect: "follow",
+    };
+
+    console.dir(`${process.env.API_HOST}/role`);
+    const res = await fetch(`${process.env.API_HOST}/role`, requestOptions);
+    if (res.ok) {
+      const obj = await res.json();
+      // console.dir(obj)
+      setData(obj.data);
+    }
+
+    if (!res.ok) {
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   return (
     <>
       <MainLayOut title="Management User Roles">
@@ -13,20 +45,20 @@ const MemberRolePage = () => {
           <span className="text-4xm text-gray-500">Roles</span>
         </div>
         <div className="mt-4 flex space-x-8 pl-4">
-          <div className="card w-full bg-base-100 shadow-xl">
+          {/* <div className="card w-full bg-base-100 shadow-xl">
             <div className="card-body">
               <h2 className="text-4xm">Administrator</h2>
-              <p className="text-gray-400">
+              <div className="text-gray-400">
                 Total user with this roles:{" "}
                 <span className="text-sm font-bold">X</span>
-              </p>
-              <p className="text-gray-400">
+              </div>
+              <div className="text-gray-400">
                 Detail:{" "}
                 <span className="text-sm font-bold">
                   The accountant handlers everything of then system.
                 </span>
-              </p>
-              <p className="text-gray-400">
+              </div>
+              <div className="text-gray-400">
                 <span className="text-4xm font-bold">Permissions</span>
                 <div className="grid grid-rows-2 pl-4">
                   <div className="flex justify-start">
@@ -64,50 +96,57 @@ const MemberRolePage = () => {
                     <span>User Manangement</span>
                   </div>
                 </div>
-              </p>
+              </div>
               <div className="card-actions justify-end">
                 <AddEditRole isEdit={true} role_id={"1"} />
               </div>
             </div>
-          </div>
-          <div className="card w-full bg-base-100 shadow-xl">
-            <div className="card-body">
-              <h2 className="text-4xm">Vendor</h2>
-              <p className="text-gray-400">
-                Total user with this roles:{" "}
-                <span className="text-sm font-bold">X</span>
-              </p>
-              <p className="text-gray-400">
-                Detail:{" "}
-                <span className="text-sm font-bold">Vendor upload files.</span>
-              </p>
-              <p className="text-gray-400">
-                <span className="text-4xm font-bold">Permissions</span>
-                <div className="grid grid-rows-2 pl-4">
-                  <div className="flex justify-start">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth="1.5"
-                      stroke="currentColor"
-                      className="w-6 h-6 text-sky-400 pt-1"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M11.25 4.5l7.5 7.5-7.5 7.5m-6-15l7.5 7.5-7.5 7.5"
-                      />
-                    </svg>
-                    <span>Overdue Billing</span>
+          </div> */}
+          {data?.map((i, x) =>
+            i.title !== "-" ? (
+              <div className="card w-full bg-base-100 shadow-xl" key={x}>
+                <div className="card-body">
+                  <h2 className="text-4xm">{i.title}</h2>
+                  <div className="text-gray-400">
+                    Total user with this roles:{" "}
+                    <span className="text-sm font-bold">X</span>
+                  </div>
+                  <div className="text-gray-400">
+                    Detail:{" "}
+                    <span className="text-sm font-bold">
+                      Vendor upload files.
+                    </span>
+                  </div>
+                  <div className="text-gray-400">
+                    <span className="text-4xm font-bold">Permissions</span>
+                    <div className="grid grid-rows-2 pl-4">
+                      <div className="flex justify-start">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          strokeWidth="1.5"
+                          stroke="currentColor"
+                          className="w-6 h-6 text-sky-400 pt-1"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M11.25 4.5l7.5 7.5-7.5 7.5m-6-15l7.5 7.5-7.5 7.5"
+                          />
+                        </svg>
+                        <span>Overdue Billing</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="card-actions justify-end">
+                    <AddEditRole isEdit={true} role_id={"2"} />
                   </div>
                 </div>
-              </p>
-              <div className="card-actions justify-end">
-                <AddEditRole isEdit={true} role_id={"2"} />
               </div>
-            </div>
-          </div>
+            ) : null
+          )}
+
           <div className="card w-full bg-base-100 shadow-xl">
             <div className="card-body">
               <h2 className="text-4xm">Add New Role</h2>
