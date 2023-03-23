@@ -200,7 +200,11 @@ const AddNewUser = ({ isEdit = false }) => {
               />
             </div>
             <div className="mt-4">
-              <Radio.Group label="Role" value={role} defaultValue={role}>
+              <Radio.Group
+                label="Role"
+                defaultValue={role}
+                onFocusChange={(e) => console.dir(e)}
+              >
                 {roleData?.map((i, x) => (
                   <Radio value={i.title} key={x}>
                     <div className="grid grid-rows-2">
