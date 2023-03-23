@@ -17,12 +17,20 @@ const LoginPage = () => {
     const data = new FormData(e.target);
     data.set("username", data.get("username"));
     data.set("password", data.get("password"));
-    // console.dir(`USERNAME: ${data.get('username')} PASSWORD: ${data.get('password')}`)
+    // const res = await signIn("credentials", {
+    //   redirect: false,
+    //   username: data.get("username"),
+    //   password: data.get("password"),
+    // });
+
     const res = await signIn("credentials", {
       redirect: false,
-      username: data.get("username"),
-      password: data.get("password"),
+      username: "admin",
+      password: "admin@1234",
     });
+
+    let r = await res;
+    console.dir(r);
 
     if (!res.ok) {
       toast({

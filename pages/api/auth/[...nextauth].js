@@ -17,27 +17,6 @@ export const authOptions = {
         urlencoded.append("username", credentials.username);
         urlencoded.append("password", credentials.password);
 
-        // const httpsAgent = new https.Agent({
-        //   rejectUnauthorized: false,
-        // });
-
-        // let httpConfig = {
-        //   method: "POST",
-        //   body: urlencoded,
-        //   headers: {
-        //     "Content-Type": "application/x-www-form-urlencoded",
-        //   },
-        //   agent: httpsAgent,
-        // };
-        // if (process.env.API_HOST.indexOf(":4040") > 0) {
-        //   httpConfig = {
-        //     method: "POST",
-        //     body: urlencoded,
-        //     headers: {
-        //       "Content-Type": "application/x-www-form-urlencoded",
-        //     },
-        //   };
-        // }
         var httpConfig = {
           method: "POST",
           headers: myHeaders,
@@ -76,7 +55,6 @@ export const authOptions = {
   callbacks: {
     async jwt({ token, user, account }) {
       if (account && user) {
-        console.dir(user.data.user.role);
         return {
           ...token,
           userId: user.data.user.id,
