@@ -98,9 +98,9 @@ export const authOptions = {
       session.user.fullName = token.fullName;
       session.user.email = token.email;
       session.user.role = token.role;
-      session.user.isAdmin = true;
-      if (token.role) {
-        session.user.isAdmin = false;
+      session.user.isAdmin = false;
+      if (token.role?.title === "Administrator") {
+        session.user.isAdmin = true;
       }
       session.user.avatar_url = token.avatar_url;
       session.user.accessToken = token.accessToken;
