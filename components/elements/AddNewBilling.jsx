@@ -1,20 +1,57 @@
-import { useState } from "react";
-import {
-  Modal,
-  Text,
-  Input,
-  Spacer,
-  Button,
-  Pagination,
-} from "@nextui-org/react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { Button, Input, Modal, Spacer, Text } from "@nextui-org/react";
+import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
+import { useToast } from "@chakra-ui/react";
 
 const AddNewBilling = () => {
+  const { data: session } = useSession();
+  const toast = useToast();
   const [visible, setVisible] = useState(false);
+  const [vendorGroup, setVendorGroup] = useState([]);
+  const [selectedVendor, setSelectedVendor] = useState("-");
+
   const handler = () => setVisible(true);
-  const closeHandler = () => {
-    setVisible(false);
-    console.log("closed");
+
+  const fetchVendorGroup = async () => {
+    setVendorGroup([]);
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", session?.user.accessToken);
+
+    var requestOptions = {
+      method: "GET",
+      headers: myHeaders,
+      redirect: "follow",
+    };
+
+    const res = await fetch(
+      `${process.env.API_HOST}/vendor/group`,
+      requestOptions
+    );
+
+    if (!res.ok) {
+      toast({
+        title: "Error!",
+        description: res.error,
+        status: "error",
+        duration: 1500,
+        isClosable: true,
+        position: "top-right",
+      });
+    }
+
+    if (res.ok) {
+      const data = await res.json();
+      console.dir(data);
+      setVendorGroup(data.data);
+    }
   };
+
+  useEffect(() => {
+    if (visible) {
+      fetchVendorGroup();
+    }
+  }, [visible]);
 
   return (
     <>
@@ -46,9 +83,8 @@ const AddNewBilling = () => {
       <Modal
         closeButton
         preventClose
-        
         open={visible}
-        onClose={closeHandler}
+        onClose={() => setVisible(false)}
       >
         <Modal.Header>
           <Text id="modal-title" size={18}>
@@ -59,29 +95,58 @@ const AddNewBilling = () => {
         </Modal.Header>
         <Modal.Body>
           <Input clearable label="Billing No." placeholder="Billing No." />
+          <div className="flex justify-start space-x-4">
+            <Input
+              fullWidth
+              clearable
+              label="Billing Date"
+              type="date"
+              placeholder="Billing Date"
+            />
+            <Input
+              fullWidth
+              clearable
+              label="Due Date"
+              type="date"
+              placeholder="Due Date"
+            />
+          </div>
           <Input
+            fullWidth
             clearable
-            label="Billing Date"
-            type="date"
-            placeholder="Billing Date"
+            label="Amount"
+            type="number"
+            placeholder="Amount"
           />
-          <Input
-            clearable
-            label="Due Date"
-            type="date"
-            placeholder="Due Date"
-          />
-          <Input clearable label="Amount" type="number" placeholder="Amount" />
-          <Input clearable label="Vendor Code" placeholder="Vendor Code" />
-          <Input clearable label="Vendor Name" placeholder="Vendor Name" />
+          <div className="flex justify-start space-x-4">
+            <Input
+              fullWidth
+              clearable
+              label="Vendor Code"
+              placeholder="Vendor Code"
+            />
+            <Input
+              fullWidth
+              clearable
+              label="Vendor Name"
+              placeholder="Vendor Name"
+            />
+          </div>
           <div className="form-control w-full max-w-xs">
             <label className="label">
               <span className="label-text">Vendor Group</span>
             </label>
-            <select className="select select-ghost max-w-xs">
-              <option>Grp. A</option>
-              <option>Grp. B</option>
-              <option>Grp. C</option>
+            <select
+              className="select select-ghost max-w-xs"
+              defaultValue={selectedVendor}
+              onChange={(e) => setSelectedVendor(e.target.value)}
+            >
+              <option value={"-"}>-</option>
+              {vendorGroup.map((i, x) => (
+                <option key={x} value={i.id}>
+                  {i.title}
+                </option>
+              ))}
             </select>
           </div>
           <Spacer y={0.5} />
@@ -91,7 +156,7 @@ const AddNewBilling = () => {
             auto
             flat
             color="error"
-            onPress={closeHandler}
+            onPress={() => setVisible(false)}
             icon={
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -113,7 +178,7 @@ const AddNewBilling = () => {
           </Button>
           <Button
             auto
-            onPress={closeHandler}
+            onPress={() => {}}
             icon={
               <svg
                 xmlns="http://www.w3.org/2000/svg"

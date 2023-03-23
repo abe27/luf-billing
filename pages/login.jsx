@@ -23,19 +23,16 @@ const LoginPage = () => {
     //   password: data.get("password"),
     // });
 
-    const res = await signIn("credentials", {
+    const r = await signIn("credentials", {
       redirect: false,
       username: "admin",
       password: "admin@1234",
     });
 
-    let r = await res;
-    console.dir(r);
-
-    if (!res.ok) {
+    if (!r.ok) {
       toast({
         title: "เกิดข้อผิดพลาด",
-        description: res.error,
+        description: r.error,
         status: "error",
         duration: 9000,
         isClosable: true,
@@ -44,7 +41,7 @@ const LoginPage = () => {
       });
     }
 
-    if (res.ok) {
+    if (r.ok) {
       toast({
         title: `สวัสดี ${data.get("username")}`,
         description: `ยินดีต้อนรับเข้าสู่ระบบ ${process.env.APP_NAME}.`,
@@ -74,6 +71,7 @@ const LoginPage = () => {
                 className="rounded-l"
                 width={650}
                 height={850}
+                alt={"bg"}
               />
             </div>
             <div className="flex justify-end">

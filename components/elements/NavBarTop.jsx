@@ -37,7 +37,7 @@ const NavBarTop = () => {
           </div>
           <div className="h-full xl:flex items-center justify-end">
             <div className="w-full h-full flex items-center">
-              <div className="w-full h-full flex pr-4">
+              <div className="w-full h-full flex pr-8">
                 <div
                   aria-haspopup="true"
                   className="cursor-pointer w-full flex items-center justify-end relative"

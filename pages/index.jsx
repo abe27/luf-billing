@@ -3,10 +3,14 @@
 import { useEffect, useState, useRef } from "react";
 import { MainLayOut, AddNewBilling, EditBilling } from "@/components";
 import { Input, Button, Pagination } from "@nextui-org/react";
-import { RandomDateString,RandomAmount,RandomVendorcode } from "@/hooks";
+import { RandomDateString, RandomAmount, RandomVendorcode } from "@/hooks";
+import { useSession } from "next-auth/react";
+import { useToast } from "@chakra-ui/react";
 
 const IndexPage = () => {
   const inputRef = useRef();
+  const { data: session } = useSession();
+  const toast = useToast();
   const [currentLimit, setCurrentLimit] = useState(5);
   const [invData, setInvData] = useState([]);
 
@@ -31,14 +35,46 @@ const IndexPage = () => {
     inputRef.current.click();
   };
 
-  const handleFileChange = e => {}
+  const handleFileChange = (e) => {};
+
+  const fetchVendorGroup = async () => {
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", session?.user.accessToken);
+
+    var requestOptions = {
+      method: "GET",
+      headers: myHeaders,
+      redirect: "follow",
+    };
+
+    const res = await fetch(
+      `${process.env.API_HOST}/vendor/group`,
+      requestOptions
+    );
+
+    if (!res.ok) {
+      toast({
+        title: "Error!",
+        description: res.error,
+        status: "error",
+        duration: 1500,
+        isClosable: true,
+        position: "top-right",
+      });
+    }
+  };
 
   useEffect(() => {
     fetchData();
   }, [currentLimit]);
+
+  useEffect(() => {
+    fetchVendorGroup();
+  }, []);
+
   return (
     <>
-    <input
+      <input
         style={{ display: "none" }}
         ref={inputRef}
         type="file"
@@ -53,9 +89,7 @@ const IndexPage = () => {
               <Input clearable placeholder="Billing No." />
               <Input width="186px" type="date" placeholder="Billing Date" />
               <select className="select select-ghostv max-w-xs bg-gray-100">
-                <option disabled >
-                  Vendor Group
-                </option>
+                <option disabled>Vendor Group</option>
                 <option>Grp. A</option>
                 <option>Grp. B</option>
                 <option>Grp. C</option>

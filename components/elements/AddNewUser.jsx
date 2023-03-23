@@ -1,12 +1,22 @@
-import { useRef, useState } from "react";
-import { Modal, Button, Text, Input, Radio } from "@nextui-org/react";
-import { Avatar } from "@chakra-ui/react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { Avatar, useToast } from "@chakra-ui/react";
+import { Button, Input, Modal, Radio, Text } from "@nextui-org/react";
+import { useEffect, useRef, useState } from "react";
+import { useSession } from "next-auth/react";
 import Swal from "sweetalert2/dist/sweetalert2.js";
 import "sweetalert2/src/sweetalert2.scss";
 
 const AddNewUser = ({ isEdit = false }) => {
+  const { data: session } = useSession();
   const inputRef = useRef();
+  const toast = useToast();
   const [visible, setVisible] = useState(false);
+  const [roleData, setRoleData] = useState([]);
+  const [username, setUsername] = useState(null);
+  const [fullName, setFullName] = useState(null);
+  const [email, setEmail] = useState(null);
+  const [company, setCompany] = useState(null);
+  const [role, setRole] = useState(null);
 
   const handleUploadExcelClick = () => {
     inputRef.current.click();
@@ -15,6 +25,11 @@ const AddNewUser = ({ isEdit = false }) => {
   const handleFileChange = (e) => {};
 
   const handleSuccess = () => {
+    console.log(username);
+    console.log(fullName);
+    console.log(email);
+    console.log(company);
+    console.log(role);
     Swal.fire({
       text: "Add New User Success!",
       icon: "success",
@@ -35,6 +50,30 @@ const AddNewUser = ({ isEdit = false }) => {
       preConfirm: () => handleSuccess(),
     });
   };
+
+  const fetchPermission = async () => {
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", session?.user.accessToken);
+
+    var requestOptions = {
+      method: "GET",
+      headers: myHeaders,
+      redirect: "follow",
+    };
+
+    const res = await fetch(`${process.env.API_HOST}/role`, requestOptions);
+
+    if (res.ok) {
+      const data = await res.json();
+      setRoleData(data.data);
+    }
+  };
+
+  useEffect(() => {
+    if (visible) {
+      fetchPermission();
+    }
+  }, [visible]);
 
   return (
     <>
@@ -106,7 +145,7 @@ const AddNewUser = ({ isEdit = false }) => {
       >
         <Modal.Header>
           <Text id="modal-title" size={18}>
-            {isEdit ? "Edit User": "Add User"}
+            {isEdit ? "Edit User" : "Add User"}
           </Text>
         </Modal.Header>
         <Modal.Body>
@@ -128,16 +167,27 @@ const AddNewUser = ({ isEdit = false }) => {
                 clearable
                 label="Username"
                 placeholder="Username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
               />
               <Input
                 fullWidth
                 clearable
                 label="Full Name"
                 placeholder="Full Name"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
               />
             </div>
             <div className="mt-4">
-              <Input fullWidth clearable label="E-Mail" placeholder="E-Mail" />
+              <Input
+                fullWidth
+                clearable
+                label="E-Mail"
+                placeholder="E-Mail"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
             </div>
             <div className="mt-4">
               <Input
@@ -145,24 +195,20 @@ const AddNewUser = ({ isEdit = false }) => {
                 clearable
                 label="Company"
                 placeholder="Company"
+                value={company}
+                onChange={(e) => setCompany(e.target.value)}
               />
             </div>
             <div className="mt-4">
-              <Radio.Group label="Role" defaultValue="Admin">
-                <Radio value="Admin">
-                  <div className="grid grid-rows-2">
-                    <span className="text-sm font-bold">Administrator</span>
-                    <span className="text-xs">
-                      The accountant handlers everything of the system.
-                    </span>
-                  </div>
-                </Radio>
-                <Radio value="Vendor">
-                  <div className="grid grid-rows-2">
-                    <span className="text-sm font-bold">Vendor</span>
-                    <span className="text-xs">Vendor upload files.</span>
-                  </div>
-                </Radio>
+              <Radio.Group label="Role" value={role} defaultValue={role}>
+                {roleData?.map((i, x) => (
+                  <Radio value={i.title} key={x}>
+                    <div className="grid grid-rows-2">
+                      <span className="text-sm font-bold">{i.title}</span>
+                      <span className="text-xs">{i.description}</span>
+                    </div>
+                  </Radio>
+                ))}
               </Radio.Group>
             </div>
           </div>
