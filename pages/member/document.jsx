@@ -28,11 +28,10 @@ const DocumentPage = () => {
       redirect: "follow",
     };
 
-    console.log(
-      `${process.env.API_HOST}/member?username=${txtSearchUserName}&name=${txtSearchName}&role=${txtSearchRole}`
-    );
+    console.log(session?.user.accessToken);
+
     const res = await fetch(
-      `${process.env.API_HOST}/member?username=${txtSearchUserName}&name=${txtSearchName}&role=${txtSearchRole}`,
+      `${process.env.API_HOST}/document/list`,
       requestOptions
     );
     if (!res.ok) {
