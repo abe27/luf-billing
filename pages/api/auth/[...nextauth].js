@@ -82,6 +82,7 @@ export const authOptions = {
       }
       session.user.avatar_url = token.avatar_url;
       session.user.accessToken = token.accessToken;
+      session.error = token.error;
       return session;
     },
   },

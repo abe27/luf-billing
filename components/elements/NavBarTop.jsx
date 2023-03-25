@@ -1,10 +1,20 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @next/next/no-img-element */
 import { signOut, useSession } from "next-auth/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 
 const NavBarTop = () => {
+  const router = useRouter();
   const { data: session } = useSession();
   const [profile, setProfile] = useState(false);
+
+  useEffect(() => {
+    console.dir(session?.error);
+    if (session?.error === "RefreshAccessTokenError") {
+      router.push("/login");
+    }
+  }, []);
 
   return (
     <>
@@ -157,7 +167,7 @@ const NavBarTop = () => {
                     className="rounded h-10 w-10 object-cover"
                     src={
                       session?.user.avatar_url
-                        ? session?.user.avatar_url
+                        ? `${process.env.API_PUBLIC}${session?.user.avatar_url}`
                         : "/emp.png"
                     }
                     alt="logo"

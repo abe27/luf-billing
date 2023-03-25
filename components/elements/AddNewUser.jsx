@@ -22,24 +22,114 @@ const AddNewUser = ({ isEdit = false }) => {
     inputRef.current.click();
   };
 
-  const handleFileChange = (e) => {};
+  const handleFileChange = (e) => {
+    console.dir(e);
+    console.dir(inputRef);
+  };
 
-  const handleSuccess = () => {
-    console.log(username);
-    console.log(fullName);
-    console.log(email);
-    console.log(company);
-    console.log(role);
-    Swal.fire({
-      text: "Add New User Success!",
-      icon: "success",
-      confirmButtonText: "OK",
-      confirmButtonColor: "#19B5FE",
-    });
+  const handleSuccess = async () => {
+    var formdata = new FormData();
+    formdata.append("username", username);
+    formdata.append("full_name", fullName);
+    formdata.append("email", email);
+    formdata.append("company", company);
+    formdata.append("password", process.env.DEFAULT_USERPASSWORD);
+    formdata.append("role_id", role);
+    formdata.append(
+      "avatar",
+      inputRef.current.files[0],
+      inputRef.current.value
+    );
+
+    var requestOptions = {
+      method: "POST",
+      body: formdata,
+      redirect: "follow",
+    };
+
+    const res = await fetch(
+      `${process.env.API_HOST}/auth/register`,
+      requestOptions
+    );
+
+    if (!res.ok) {
+      console.dir(res.error);
+    }
+    // Swal.fire({
+    //   text: "Add New User Success!",
+    //   icon: "success",
+    //   confirmButtonText: "OK",
+    //   confirmButtonColor: "#19B5FE",
+    // });
   };
 
   const handleClick = () => {
     setVisible(false);
+    if (!username) {
+      toast({
+        title: "Alert Message",
+        description: "Please enter your Username?",
+        status: "error",
+        duration: 1500,
+        isClosable: true,
+        position: "top",
+        onCloseComplete: () => setVisible(true),
+      });
+      return;
+    }
+
+    if (!fullName) {
+      toast({
+        title: "Alert Message",
+        description: "Please enter Full Name?",
+        status: "error",
+        duration: 1500,
+        isClosable: true,
+        position: "top",
+        onCloseComplete: () => setVisible(true),
+      });
+      return;
+    }
+
+    if (!email) {
+      toast({
+        title: "Alert Message",
+        description: "Please enter E-Mail?",
+        status: "error",
+        duration: 1500,
+        isClosable: true,
+        position: "top",
+        onCloseComplete: () => setVisible(true),
+      });
+      return;
+    }
+
+    if (!company) {
+      toast({
+        title: "Alert Message",
+        description: "Please enter Company name?",
+        status: "error",
+        duration: 1500,
+        isClosable: true,
+        position: "top",
+        onCloseComplete: () => setVisible(true),
+      });
+      return;
+    }
+
+    if (!role) {
+      toast({
+        title: "Alert Message",
+        description: "Please enter Role?",
+        status: "error",
+        duration: 1500,
+        isClosable: true,
+        position: "top",
+        onCloseComplete: () => setVisible(true),
+      });
+      return;
+    }
+
     Swal.fire({
       text: "Would you like to Confirm?",
       icon: "warning",
@@ -156,6 +246,14 @@ const AddNewUser = ({ isEdit = false }) => {
                 onClick={handleUploadExcelClick}
               >
                 <Avatar size="2xl" src="https://placehold.co/600x600" />
+                {/* <Avatar
+                  size="2xl"
+                  src={
+                    inputRef.current.value
+                      ? inputRef.value
+                      : "https://placehold.co/600x600"
+                  } 
+                />*/}
               </div>
               <div className="flex justify-center mt-2">
                 <p className="text-xs">Allow files type png jpg jpeg</p>
@@ -200,11 +298,7 @@ const AddNewUser = ({ isEdit = false }) => {
               />
             </div>
             <div className="mt-4">
-              <Radio.Group
-                label="Role"
-                defaultValue={role}
-                onFocusChange={(e) => console.dir(e)}
-              >
+              <Radio.Group label="Role" value={role} onChange={setRole}>
                 {roleData?.map((i, x) => (
                   <Radio value={i.title} key={x}>
                     <div className="grid grid-rows-2">
