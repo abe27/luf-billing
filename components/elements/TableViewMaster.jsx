@@ -1,9 +1,7 @@
+import { Pagination } from "@nextui-org/react";
 import { DateTime } from "@/hooks";
-import { Button, Pagination } from "@nextui-org/react";
-import AddNewUser from "./AddNewUser";
-import ConfirmDialog from "./ConfirmDialog";
 
-const UserActionTable = ({
+const TableViewMaster = ({
   data = [],
   limit = 10,
   page = 1,
@@ -11,10 +9,6 @@ const UserActionTable = ({
   changeLimit = false,
   reloadData = false,
 }) => {
-  const afterUpdate = () => {
-    console.dir("after update");
-    reloadData();
-  };
   return (
     <>
       <div className="mt-4">
@@ -22,11 +16,9 @@ const UserActionTable = ({
           <thead>
             <tr>
               <th className="normal-case">No.</th>
-              <th className="normal-case">Username</th>
-              <th className="normal-case">Name</th>
-              <th className="normal-case">E-Mail</th>
-              <th className="normal-case">Role</th>
-              <th className="normal-case">Company</th>
+              <th className="normal-case">Title</th>
+              <th className="normal-case">Description</th>
+              <th className="normal-case">Status</th>
               <th className="normal-case">Create Date</th>
               <th className="normal-case">Action</th>
             </tr>
@@ -36,38 +28,32 @@ const UserActionTable = ({
               data.map((i, x) => (
                 <tr key={i.id}>
                   <td>{x + 1}</td>
-                  <td>{i.username}</td>
-                  <td>{i.full_name}</td>
-                  <td>{i.email}</td>
+                  <td>{i.title}</td>
+                  <td>{i.description}</td>
                   <td>
                     <span
                       className={
-                        i.role.title === "Vendor"
-                          ? "text-rose-400"
-                          : i.role.title === "Administrator"
-                          ? "text-indigo-500"
-                          : ""
+                        i.is_active ? "text-green-400" : "text-rose-500"
                       }
                     >
-                      {i.role.title}
+                      {i.is_active}
                     </span>
                   </td>
-                  <td>{i.company}</td>
                   <td>{DateTime(i.created_at)}</td>
                   <td>
                     <div className="flex justify-between">
                       <div className="flex justify-start space-x-2">
-                        <AddNewUser
+                        {/* <AddNewUser
                           isEdit={true}
                           userData={i}
                           reloadData={afterUpdate}
-                        />
+                        /> */}
                       </div>
                       <div className="flex justify-start">
-                        <ConfirmDialog
+                        {/* <ConfirmDialog
                           id={i.id}
                           reloadData={() => reloadData}
-                        />
+                        /> */}
                       </div>
                     </div>
                   </td>
@@ -103,4 +89,4 @@ const UserActionTable = ({
   );
 };
 
-export default UserActionTable;
+export default TableViewMaster;

@@ -1,17 +1,22 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Avatar, useToast } from "@chakra-ui/react";
 import { Button, Input, Modal, Radio, Text } from "@nextui-org/react";
-import { useEffect, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
+import { useEffect, useRef, useState } from "react";
 import Swal from "sweetalert2/dist/sweetalert2.js";
 import "sweetalert2/src/sweetalert2.scss";
 
-const AddNewUser = ({ isEdit = false }) => {
+const AddNewUser = ({
+  isEdit = false,
+  reloadData = false,
+  userData = null,
+}) => {
   const { data: session } = useSession();
   const inputRef = useRef();
   const toast = useToast();
   const [visible, setVisible] = useState(false);
   const [roleData, setRoleData] = useState([]);
+  const [imageUrl, setImageUrl] = useState(null);
   const [username, setUsername] = useState(null);
   const [fullName, setFullName] = useState(null);
   const [email, setEmail] = useState(null);
@@ -23,8 +28,14 @@ const AddNewUser = ({ isEdit = false }) => {
   };
 
   const handleFileChange = (e) => {
-    console.dir(e);
-    console.dir(inputRef);
+    try {
+      let files = URL.createObjectURL(e.target.files[0]);
+      setImageUrl(files);
+    } catch {
+      setImageUrl(
+        `https://ui-avatars.com/api/?background=0D8ABC&color=fff&size=128&rounded=true&name=${username}`
+      );
+    }
   };
 
   const handleSuccess = async () => {
@@ -35,32 +46,61 @@ const AddNewUser = ({ isEdit = false }) => {
     formdata.append("company", company);
     formdata.append("password", process.env.DEFAULT_USERPASSWORD);
     formdata.append("role_id", role);
-    formdata.append(
-      "avatar",
-      inputRef.current.files[0],
-      inputRef.current.value
-    );
+    if (inputRef.current.value) {
+      formdata.append(
+        "avatar",
+        inputRef.current.files[0],
+        inputRef.current.value
+      );
+    }
 
+    let url = `${process.env.API_HOST}/auth/register`;
+    let byMethod = "POST";
     var requestOptions = {
-      method: "POST",
+      method: byMethod,
       body: formdata,
       redirect: "follow",
     };
+    if (isEdit) {
+      var myHeaders = new Headers();
+      myHeaders.append("Authorization", session?.user.accessToken);
+      byMethod = "PUT";
+      url = `${process.env.API_HOST}/member/${userData?.id}`;
+      requestOptions = {
+        method: byMethod,
+        headers: myHeaders,
+        body: formdata,
+        redirect: "follow",
+      };
+    }
 
-    const res = await fetch(
-      `${process.env.API_HOST}/auth/register`,
-      requestOptions
-    );
+    const res = await fetch(url, requestOptions);
 
     if (!res.ok) {
-      console.dir(res.error);
+      toast({
+        title: "Alert Message",
+        description: res.statusText,
+        status: "error",
+        duration: 1500,
+        isClosable: true,
+        position: "top",
+        onCloseComplete: () => setVisible(true),
+      });
+      return;
     }
-    // Swal.fire({
-    //   text: "Add New User Success!",
-    //   icon: "success",
-    //   confirmButtonText: "OK",
-    //   confirmButtonColor: "#19B5FE",
-    // });
+
+    let txt = "Add New User Success!";
+    if (isEdit) {
+      txt = "Update Data Success!";
+    }
+
+    Swal.fire({
+      text: txt,
+      icon: "success",
+      confirmButtonText: "OK",
+      confirmButtonColor: "#19B5FE",
+    });
+    reloadData();
   };
 
   const handleClick = () => {
@@ -161,9 +201,34 @@ const AddNewUser = ({ isEdit = false }) => {
 
   useEffect(() => {
     if (visible) {
+      document.body.style.overflow = "hidden";
+      setImageUrl(null);
+      setUsername(null);
+      setFullName(null);
+      setEmail(null);
+      setCompany(null);
+      setRole(null);
       fetchPermission();
+      if (userData) {
+        setImageUrl(`${process.env.API_PUBLIC}${userData.avatar_url}`);
+        setUsername(userData.username);
+        setFullName(userData.full_name);
+        setEmail(userData.email);
+        setCompany(userData.company);
+        setRole(userData.role.title);
+      }
+    } else {
+      document.body.style.overflow = "unset";
     }
   }, [visible]);
+
+  useEffect(() => {
+    if (!imageUrl) {
+      setImageUrl(
+        `https://ui-avatars.com/api/?background=0D8ABC&color=fff&size=128&rounded=true&name=${username}`
+      );
+    }
+  }, [username]);
 
   return (
     <>
@@ -195,7 +260,7 @@ const AddNewUser = ({ isEdit = false }) => {
               />
             </svg>
           }
-          onClick={() => setVisible(true)}
+          onPress={() => setVisible(true)}
         >
           Add User
         </Button>
@@ -221,7 +286,7 @@ const AddNewUser = ({ isEdit = false }) => {
               />
             </svg>
           }
-          onClick={() => setVisible(true)}
+          onPress={() => setVisible(true)}
         >
           Edit
         </Button>
@@ -245,17 +310,13 @@ const AddNewUser = ({ isEdit = false }) => {
                 className="flex justify-center items-center w-full hover:cursor-pointer"
                 onClick={handleUploadExcelClick}
               >
-                <Avatar size="2xl" src="https://placehold.co/600x600" />
-                {/* <Avatar
-                  size="2xl"
-                  src={
-                    inputRef.current.value
-                      ? inputRef.value
-                      : "https://placehold.co/600x600"
-                  } 
-                />*/}
+                {/* <Avatar size="2xl" src="https://placehold.co/600x600" /> */}
+                <Avatar size="2xl" src={imageUrl} />
               </div>
               <div className="flex justify-center mt-2">
+                {/* {inputRef?.current?.value ? (
+                  <p>{inputRef.current.files[0].name}</p>
+                ) : null} */}
                 <p className="text-xs">Allow files type png jpg jpeg</p>
               </div>
             </div>

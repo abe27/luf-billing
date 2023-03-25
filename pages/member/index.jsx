@@ -3,46 +3,65 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { MainLayOut, UserActionTable, AddNewUser } from "@/components";
 import { Input, Button, Loading } from "@nextui-org/react";
-import { RandomUserName } from "@/hooks";
+import { useSession } from "next-auth/react";
+import { useToast } from "@chakra-ui/react";
 
 const MemberPage = () => {
+  const { data: session } = useSession();
+  const toast = useToast();
   const [loading, setLoading] = useState(false);
-  const [data, setData] = useState([]);
+  const [obj, setObj] = useState([]);
   const [currentLimit, setCurrentLimit] = useState(10);
   const [totalPage, setTotalPage] = useState(2);
   const [currentPage, setCurrentPage] = useState(1);
+  const [txtSearchUserName, setSearchUserName] = useState("");
+  const [txtSearchName, setSearchName] = useState("");
+  const [txtSearchRole, setSearchRole] = useState("");
 
-  const fetchData = () => {
-    setData([]);
+  const fetchData = async () => {
+    setObj([]);
     setLoading(true);
-    let doc = [];
-    for (let i = 0; i < currentLimit; i++) {
-      let rdUser = RandomUserName();
-      doc.push({
-        id: i + 1,
-        avatar: rdUser.avatar,
-        user_id: rdUser.user_id,
-        user_name: rdUser.user_name,
-        email: rdUser.email,
-        role: rdUser.role,
-        company: rdUser.company,
-        created_at: rdUser.created_at,
-        status: rdUser.status,
-      });
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", session?.user.accessToken);
+    var requestOptions = {
+      method: "GET",
+      headers: myHeaders,
+      redirect: "follow",
+    };
+
+    console.log(
+      `${process.env.API_HOST}/member?username=${txtSearchUserName}&name=${txtSearchName}&role=${txtSearchRole}`
+    );
+    const res = await fetch(
+      `${process.env.API_HOST}/member?username=${txtSearchUserName}&name=${txtSearchName}&role=${txtSearchRole}`,
+      requestOptions
+    );
+    if (!res.ok) {
+      // console.dir(res);
+      // toast({
+      //   title: "Error Alert!",
+      //   description: "We've created your account for you.",
+      //   status: "error",
+      //   duration: 1500,
+      //   isClosable: true,
+      //   onCloseComplete: () => setLoading(false),
+      // });
+      setLoading(false);
     }
 
-    let t = setTimeout(() => {
-      setData(doc);
+    if (res.ok) {
+      const data = await res.json();
+      setObj(data.data);
+      setTotalPage(Math.ceil(data.length / currentLimit));
       setLoading(false);
-    }, 1000);
-
-    return () => clearTimeout(t);
+    }
   };
-  const handleAddUserClick = () => {};
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    if (session?.user) {
+      fetchData();
+    }
+  }, [session]);
 
   useEffect(() => {
     fetchData();
@@ -65,16 +84,22 @@ const MemberPage = () => {
                 clearable
                 contentRight={loading && <Loading size="xs" />}
                 placeholder="Username"
+                value={txtSearchUserName}
+                onChange={(e) => setSearchUserName(e.target.value)}
               />
               <Input
                 clearable
                 contentRight={loading && <Loading size="xs" />}
                 placeholder="Name"
+                value={txtSearchName}
+                onChange={(e) => setSearchName(e.target.value)}
               />
               <Input
                 clearable
                 contentRight={loading && <Loading size="xs" />}
                 placeholder="Role"
+                value={txtSearchRole}
+                onChange={(e) => setSearchRole(e.target.value)}
               />
             </div>
             <div className="flex justify-end space-x-4 z-0">
@@ -103,16 +128,17 @@ const MemberPage = () => {
               >
                 Search
               </Button>
-              <AddNewUser />
+              <AddNewUser reloadData={fetchData} />
             </div>
           </div>
           <>
             <UserActionTable
-              data={data}
+              data={obj}
               limit={currentLimit}
               page={currentPage}
               totalPage={totalPage}
               changeLimit={(t) => setCurrentLimit(t)}
+              reloadData={fetchData}
             />
           </>
         </div>

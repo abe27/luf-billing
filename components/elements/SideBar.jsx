@@ -47,7 +47,7 @@ const navbarLinkAdmin = [
       { id: 3, title: "Vendor Groups", name: "vendor", href: "/vendor" },
     ],
     isAdmin: true,
-  }
+  },
 ];
 
 const navbarLinkForUser = [
@@ -97,92 +97,100 @@ const SideBar = () => {
       <div className="absolute lg:relative w-64 h-screen shadow bg-gray-100 hidden lg:block">
         <div className="flex items-center justify-center">
           <ul aria-orientation="vertical" className="py-6">
-          {session?.user.isAdmin ? (
-            navbarLinkAdmin.map((i) => (
-              <section key={i.id}>
-                <li
-                  className={NavClass(i.href)}
-                  onClick={() => router.push(i.href)}
-                >
-                  <div className="flex items-center">
-                    <span className="ml-2 pl-4 pr-4">{i.title}</span>
-                  </div>
-                </li>
-                {i.children.length > 0 ? (
-                  <li
-                    className={`${
-                      active ? `visible` : `hidden invisible`
-                    } items-center w-full cursor-pointer text-sm leading-3 tracking-normal hover:text-indigo-700 focus:text-indigo-700 focus:outline-none`}
-                  >
-                    <div className="flex items-center">
-                      <span className="ml-2 pl-4 pr-4">
-                        <Radio.Group
-                          value={memberMenu}
-                          defaultValue={memberMenu}
-                        >
-                          <Radio value="u" size="xs">
-                            <Link
-                              href="/member"
-                              className={
-                                memberMenu === "u" ? "text-indigo-500" : ""
-                              }
+            {session?.user.isAdmin
+              ? navbarLinkAdmin.map((i) => (
+                  <section key={i.id}>
+                    <li
+                      className={NavClass(i.href)}
+                      onClick={() => router.push(i.href)}
+                    >
+                      <div className="flex items-center">
+                        <span className="ml-2 pl-4 pr-4">{i.title}</span>
+                      </div>
+                    </li>
+                    {i.children.length > 0 ? (
+                      <li
+                        className={`${
+                          active ? `visible` : `hidden invisible`
+                        } items-center w-full cursor-pointer text-sm leading-3 tracking-normal hover:text-indigo-700 focus:text-indigo-700 focus:outline-none`}
+                      >
+                        <div className="flex items-center">
+                          <span className="ml-2 pl-4 pr-4">
+                            <Radio.Group
+                              value={memberMenu}
+                              defaultValue={memberMenu}
                             >
-                              User
-                            </Link>
-                          </Radio>
-                          <Radio value="r" size="xs">
-                            <Link
-                              href="/member/roles"
-                              className={
-                                memberMenu === "r" ? "text-indigo-500" : ""
-                              }
-                            >
-                              Roles
-                            </Link>
-                          </Radio>
-                          <Radio value="p" size="xs">
-                            <Link
-                              href="/member/permissions"
-                              className={
-                                memberMenu === "p" ? "text-indigo-500" : ""
-                              }
-                            >
-                              Permisions
-                            </Link>
-                          </Radio>
-                          <Radio value="v" size="xs">
-                            <Link
-                              href="/member/vendor"
-                              className={
-                                memberMenu === "v" ? "text-indigo-500" : ""
-                              }
-                            >
-                              Vendor Group
-                            </Link>
-                          </Radio>
-                        </Radio.Group>
-                      </span>
-                    </div>
-                  </li>
-                ) : (
-                  <></>
-                )}
-              </section>
-            ))
-          ) : (
-            navbarLinkForUser.map((i) => (
-              <section key={i.id}>
-                <li
-                  className={NavClass(i.href)}
-                  onClick={() => router.push(i.href)}
-                >
-                  <div className="flex items-center">
-                    <span className="ml-2 pl-4 pr-4">{i.title}</span>
-                  </div>
-                </li>
-              </section>
-            ))
-          )}
+                              <Radio value="u" size="xs">
+                                <Link
+                                  href="/member"
+                                  className={
+                                    memberMenu === "u" ? "text-indigo-500" : ""
+                                  }
+                                >
+                                  User
+                                </Link>
+                              </Radio>
+                              <Radio value="r" size="xs">
+                                <Link
+                                  href="/member/roles"
+                                  className={
+                                    memberMenu === "r" ? "text-indigo-500" : ""
+                                  }
+                                >
+                                  Roles
+                                </Link>
+                              </Radio>
+                              <Radio value="p" size="xs">
+                                <Link
+                                  href="/member/permissions"
+                                  className={
+                                    memberMenu === "p" ? "text-indigo-500" : ""
+                                  }
+                                >
+                                  Permisions
+                                </Link>
+                              </Radio>
+                              <Radio value="v" size="xs">
+                                <Link
+                                  href="/member/vendor"
+                                  className={
+                                    memberMenu === "v" ? "text-indigo-500" : ""
+                                  }
+                                >
+                                  Vendor Group
+                                </Link>
+                              </Radio>
+                              <Radio value="d" size="xs">
+                                <Link
+                                  href="/member/document"
+                                  className={
+                                    memberMenu === "d" ? "text-indigo-500" : ""
+                                  }
+                                >
+                                  Document
+                                </Link>
+                              </Radio>
+                            </Radio.Group>
+                          </span>
+                        </div>
+                      </li>
+                    ) : (
+                      <></>
+                    )}
+                  </section>
+                ))
+              : navbarLinkForUser.map((i) => (
+                  <section key={i.id}>
+                    <li
+                      className={NavClass(i.href)}
+                      onClick={() => router.push(i.href)}
+                    >
+                      <div className="flex items-center">
+                        <span className="ml-2 pl-4 pr-4">{i.title}</span>
+                      </div>
+                    </li>
+                  </section>
+                ))}
           </ul>
         </div>
       </div>

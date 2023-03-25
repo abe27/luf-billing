@@ -24,3 +24,7 @@
 .active:not(:first-child):before {
   @apply bg-sky-400;
 }
+
+.sw_active {
+  overflow: hidden;
+}

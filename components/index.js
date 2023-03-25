@@ -26,6 +26,8 @@ import OverdueBillingAllTable from "./elements/OverdueBillingAllTable";
 import OverdueBillingUploadFile from "./elements/OverdueBillingUploadFile";
 import RequiredDocuments from "./elements/RequiredDocuments";
 import IconStatus from "./elements/IconStatus";
+import AddOrUpdateMaster from "./elements/AddOrUpdateMaster";
+import TableViewMaster from "./elements/TableViewMaster";
 
 export {
   SideBar,
@@ -56,4 +58,6 @@ export {
   OverdueBillingUploadFile,
   RequiredDocuments,
   IconStatus,
+  AddOrUpdateMaster,
+  TableViewMaster,
 };

@@ -1,4 +1,5 @@
 import { Button } from "@nextui-org/react";
+import { useSession } from "next-auth/react";
 import Swal from "sweetalert2/dist/sweetalert2.js";
 import "sweetalert2/src/sweetalert2.scss";
 
@@ -8,17 +9,44 @@ const ConfirmDialog = ({
   size = "xs",
   color = "error",
   title = "Delete",
-  id=null
+  id = null,
+  reloadData = false,
 }) => {
+  const { data: session } = useSession();
+  const handleSuccess = async () => {
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", session?.user.accessToken);
 
-  const handleSuccess = () => {
-    Swal.fire({
-      text: `${title} Success!`,
-      icon: "success",
-      confirmButtonText: "OK",
-      confirmButtonColor: "#19B5FE",
-    });
-  }
+    var requestOptions = {
+      method: "DELETE",
+      headers: myHeaders,
+      redirect: "follow",
+    };
+
+    const res = await fetch(
+      `${process.env.API_HOST}/member/${id}`,
+      requestOptions
+    );
+
+    if (res.ok) {
+      Swal.fire({
+        text: `${title} Success!`,
+        icon: "success",
+        confirmButtonText: "OK",
+        confirmButtonColor: "#19B5FE",
+      }).then((r) => reloadData(r));
+      return;
+    }
+
+    if (!res.ok) {
+      Swal.fire({
+        text: `${title} Failed!`,
+        icon: "error",
+        confirmButtonText: "OK",
+        confirmButtonColor: "#19B5FE",
+      }).then((r) => reloadData(r));
+    }
+  };
 
   const handlerConfirm = () => {
     Swal.fire({
@@ -30,7 +58,7 @@ const ConfirmDialog = ({
       confirmButtonColor: "#19B5FE",
       preConfirm: () => handleSuccess(),
     });
-  }
+  };
   return (
     <>
       <Button
