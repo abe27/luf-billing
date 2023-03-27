@@ -7,15 +7,42 @@ import {
   Text,
   Textarea,
 } from "@nextui-org/react";
+import { useToast } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2/dist/sweetalert2.js";
 
 const AddEditRole = ({ isEdit = false, role_id = null, token = null }) => {
+  const toast = useToast();
   const [visible, setVisible] = useState(false);
   const [permissionData, setPermissionData] = useState([]);
   const [permisions, setPermissions] = useState([]);
+  const [txtPermission, setTxtPermission] = useState(null);
+  const [txtDescription, setTxtDescription] = useState(null);
 
-  const handleSuccess = () => {
+  const handleSuccess = async () => {
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", token);
+    myHeaders.append("Content-Type", "application/json");
+    var raw = JSON.stringify({
+      title: txtPermission,
+      description: txtDescription,
+      is_active: true,
+      role_detail: permisions,
+    });
+
+    var requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw,
+      redirect: "follow",
+    };
+
+    console.log(raw);
+
+    const res = await fetch(`${process.env.API_HOST}/role`, requestOptions);
+    if (res.ok) {
+      res;
+    }
     Swal.fire({
       text: "Save Success!",
       icon: "success",
@@ -26,16 +53,29 @@ const AddEditRole = ({ isEdit = false, role_id = null, token = null }) => {
 
   const handlerSave = () => {
     console.dir(permisions);
-    // setVisible(false);
-    // Swal.fire({
-    //   text: "Would you like to Confirm?",
-    //   icon: "warning",
-    //   showCancelButton: true,
-    //   cancelButtonText: "Cancel",
-    //   confirmButtonText: "OK",
-    //   confirmButtonColor: "#19B5FE",
-    //   preConfirm: () => handleSuccess(),
-    // });
+    setVisible(false);
+    if (!txtPermission) {
+      toast({
+        title: "Warning Message!",
+        description: "Please enter a title.",
+        status: "error",
+        duration: 1500,
+        isClosable: true,
+        position: "top",
+        onCloseComplete: () => setVisible(true),
+      });
+      return;
+    }
+
+    Swal.fire({
+      text: "Would you like to Confirm?",
+      icon: "warning",
+      showCancelButton: true,
+      cancelButtonText: "Cancel",
+      confirmButtonText: "OK",
+      confirmButtonColor: "#19B5FE",
+      preConfirm: () => handleSuccess(),
+    });
   };
 
   const fetchData = async () => {
@@ -75,6 +115,12 @@ const AddEditRole = ({ isEdit = false, role_id = null, token = null }) => {
     if (visible) {
       fetchData();
       setPermissions([]);
+      setTxtPermission(null);
+      setTxtDescription(null);
+      if (isEdit) {
+        setTxtPermission(null);
+        setTxtDescription(null);
+      }
     }
   }, [visible]);
   return (
@@ -150,6 +196,8 @@ const AddEditRole = ({ isEdit = false, role_id = null, token = null }) => {
                 clearable
                 label="Role Name"
                 placeholder="Role Name"
+                value={txtPermission}
+                onChange={(e) => setTxtPermission(e.target.value)}
               />
             </div>
             <div className="mt-4">
@@ -158,6 +206,8 @@ const AddEditRole = ({ isEdit = false, role_id = null, token = null }) => {
                 clearable
                 label="Detail"
                 placeholder="Detail"
+                value={txtDescription}
+                onChange={(e) => setTxtDescription(e.target.value)}
               />
             </div>
             <div className="mt-4">
