@@ -11,7 +11,12 @@ import { useToast } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2/dist/sweetalert2.js";
 
-const AddEditRole = ({ isEdit = false, role_id = null, token = null }) => {
+const AddEditRole = ({
+  isEdit = false,
+  role_id = null,
+  token = null,
+  reloadData = null,
+}) => {
   const toast = useToast();
   const [visible, setVisible] = useState(false);
   const [permissionData, setPermissionData] = useState([]);
@@ -37,18 +42,16 @@ const AddEditRole = ({ isEdit = false, role_id = null, token = null }) => {
       redirect: "follow",
     };
 
-    console.log(raw);
-
     const res = await fetch(`${process.env.API_HOST}/role`, requestOptions);
     if (res.ok) {
-      res;
+      Swal.fire({
+        text: "Save Success!",
+        icon: "success",
+        confirmButtonText: "OK",
+        confirmButtonColor: "#19B5FE",
+      });
+      reloadData();
     }
-    Swal.fire({
-      text: "Save Success!",
-      icon: "success",
-      confirmButtonText: "OK",
-      confirmButtonColor: "#19B5FE",
-    });
   };
 
   const handlerSave = () => {

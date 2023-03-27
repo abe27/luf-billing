@@ -145,7 +145,10 @@ const MemberRolePage = () => {
                     </svg>
                   </div>
                   <div className="card-actions justify-end">
-                    <AddEditRole token={session?.user.accessToken} />
+                    <AddEditRole
+                      token={session?.user.accessToken}
+                      reloadData={() => fetchData()}
+                    />
                   </div>
                 </div>
               </div>
