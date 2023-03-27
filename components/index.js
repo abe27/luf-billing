@@ -28,6 +28,7 @@ import RequiredDocuments from "./elements/RequiredDocuments";
 import IconStatus from "./elements/IconStatus";
 import AddOrUpdateMaster from "./elements/AddOrUpdateMaster";
 import TableViewMaster from "./elements/TableViewMaster";
+import ConfirmDelete from "./elements/ConfirmDelete";
 
 export {
   SideBar,
@@ -60,4 +61,5 @@ export {
   IconStatus,
   AddOrUpdateMaster,
   TableViewMaster,
+  ConfirmDelete,
 };

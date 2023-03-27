@@ -1,7 +1,6 @@
 import { Button } from "@nextui-org/react";
 import { useRouter } from "next/router";
 import Swal from "sweetalert2/dist/sweetalert2.js";
-import "sweetalert2/src/sweetalert2.scss";
 
 const RequiredDocuments = ({
   fileType = [],

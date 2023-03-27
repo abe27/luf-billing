@@ -1,35 +1,91 @@
-import {
-  Button,
-  Checkbox,
-  Input,
-  Modal,
-  Text,
-  useModal,
-} from "@nextui-org/react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { Button, Checkbox, Input, Modal, Text } from "@nextui-org/react";
+import { useEffect, useState } from "react";
+import { useToast } from "@chakra-ui/react";
 import Swal from "sweetalert2/dist/sweetalert2.js";
-import "sweetalert2/src/sweetalert2.scss";
 
-const vendorList = [
-  "Purchase Order",
-  "Tax Invoice/delivery order.",
-  "Receipt",
-  "Bill",
-];
+const AddEditVendorGroup = ({
+  isEdit = false,
+  vendor = null,
+  token,
+  reloadData = false,
+}) => {
+  const toast = useToast();
+  const [visible, setVisible] = useState(false);
+  const [documents, setDocuments] = useState([]);
+  const [slDoc, setSlDoc] = useState([]);
+  const [vendorGroup, setVendorGroup] = useState(null);
 
-const AddEditVendorGroup = ({ isEdit = false, vendor_id = null }) => {
-  const { setVisible, bindings } = useModal();
+  const handleSuccess = async () => {
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", token);
+    myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
 
-  const handleSuccess = () => {
-    Swal.fire({
-      text: "Save Success!",
-      icon: "success",
-      confirmButtonText: "OK",
-      confirmButtonColor: "#19B5FE",
-    });
+    var urlencoded = new URLSearchParams();
+    urlencoded.append("title", vendorGroup);
+    urlencoded.append("description", "-");
+    urlencoded.append("documents", slDoc);
+    urlencoded.append("is_active", "true");
+
+    var requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: urlencoded,
+      redirect: "follow",
+    };
+    let url = `${process.env.API_HOST}/vendor/group`;
+    if (isEdit) {
+      requestOptions = {
+        method: "PUT",
+        headers: myHeaders,
+        body: urlencoded,
+        redirect: "follow",
+      };
+      if (vendor.documents.length > 0) {
+        url = `${process.env.API_HOST}/vendor/group/${vendor.documents[0].vendor_group_id}`;
+      }
+    }
+
+    const res = await fetch(url, requestOptions);
+
+    if (res.ok) {
+      Swal.fire({
+        text: "Save Success!",
+        icon: "success",
+        confirmButtonText: "OK",
+        confirmButtonColor: "#19B5FE",
+      });
+      reloadData();
+    }
+
+    if (!res.ok) {
+      toast({
+        title: "Error Message!",
+        description: res.error,
+        status: "error",
+        duration: 1500,
+        isClosable: true,
+        position: "top",
+        onCloseComplete: () => setVisible(true),
+      });
+    }
   };
 
   const handlerSave = () => {
     setVisible(false);
+    if (!vendorGroup) {
+      toast({
+        title: "Warning Message!",
+        description: "Please enter vendor group name!",
+        status: "error",
+        duration: 1500,
+        isClosable: true,
+        position: "top",
+        onCloseComplete: () => setVisible(true),
+      });
+      return;
+    }
+
     Swal.fire({
       text: "Would you like to Confirm?",
       icon: "warning",
@@ -40,6 +96,68 @@ const AddEditVendorGroup = ({ isEdit = false, vendor_id = null }) => {
       preConfirm: () => handleSuccess(),
     });
   };
+
+  const fetchDocuments = async () => {
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", token);
+
+    var requestOptions = {
+      method: "GET",
+      headers: myHeaders,
+      redirect: "follow",
+    };
+
+    const res = await fetch(
+      `${process.env.API_HOST}/document/list`,
+      requestOptions
+    );
+
+    if (res.ok) {
+      const data = await res.json();
+      setDocuments(data.data);
+    }
+  };
+
+  const checkSelected = (x) => {
+    let doc = slDoc;
+    if (doc.indexOf(x) > -1) {
+      return true;
+    }
+    return false;
+  };
+
+  const selectDocument = (e, value) => {
+    let doc = slDoc;
+    if (doc.length > 0) {
+      let p = doc.indexOf(value);
+      if (p > -1) {
+        doc.splice(p, 1);
+        setSlDoc(doc);
+      } else {
+        if (e) {
+          setSlDoc([value, ...slDoc]);
+        }
+      }
+    } else {
+      if (e) {
+        setSlDoc([value]);
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (visible) {
+      fetchDocuments();
+      setSlDoc([]);
+      setVendorGroup(null);
+      if (vendor) {
+        setVendorGroup(vendor.title);
+        let v = [];
+        vendor.documents.map((i) => v.push(i.document_id));
+        setSlDoc(v);
+      }
+    }
+  }, [visible]);
   return (
     <>
       {isEdit ? (
@@ -93,7 +211,13 @@ const AddEditVendorGroup = ({ isEdit = false, vendor_id = null }) => {
           <div className="p-4">New Vendor Group</div>
         </Button>
       )}
-      <Modal closeButton preventClose {...bindings}>
+      <Modal
+        closeButton
+        preventClose
+        aria-labelledby="modal-title"
+        open={visible}
+        onClose={() => setVisible(false)}
+      >
         <Modal.Header>
           <Text id="modal-title" size={18}>
             {isEdit ? "Edit Vendor Group" : "Add New Vendor Group"}
@@ -101,21 +225,28 @@ const AddEditVendorGroup = ({ isEdit = false, vendor_id = null }) => {
         </Modal.Header>
         <Modal.Body>
           <div className="mb-8">
-            <div >
+            <div>
               <Input
                 fullWidth
                 clearable
                 label="Group Name"
                 placeholder="Group Name"
+                value={vendorGroup}
+                onChange={(e) => setVendorGroup(e.target.value)}
               />
             </div>
             <div className="mt-4">
               <span className="text-sm">Document List</span>
               <div className="grid mt-2">
-                {vendorList?.map((i, x) => (
+                {documents?.map((i, x) => (
                   <div key={x}>
-                    <Checkbox defaultSelected size="sm">
-                      <span className="text-sm">{i}</span>
+                    <Checkbox
+                      value={i.id}
+                      size="sm"
+                      defaultSelected={checkSelected(i.id)}
+                      onChange={(e) => selectDocument(e, i.id)}
+                    >
+                      <span className="text-sm">{i.title}</span>
                     </Checkbox>
                   </div>
                 ))}

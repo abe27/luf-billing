@@ -1,6 +1,5 @@
 import { useState } from "react";
 import Swal from "sweetalert2/dist/sweetalert2.js";
-import "sweetalert2/src/sweetalert2.scss";
 import { Modal, Input, Row, Textarea, Button, Text } from "@nextui-org/react";
 
 const BillingApproveAlert = () => {
@@ -60,13 +59,7 @@ const BillingApproveAlert = () => {
       >
         Approve
       </Button>
-      <Modal
-        closeButton
-        blur
-        
-        open={visible}
-        onClose={closeHandler}
-      >
+      <Modal closeButton blur open={visible} onClose={closeHandler}>
         <Modal.Header>
           <Text id="modal-title" size={18}>
             Approve Detail

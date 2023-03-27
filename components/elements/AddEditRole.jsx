@@ -1,16 +1,19 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import {
   Button,
-  Modal,
-  useModal,
-  Text,
-  Input,
   Checkbox,
+  Input,
+  Modal,
+  Text,
+  Textarea,
 } from "@nextui-org/react";
+import { useEffect, useState } from "react";
 import Swal from "sweetalert2/dist/sweetalert2.js";
-import "sweetalert2/src/sweetalert2.scss";
 
-const AddEditRole = ({ isEdit = false, role_id = null }) => {
-  const { setVisible, bindings } = useModal();
+const AddEditRole = ({ isEdit = false, role_id = null, token = null }) => {
+  const [visible, setVisible] = useState(false);
+  const [permissionData, setPermissionData] = useState([]);
+  const [permisions, setPermissions] = useState([]);
 
   const handleSuccess = () => {
     Swal.fire({
@@ -19,20 +22,61 @@ const AddEditRole = ({ isEdit = false, role_id = null }) => {
       confirmButtonText: "OK",
       confirmButtonColor: "#19B5FE",
     });
-  }
+  };
 
   const handlerSave = () => {
-    setVisible(false);
-    Swal.fire({
-      text: "Would you like to Confirm?",
-      icon: "warning",
-      showCancelButton: true,
-      cancelButtonText: "Cancel",
-      confirmButtonText: "OK",
-      confirmButtonColor: "#19B5FE",
-      preConfirm: () => handleSuccess(),
-    });
-  }
+    console.dir(permisions);
+    // setVisible(false);
+    // Swal.fire({
+    //   text: "Would you like to Confirm?",
+    //   icon: "warning",
+    //   showCancelButton: true,
+    //   cancelButtonText: "Cancel",
+    //   confirmButtonText: "OK",
+    //   confirmButtonColor: "#19B5FE",
+    //   preConfirm: () => handleSuccess(),
+    // });
+  };
+
+  const fetchData = async () => {
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", token);
+
+    var requestOptions = {
+      method: "GET",
+      headers: myHeaders,
+      redirect: "follow",
+    };
+
+    const res = await fetch(
+      `${process.env.API_HOST}/permission`,
+      requestOptions
+    );
+
+    if (res.ok) {
+      const data = await res.json();
+      console.dir(data.data);
+      setPermissionData(data.data);
+    }
+  };
+
+  const setCheckPermission = (id, type, checked) => {
+    let p = { id: id, type: type, checked: checked };
+    let doc = permisions.find((i) => i.id === id && i.type === type);
+    if (doc) {
+      doc.checked = checked;
+      setPermissions(Object.assign(permisions, doc));
+    } else {
+      setPermissions([p, ...permisions]);
+    }
+  };
+
+  useEffect(() => {
+    if (visible) {
+      fetchData();
+      setPermissions([]);
+    }
+  }, [visible]);
   return (
     <>
       {isEdit ? (
@@ -86,7 +130,13 @@ const AddEditRole = ({ isEdit = false, role_id = null }) => {
           New Role
         </Button>
       )}
-      <Modal closeButton preventClose {...bindings}>
+      <Modal
+        closeButton
+        preventClose
+        aria-labelledby="modal-title"
+        open={visible}
+        onClose={() => setVisible(false)}
+      >
         <Modal.Header>
           <Text id="modal-title" size={18}>
             {isEdit ? "Edit Role" : "Add New Role"}
@@ -103,69 +153,46 @@ const AddEditRole = ({ isEdit = false, role_id = null }) => {
               />
             </div>
             <div className="mt-4">
-              <Input fullWidth clearable label="Detail" placeholder="Detail" />
+              <Textarea
+                fullWidth
+                clearable
+                label="Detail"
+                placeholder="Detail"
+              />
             </div>
             <div className="mt-4">
               <span className="text-sm">Role Permisions</span>
               <div className="grid mt-2">
-                <div className="flex w-full">
-                  <div className="w-40">
-                    <span className="text-sm">Administrator Access</span>
+                {permissionData.map((i) => (
+                  <div className="flex justify-between w-full mt-2" key={i.id}>
+                    <div className="flex justify-start w-40">
+                      <span className="text-sm">{i.title}</span>
+                    </div>
+                    <div className="flex justify-end space-x-2">
+                      <Checkbox
+                        defaultSelected={i.read}
+                        size="sm"
+                        onChange={(e) => setCheckPermission(i.id, "read", e)}
+                      >
+                        <span className="text-sm">Read</span>
+                      </Checkbox>
+                      <Checkbox
+                        defaultSelected={i.write}
+                        size="sm"
+                        onChange={(e) => setCheckPermission(i.id, "write", e)}
+                      >
+                        <span className="text-sm">Write</span>
+                      </Checkbox>
+                      <Checkbox
+                        defaultSelected={i.create}
+                        size="sm"
+                        onChange={(e) => setCheckPermission(i.id, "create", e)}
+                      >
+                        <span className="text-sm">Create</span>
+                      </Checkbox>
+                    </div>
                   </div>
-                  <div>
-                    <Checkbox defaultSelected size="sm">
-                      <span className="text-sm">Select All</span>
-                    </Checkbox>
-                  </div>
-                </div>
-                <div className="flex justify-between w-full mt-2">
-                  <div className="flex justify-start w-40">
-                    <span className="text-sm">Billing Monitor</span>
-                  </div>
-                  <div className="flex justify-end space-x-2">
-                    <Checkbox defaultSelected size="sm">
-                      <span className="text-sm">Read</span>
-                    </Checkbox>
-                    <Checkbox defaultSelected size="sm">
-                      <span className="text-sm">Write</span>
-                    </Checkbox>
-                    <Checkbox defaultSelected size="sm">
-                      <span className="text-sm">Create</span>
-                    </Checkbox>
-                  </div>
-                </div>
-                <div className="flex justify-between w-full mt-2">
-                  <div className="flex justify-start w-40">
-                    <span className="text-sm">Overdue Billing</span>
-                  </div>
-                  <div className="flex justify-end space-x-2">
-                    <Checkbox defaultSelected size="sm">
-                      <span className="text-sm">Read</span>
-                    </Checkbox>
-                    <Checkbox defaultSelected size="sm">
-                      <span className="text-sm">Write</span>
-                    </Checkbox>
-                    <Checkbox defaultSelected size="sm">
-                      <span className="text-sm">Create</span>
-                    </Checkbox>
-                  </div>
-                </div>
-                <div className="flex justify-between w-full mt-2">
-                  <div className="flex justify-start w-40">
-                    <span className="text-sm">User Manangement</span>
-                  </div>
-                  <div className="flex justify-end space-x-2">
-                    <Checkbox defaultSelected size="sm">
-                      <span className="text-sm">Read</span>
-                    </Checkbox>
-                    <Checkbox defaultSelected size="sm">
-                      <span className="text-sm">Write</span>
-                    </Checkbox>
-                    <Checkbox defaultSelected size="sm">
-                      <span className="text-sm">Create</span>
-                    </Checkbox>
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
           </div>

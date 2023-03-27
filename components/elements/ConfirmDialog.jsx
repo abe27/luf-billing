@@ -1,7 +1,6 @@
 import { Button } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
 import Swal from "sweetalert2/dist/sweetalert2.js";
-import "sweetalert2/src/sweetalert2.scss";
 
 const ConfirmDialog = ({
   flat = true,
@@ -34,7 +33,7 @@ const ConfirmDialog = ({
         icon: "success",
         confirmButtonText: "OK",
         confirmButtonColor: "#19B5FE",
-      }).then((r) => reloadData(r));
+      }).then((r) => reloadData());
       return;
     }
 
@@ -44,7 +43,7 @@ const ConfirmDialog = ({
         icon: "error",
         confirmButtonText: "OK",
         confirmButtonColor: "#19B5FE",
-      }).then((r) => reloadData(r));
+      }).then((r) => reloadData());
     }
   };
 

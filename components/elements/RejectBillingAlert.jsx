@@ -8,7 +8,6 @@ import {
   Checkbox,
 } from "@nextui-org/react";
 import Swal from "sweetalert2/dist/sweetalert2.js";
-import "sweetalert2/src/sweetalert2.scss";
 
 let doc = ["Purchase Order", "Text Invoioce/Delivery Order", "Receipt", "Bill"];
 
@@ -28,7 +27,7 @@ const RejectBillingAlert = () => {
       confirmButtonText: "OK",
       confirmButtonColor: "#19B5FE",
     });
-  }
+  };
 
   const handlerReject = () => {
     setVisible(false);
@@ -41,7 +40,7 @@ const RejectBillingAlert = () => {
       confirmButtonColor: "#19B5FE",
       preConfirm: () => handleSuccess(),
     });
-  }
+  };
   return (
     <>
       <Button
@@ -69,13 +68,7 @@ const RejectBillingAlert = () => {
       >
         Reject
       </Button>
-      <Modal
-        closeButton
-        blur
-        
-        open={visible}
-        onClose={closeHandler}
-      >
+      <Modal closeButton blur open={visible} onClose={closeHandler}>
         <Modal.Header>
           <Text id="modal-title" size={18}>
             Add Required

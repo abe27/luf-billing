@@ -1,6 +1,15 @@
-import { Button, Modal, useModal, Input, Text } from "@nextui-org/react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import {
+  Button,
+  Modal,
+  useModal,
+  Input,
+  Text,
+  Textarea,
+} from "@nextui-org/react";
+import { useEffect, useState } from "react";
+import { useToast } from "@chakra-ui/react";
 import Swal from "sweetalert2/dist/sweetalert2.js";
-import "sweetalert2/src/sweetalert2.scss";
 
 const AddNewPermissions = ({
   title = "Add Permissions",
@@ -9,20 +18,72 @@ const AddNewPermissions = ({
   color = "error",
   auto = true,
   size = "sm",
-  id = null,
+  propData = null,
+  token = null,
+  reloadData = false,
 }) => {
-  const { setVisible, bindings } = useModal();
-  const handleSuccess = () => {
-    Swal.fire({
-      text: "Save Success!",
-      icon: "success",
-      confirmButtonText: "OK",
-      confirmButtonColor: "#19B5FE",
-    });
+  const toast = useToast();
+  const [visible, setVisible] = useState(false);
+  const [name, setName] = useState(null);
+  const [description, setDescription] = useState(null);
+  const handleSuccess = async () => {
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", token);
+
+    var urlencoded = new URLSearchParams();
+    urlencoded.append("title", name);
+    urlencoded.append("description", description);
+    urlencoded.append("read", "false");
+    urlencoded.append("write", "false");
+    urlencoded.append("create", "false");
+    urlencoded.append("is_active", "true");
+
+    console.dir(urlencoded);
+
+    var requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: urlencoded,
+      redirect: "follow",
+    };
+
+    let url = `${process.env.API_HOST}/permission`;
+    if (isEdit) {
+      url = `${process.env.API_HOST}/permission/${propData.id}`;
+      requestOptions = {
+        method: "PUT",
+        headers: myHeaders,
+        body: urlencoded,
+        redirect: "follow",
+      };
+    }
+
+    const res = await fetch(url, requestOptions);
+    if (res.ok) {
+      Swal.fire({
+        text: "Save Success!",
+        icon: "success",
+        confirmButtonText: "OK",
+        confirmButtonColor: "#19B5FE",
+      }).then((r) => reloadData());
+    }
   };
 
   const handlerSave = () => {
     setVisible(false);
+    if (!name) {
+      toast({
+        title: "Warning Message!",
+        description: "Please enter a name?",
+        status: "error",
+        duration: 1500,
+        isClosable: true,
+        position: "top",
+        onCloseComplete: () => setVisible(true),
+      });
+      return;
+    }
+
     Swal.fire({
       text: "Would you like to Confirm?",
       icon: "warning",
@@ -33,6 +94,17 @@ const AddNewPermissions = ({
       preConfirm: () => handleSuccess(),
     });
   };
+
+  useEffect(() => {
+    if (visible) {
+      setName(null);
+      setDescription(null);
+      if (isEdit) {
+        setName(propData.title);
+        setDescription(propData.description);
+      }
+    }
+  }, [visible]);
 
   return (
     <>
@@ -78,7 +150,13 @@ const AddNewPermissions = ({
       >
         {title}
       </Button>
-      <Modal closeButton preventClose {...bindings}>
+      <Modal
+        closeButton
+        preventClose
+        aria-labelledby="modal-title"
+        open={visible}
+        onClose={() => setVisible(false)}
+      >
         <Modal.Header>
           <Text id="modal-title" size={18}>
             {isEdit ? "Edit Permision" : "Add New Permision"}
@@ -86,16 +164,25 @@ const AddNewPermissions = ({
         </Modal.Header>
         <Modal.Body>
           <div className="mb-8">
-            <div >
+            <div>
               <Input
                 fullWidth
                 clearable
                 label="Permission"
                 placeholder="Permission"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
               />
             </div>
             <div className="mt-4">
-              <Input fullWidth clearable label="Detail" placeholder="Detail" />
+              <Textarea
+                fullWidth
+                clearable
+                label="Detail"
+                placeholder="Detail"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+              />
             </div>
           </div>
         </Modal.Body>

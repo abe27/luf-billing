@@ -1,5 +1,6 @@
 import { Pagination } from "@nextui-org/react";
 import { DateTime } from "@/hooks";
+import { AddOrUpdateMaster, ConfirmDelete } from "..";
 
 const TableViewMaster = ({
   data = [],
@@ -8,7 +9,17 @@ const TableViewMaster = ({
   totalPage = 3,
   changeLimit = false,
   reloadData = false,
+  token = null,
+  isConfirmDelete,
 }) => {
+  const afterUpdate = () => {
+    reloadData();
+  };
+
+  const isConfirm = (obj) => {
+    return isConfirmDelete(obj);
+  };
+
   return (
     <>
       <div className="mt-4">
@@ -36,24 +47,25 @@ const TableViewMaster = ({
                         i.is_active ? "text-green-400" : "text-rose-500"
                       }
                     >
-                      {i.is_active}
+                      {i.is_active ? "active" : "disabled"}
                     </span>
                   </td>
                   <td>{DateTime(i.created_at)}</td>
                   <td>
-                    <div className="flex justify-between">
-                      <div className="flex justify-start space-x-2">
-                        {/* <AddNewUser
+                    <div className="flex space-x-2">
+                      <div className="flex">
+                        <AddOrUpdateMaster
+                          size="xs"
+                          color="warning"
+                          flat={true}
                           isEdit={true}
-                          userData={i}
                           reloadData={afterUpdate}
-                        /> */}
+                          obj={i}
+                          token={token}
+                        />
                       </div>
-                      <div className="flex justify-start">
-                        {/* <ConfirmDialog
-                          id={i.id}
-                          reloadData={() => reloadData}
-                        /> */}
+                      <div className="flex">
+                        <ConfirmDelete id={i.id} isConfirm={isConfirm} />
                       </div>
                     </div>
                   </td>

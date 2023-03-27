@@ -1,25 +1,18 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { AddOrUpdateMaster, MainLayOut, TableViewMaster } from "@/components";
-import { useToast } from "@chakra-ui/react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import Swal from "sweetalert2/dist/sweetalert2.js";
 
 const DocumentPage = () => {
   const { data: session } = useSession();
-  const toast = useToast();
-  const [loading, setLoading] = useState(false);
   const [obj, setObj] = useState([]);
   const [currentLimit, setCurrentLimit] = useState(10);
   const [totalPage, setTotalPage] = useState(2);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [txtSearchUserName, setSearchUserName] = useState("");
-  const [txtSearchName, setSearchName] = useState("");
-  const [txtSearchRole, setSearchRole] = useState("");
 
   const fetchData = async () => {
     setObj([]);
-    setLoading(true);
     var myHeaders = new Headers();
     myHeaders.append("Authorization", session?.user.accessToken);
     var requestOptions = {
@@ -34,15 +27,47 @@ const DocumentPage = () => {
       `${process.env.API_HOST}/document/list`,
       requestOptions
     );
-    if (!res.ok) {
-      setLoading(false);
-    }
-
     if (res.ok) {
       const data = await res.json();
       setObj(data.data);
       setTotalPage(Math.ceil(data.length / currentLimit));
-      setLoading(false);
+    }
+  };
+
+  const confirmDelete = async (doc) => {
+    console.dir(doc);
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", session?.user.accessToken);
+
+    var requestOptions = {
+      method: "DELETE",
+      headers: myHeaders,
+      redirect: "follow",
+    };
+
+    const res = await fetch(
+      `${process.env.API_HOST}/document/list/${doc}`,
+      requestOptions
+    );
+
+    if (res.ok) {
+      Swal.fire({
+        text: `Delete Success!`,
+        icon: "success",
+        confirmButtonText: "OK",
+        confirmButtonColor: "#19B5FE",
+      }).then((r) => fetchData());
+      return;
+    }
+
+    if (!res.ok) {
+      Swal.fire({
+        text: res.error,
+        icon: "error",
+        confirmButtonText: "OK",
+        confirmButtonColor: "#19B5FE",
+      }).then((r) => fetchData());
+      return;
     }
   };
 
@@ -73,11 +98,20 @@ const DocumentPage = () => {
             </div>
             <div className="flex justify-end space-x-4 z-0">
               <></>
-              <AddOrUpdateMaster />
+              <AddOrUpdateMaster
+                reloadData={fetchData}
+                token={session?.user.accessToken}
+              />
             </div>
           </div>
           <>
-            <TableViewMaster />
+            <TableViewMaster
+              data={obj}
+              totalPage={totalPage}
+              token={session?.user.accessToken}
+              reloadData={fetchData}
+              isConfirmDelete={confirmDelete}
+            />
           </>
         </div>
       </MainLayOut>

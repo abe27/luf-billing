@@ -3,40 +3,49 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Input, Button, Loading } from "@nextui-org/react";
 import { MainLayOut, AddNewPermissions, PermisionTable } from "@/components";
-import { RandomPermision } from "@/hooks";
+import { useSession } from "next-auth/react";
 
 const MemberPermisionPage = () => {
+  const { data: session } = useSession();
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
   const [currentLimit, setCurrentLimit] = useState(5);
+  const [totalPage, setTotalPage] = useState(2);
+  const [txtSearch, setTxtSearch] = useState(null);
 
   const fetchData = async () => {
     setLoading(true);
-    setData([])
-    let doc = [];
-    for (let i = 0; i < currentLimit; i++) {
-      let permision = await RandomPermision();
-      doc.push({
-        id: i + 1,
-        name: permision.name,
-        detail: permision.detail,
-        created_at: permision.created_at,
-      });
+    setData([]);
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", session?.user.accessToken);
+
+    var requestOptions = {
+      method: "GET",
+      headers: myHeaders,
+      redirect: "follow",
+    };
+
+    let url = `${process.env.API_HOST}/permission`;
+    if (txtSearch) {
+      url = `${process.env.API_HOST}/permission?search=${txtSearch}`;
     }
-    const t = setTimeout(() => {
-      setData(doc);
+    const res = await fetch(url, requestOptions);
+
+    if (res.ok) {
+      const data = await res.json();
+      setData(data.data);
+      setTotalPage(Math.ceil(data.data.length / currentLimit));
       setLoading(false);
-    }, 1000);
-    return () => clearTimeout(t);
+    }
   };
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    if (session) fetchData();
+  }, [session]);
 
   useEffect(() => {
     fetchData();
-  }, [currentLimit]);
+  }, [currentLimit, txtSearch]);
 
   return (
     <>
@@ -56,6 +65,8 @@ const MemberPermisionPage = () => {
                   clearable
                   contentRight={loading && <Loading size="xs" />}
                   placeholder="Permisions"
+                  value={txtSearch}
+                  onChange={(e) => setTxtSearch(e.target.value)}
                 />
               </div>
               <div className="flex justify-end space-x-2">
@@ -84,7 +95,12 @@ const MemberPermisionPage = () => {
                 >
                   Search
                 </Button>
-                <AddNewPermissions flat={false} color="primary" />
+                <AddNewPermissions
+                  flat={false}
+                  color="primary"
+                  token={session?.user.accessToken}
+                  reloadData={fetchData}
+                />
               </div>
             </div>
           </div>
@@ -93,7 +109,11 @@ const MemberPermisionPage = () => {
           <PermisionTable
             data={data}
             currentLimit={currentLimit}
+            totalPage={totalPage}
             setCurrentLimit={(n) => setCurrentLimit(n)}
+            reloadData={() => fetchData()}
+            token={session?.user.accessToken}
+            onDeleted={() => fetchData()}
           />
         </>
       </MainLayOut>

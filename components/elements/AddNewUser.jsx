@@ -4,7 +4,6 @@ import { Button, Input, Modal, Radio, Text } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
 import { useEffect, useRef, useState } from "react";
 import Swal from "sweetalert2/dist/sweetalert2.js";
-import "sweetalert2/src/sweetalert2.scss";
 
 const AddNewUser = ({
   isEdit = false,
