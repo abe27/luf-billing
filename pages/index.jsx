@@ -12,8 +12,10 @@ import { useSession } from "next-auth/react";
 import { useToast } from "@chakra-ui/react";
 import { DateString } from "@/hooks";
 import Swal from "sweetalert2/dist/sweetalert2.js";
+import { useRouter } from "next/router";
 
 const IndexPage = () => {
+  const router = useRouter();
   const inputRef = useRef();
   const { data: session } = useSession();
   const toast = useToast();
@@ -155,7 +157,9 @@ const IndexPage = () => {
   };
 
   useEffect(() => {
-    if (session?.user) {
+    if (!session?.user.isAdmin) {
+      router.push("/overdue");
+    } else {
       fetchVendorGroup();
       fetchData();
     }

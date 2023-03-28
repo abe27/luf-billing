@@ -1,13 +1,14 @@
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable @next/next/no-img-element */
 import { useToast } from "@chakra-ui/react";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import Head from "next/head";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useState } from "react";
 
 const LoginPage = () => {
+  const { data: session } = useSession();
   const toast = useToast();
   const router = useRouter();
   const [showpass, setShowPass] = useState(false);
@@ -49,7 +50,13 @@ const LoginPage = () => {
         duration: 2000,
         isClosable: true,
         position: "top",
-        onCloseComplete: () => router.push("/"),
+        onCloseComplete: () => {
+          if (session?.user.isAdmin) {
+            router.push("/");
+          } else {
+            router.push("/overdue");
+          }
+        },
       });
     }
   };
