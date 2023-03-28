@@ -14,7 +14,7 @@ const NavBarTop = () => {
     if (session?.error === "RefreshAccessTokenError") {
       router.push("/login");
     }
-  }, []);
+  }, [session]);
 
   return (
     <>

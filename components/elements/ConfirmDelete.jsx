@@ -2,6 +2,7 @@ import { Button } from "@nextui-org/react";
 import Swal from "sweetalert2/dist/sweetalert2.js";
 
 const ConfirmDelete = ({
+  light = false,
   id = null,
   title = "Delete",
   text = "Do you want to delete this?",
@@ -24,7 +25,14 @@ const ConfirmDelete = ({
 
   return (
     <>
-      <Button flat={flat} color={color} size={size} onPress={handlerConfirm}>
+      <Button
+        light={light}
+        auto
+        flat={flat}
+        color={color}
+        size={size}
+        onPress={handlerConfirm}
+      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"

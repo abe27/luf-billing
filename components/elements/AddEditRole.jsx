@@ -16,6 +16,7 @@ const AddEditRole = ({
   role_id = null,
   token = null,
   reloadData = null,
+  data = [],
 }) => {
   const toast = useToast();
   const [visible, setVisible] = useState(false);
@@ -121,8 +122,8 @@ const AddEditRole = ({
       setTxtPermission(null);
       setTxtDescription(null);
       if (isEdit) {
-        setTxtPermission(null);
-        setTxtDescription(null);
+        setTxtPermission(data.title);
+        setTxtDescription(data.description);
       }
     }
   }, [visible]);

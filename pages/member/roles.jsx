@@ -1,9 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { AddEditRole, MainLayOut } from "@/components";
+import { AddEditRole, ConfirmDelete, MainLayOut } from "@/components";
 import Link from "next/link";
 import { Grid, Button } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
+import Swal from "sweetalert2/dist/sweetalert2.js";
 
 const MemberRolePage = () => {
   const { data: session } = useSession();
@@ -31,7 +32,31 @@ const MemberRolePage = () => {
     }
   };
 
-  const confirmDelete = (id) => {};
+  const confirmDelete = async (id) => {
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", session?.user.accessToken);
+
+    var requestOptions = {
+      method: "DELETE",
+      headers: myHeaders,
+      redirect: "follow",
+    };
+
+    const res = await fetch(
+      `${process.env.API_HOST}/role/${id}`,
+      requestOptions
+    );
+
+    if (res.ok) {
+      Swal.fire({
+        text: "Delete Success!",
+        icon: "success",
+        confirmButtonText: "OK",
+        confirmButtonColor: "#19B5FE",
+      });
+      fetchData();
+    }
+  };
 
   useEffect(() => {
     if (session) fetchData();
@@ -51,14 +76,14 @@ const MemberRolePage = () => {
           <Grid.Container gap={2} justify="flex-start">
             {data.map((i) => (
               <Grid xs={4} key={i.id}>
-                <div className="card w-full bg-base-100 shadow-xl">
+                <div className="card w-full bg-base-100 shadow-xl z-0">
                   <div className="card-body">
                     <div className="flex w-full justify-between">
                       <div className="flex justify-start mt-3">
                         <h2 className="text-4xm text-sm">{i.title}</h2>
                       </div>
                       <div className="flex justify-end items-end">
-                        <Button
+                        {/* <Button
                           light
                           color="error"
                           auto
@@ -79,7 +104,14 @@ const MemberRolePage = () => {
                             </svg>
                           }
                           onPress={() => confirmDelete(i)}
-                        ></Button>
+                        ></Button> */}
+                        <ConfirmDelete
+                          title=""
+                          flat={true}
+                          id={i.id}
+                          light={false}
+                          isConfirm={confirmDelete}
+                        />
                       </div>
                     </div>
                     <div className="text-sm text-gray-400">
@@ -118,6 +150,7 @@ const MemberRolePage = () => {
                         isEdit={true}
                         role_id={i.id}
                         token={session?.user.accessToken}
+                        data={i}
                       />
                     </div>
                   </div>
