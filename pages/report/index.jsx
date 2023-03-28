@@ -58,17 +58,20 @@ const BillingReportingPage = () => {
               <div className="grid grid-rows-1">
                 <div className="flex flex-wrap justify-start space-x-24">
                   <Input
+                    size="xs"
                     clearable
                     contentRight={loading && <Loading size="xs" />}
                     placeholder="Billing No."
                   />
                   <Input
+                    size="xs"
                     clearable
                     contentRight={loading && <Loading size="xs" />}
                     type={"date"}
                     placeholder="Billing Start Date"
                   />
                   <Input
+                    size="xs"
                     clearable
                     contentRight={loading && <Loading size="xs" />}
                     type={"date"}
@@ -77,24 +80,26 @@ const BillingReportingPage = () => {
                 </div>
                 <div className="flex flex-wrap justify-start space-x-24 mt-4">
                   <Input
+                    size="xs"
                     clearable
                     contentRight={loading && <Loading size="xs" />}
                     placeholder="Vendor code"
                   />
                   <Input
+                    size="xs"
                     clearable
                     contentRight={loading && <Loading size="xs" />}
                     placeholder="Vendor name"
                   />
-                  <select className="select select-ghost select-sm max-w-xs">
+                  <select className="select select-ghost select-sm max-w-xs select-xs">
                     <option disabled>Vendor Group</option>
                     <option>Group A</option>
                     <option>Group B</option>
                     <option>Group C</option>
                   </select>
-                </div>
-                <div className="flex flex-wrap justify-start space-x-24 mt-4">
-                  <select className="select select-ghost select-sm max-w-xs">
+                  {/* </div>
+                <div className="flex flex-wrap justify-start space-x-24 mt-4"> */}
+                  <select className="select select-ghost select-sm max-w-xs select-xs">
                     <option disabled>Status</option>
                     <option>Open</option>
                     <option>On Process</option>
