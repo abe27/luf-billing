@@ -139,7 +139,7 @@ const IndexPage = () => {
         ref={inputRef}
         type="file"
         onChange={handleFileChange}
-        accept=".xlsx,.csv"
+        accept=".xls,.csv"
       />
       <MainLayOut>
         <span className="text-4xm font-bold">Import Data Billing</span>
