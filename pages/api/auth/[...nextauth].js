@@ -61,7 +61,9 @@ export const authOptions = {
           userName: user.data.user.username,
           fullName: user.data.user.full_name,
           email: user.data.user.email,
-          role: user.data.user.role,
+          company: user.data.user.company,
+          role: user.data.user.role.title,
+          isAdmin: user.data.user.role.title === "Administrator",
           avatar_url: user.data.user.avatar_url,
           accessToken: `${user.data.type} ${user.data.token}`,
         };
@@ -76,10 +78,8 @@ export const authOptions = {
       session.user.fullName = token.fullName;
       session.user.email = token.email;
       session.user.role = token.role;
-      session.user.isAdmin = false;
-      if (token.role?.title === "Administrator") {
-        session.user.isAdmin = true;
-      }
+      session.user.isAdmin = token.isAdmin;
+      session.user.company = token.company;
       session.user.avatar_url = token.avatar_url;
       session.user.accessToken = token.accessToken;
       session.error = token.error;

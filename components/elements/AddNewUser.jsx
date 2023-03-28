@@ -37,13 +37,15 @@ const AddNewUser = ({
     }
   };
 
+  console.dir(process.env.DEFAULT_PASSWORD);
+
   const handleSuccess = async () => {
     var formdata = new FormData();
     formdata.append("username", username);
     formdata.append("full_name", fullName);
     formdata.append("email", email);
     formdata.append("company", company);
-    formdata.append("password", process.env.DEFAULT_USERPASSWORD);
+    formdata.append("password", process.env.DEFAULT_PASSWORD);
     formdata.append("role_id", role);
     if (inputRef.current.value) {
       formdata.append(

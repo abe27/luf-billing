@@ -25,8 +25,8 @@ const LoginPage = () => {
 
     const r = await signIn("credentials", {
       redirect: false,
-      username: "admin",
-      password: "admin@1234",
+      username: data.get("username"),
+      password: data.get("password"),
     });
 
     if (!r.ok) {

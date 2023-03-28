@@ -160,7 +160,7 @@ const NavBarTop = () => {
                     <p className="text-gray-800 text-sm ml-2">
                       {session?.user.role === null
                         ? "Unknow"
-                        : session?.user.role.title}
+                        : session?.user.role}
                     </p>
                   </div>
                   <img

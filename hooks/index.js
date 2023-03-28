@@ -271,6 +271,11 @@ const RandomPermision = () => {
   };
 };
 
+const ColorInt = (x) => {
+  let color = ["primary", "success", "error", "secondary"];
+  return color[x - 1];
+};
+
 export {
   DateTime,
   DateOnly,
@@ -292,4 +297,5 @@ export {
   RandomUserName,
   RandomPermision,
   DateString,
+  ColorInt,
 };

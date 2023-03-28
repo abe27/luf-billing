@@ -13,25 +13,18 @@ const classStatus = [
   { status: "Approved", name: "bg-indigo-500" },
 ];
 
-const BillingActionTable = ({ status, limitPage = 5 }) => {
+const BillingActionTable = ({
+  status,
+  limitPage = 5,
+  statusData = [],
+  vendorGroup = [],
+  data = [],
+}) => {
   const [currentLimit, setCurrentLimit] = useState(0);
   const [invData, setInvData] = useState([]);
 
   const fetchData = async () => {
-    let doc = [];
-    for (let i = 0; i < currentLimit; i++) {
-      doc.push({
-        id: i + 1,
-        billing_no: ("0000000" + (i + 1)).slice(-8), // Billing No.
-        billing_date: RandomDateString(), // Billing Date
-        due_date: RandomDateString(), // Due Date
-        amount: RandomAmount(), // Amount
-        vendor_code: RandomVendorcode(), // Vendor Code
-        vender_name: "XXXXXXX", // Vendor Name
-        vendor_group: "G" + ("000" + (i + 1)).slice(-3), // Vendor Group
-      });
-    }
-    setInvData(doc);
+    setInvData(data);
   };
 
   const checkStatus = (txt) => {
@@ -62,18 +55,19 @@ const BillingActionTable = ({ status, limitPage = 5 }) => {
               <option disabled selected>
                 Vendor Group
               </option>
-              <option>Grp. A</option>
-              <option>Grp. B</option>
-              <option>Grp. C</option>
+              {vendorGroup.map((i, x) => (
+                <option key={i.id} value={i.id}>
+                  {i.title}
+                </option>
+              ))}
             </select>
             <select className="select select-ghost max-w-xs">
               <option disabled selected>
                 Status
               </option>
-              <option>On Process</option>
-              <option>Verify</option>
-              <option>Rejected</option>
-              <option>Approved</option>
+              {statusData.map((i) => (
+                <option key={i.id}>{i.title}</option>
+              ))}
             </select>
           </div>
           <div className="flex justify-end z-0">
@@ -82,6 +76,7 @@ const BillingActionTable = ({ status, limitPage = 5 }) => {
                 flat
                 color="primary"
                 auto
+                size={"sm"}
                 icon={
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -105,6 +100,7 @@ const BillingActionTable = ({ status, limitPage = 5 }) => {
                 flat
                 color="success"
                 auto
+                size={"sm"}
                 icon={
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -150,18 +146,18 @@ const BillingActionTable = ({ status, limitPage = 5 }) => {
                   </tr>
                 </thead>
                 <tbody>
-                  {invData.map((i) => (
+                  {invData.map((i, x) => (
                     <tr key={i.id}>
-                      <td>{i.id}</td>
+                      <td>{x + 1}</td>
                       <td>{i.billing_no}</td>
                       <td>{i.billing_date}</td>
                       <td>{i.due_date}</td>
                       <td>{i.amount.toLocaleString()}</td>
                       <td>{i.vendor_code}</td>
-                      <td>{i.vender_name}</td>
-                      <td>{i.vendor_group}</td>
+                      <td>{i.vendor_name}</td>
+                      <td>{i.vendor_group.title}</td>
                       <td>
-                        {status === "Verify" ? (
+                        {status === 2 ? (
                           <Link
                             href={`/monitor/detail?id=${i.billing_no}&action=${status}`}
                           >
@@ -190,9 +186,9 @@ const BillingActionTable = ({ status, limitPage = 5 }) => {
                               Verify
                             </Button>
                           </Link>
-                        ) : status === "Approve" ? (
+                        ) : status === 4 ? (
                           <BillingApproveAlert />
-                        ) : status === "View" ? (
+                        ) : status === 3 ? (
                           <ViewRejectDetail />
                         ) : (
                           <Link href={`/monitor/approve?id=${i.billing_no}`}>

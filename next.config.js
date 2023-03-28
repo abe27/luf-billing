@@ -7,7 +7,7 @@ const nextConfig = {
     API_PUBLIC: process.env.API_HOST,
     API_HOST: `${process.env.API_HOST}/api/v1`,
     JWT_SECRET: process.env.JWT_SECRET,
-    DEFAULT_USER_PASSWORD: process.env.DEFAULT_USERPASSWORD,
+    DEFAULT_PASSWORD: process.env.DEFAULT_PASSWORD,
   },
 };
 

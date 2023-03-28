@@ -2,39 +2,38 @@
 import { BillingReportTable, MainLayOut } from "@/components";
 import { Button, Input, Loading } from "@nextui-org/react";
 import { useEffect, useState } from "react";
-import {
-  RandomDateString,
-  RandomAmount,
-  RandomVendorcode,
-  RandomStatus,
-} from "@/hooks";
+import { useSession } from "next-auth/react";
 
 const BillingReportingPage = () => {
+  const { data: session } = useSession();
   const [loading, setLoading] = useState(false);
-  const [currentLimit, setCurrentLimit] = useState(5);
+  const [currentLimit, setCurrentLimit] = useState(0);
+  const [totalPage, setTotalPage] = useState(0);
   const [data, setData] = useState([]);
 
   const fetchData = async () => {
     setLoading(true);
-    let doc = [];
-    for (let i = 0; i < currentLimit; i++) {
-      doc.push({
-        id: i + 1,
-        billing_no: ("0000000" + (i + 1)).slice(-8), // Billing No.
-        billing_date: RandomDateString(), // Billing Date
-        due_date: RandomDateString(), // Due Date
-        amount: RandomAmount(), // Amount
-        vendor_code: RandomVendorcode(), // Vendor Code
-        vender_name: "XXXXXXX", // Vendor Name
-        vendor_group: "G" + ("000" + (i + 1)).slice(-3), // Vendor Group
-        status: RandomStatus(),
-      });
-    }
-    setData(doc);
-    let t = setTimeout(() => {
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", session?.user.accessToken);
+
+    var requestOptions = {
+      method: "GET",
+      headers: myHeaders,
+      redirect: "follow",
+    };
+
+    const res = await fetch(
+      `${process.env.API_HOST}/billing/list?billing_no=null&billing_date=null&vendor_group=null`,
+      requestOptions
+    );
+
+    if (res.ok) {
+      const data = await res.json();
+      console.dir(data.data);
+      setData(data.data);
+      setTotalPage(Math.ceil(data.data.length / currentLimit));
       setLoading(false);
-    }, 1000);
-    return () => clearTimeout(t);
+    }
   };
 
   const handlerChangeLimit = (limit) => {
@@ -43,8 +42,8 @@ const BillingReportingPage = () => {
   const handleExportExcelClick = () => {};
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    if (session?.user) fetchData();
+  }, [session]);
 
   useEffect(() => {
     fetchData();
@@ -168,7 +167,7 @@ const BillingReportingPage = () => {
             <BillingReportTable
               data={data}
               limit={currentLimit}
-              page={2}
+              page={totalPage}
               changeLimit={handlerChangeLimit}
             />
           </>

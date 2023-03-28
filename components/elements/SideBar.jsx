@@ -61,7 +61,7 @@ const navbarLinkForUser = [
   },
   {
     id: 5,
-    title: "Billing Report For User",
+    title: "Billing Report",
     name: "billing",
     href: "/billing",
     children: [],
@@ -94,8 +94,8 @@ const SideBar = () => {
 
   return (
     <>
-      <div className="absolute lg:relative w-64 h-screen shadow bg-gray-100 hidden lg:block">
-        <div className="flex items-center justify-center">
+      <div className="relative w-60 h-screen shadow bg-gray-100 block">
+        <div className="flex">
           <ul aria-orientation="vertical" className="py-6">
             {session?.user.isAdmin
               ? navbarLinkAdmin.map((i) => (

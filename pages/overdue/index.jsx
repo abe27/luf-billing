@@ -8,6 +8,7 @@ import {
   OverdueBillingAllTable,
 } from "@/components";
 import { useState } from "react";
+import { useSession } from "next-auth/react";
 
 const tabList = [
   { id: 0, title: "Open", total: 10, color: "primary" },
@@ -17,6 +18,7 @@ const tabList = [
 ];
 
 const OverdueBillingPage = () => {
+  const { data: session } = useSession();
   return (
     <>
       <MainLayOut title="Overdue Billing">
@@ -28,7 +30,7 @@ const OverdueBillingPage = () => {
         <div className="mt-4">
           <div className="flex justify-between space-x-2">
             <div className="flex justify-start w-fit">
-              <AvatarDetail />
+              <AvatarDetail user={session?.user} />
             </div>
             <div className="w-full">
               <Tabs>

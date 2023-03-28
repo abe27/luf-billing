@@ -153,7 +153,7 @@ const AddNewBilling = ({
       return;
     }
 
-    if (!selectedVendor) {
+    if (!selectedVendor || selectedVendor === "-") {
       toast({
         title: "Vendor Group is required",
         status: "error",
@@ -319,6 +319,7 @@ const AddNewBilling = ({
               defaultValue={selectedVendor}
               onChange={(e) => setSelectedVendor(e.target.value)}
             >
+              <option value={`-`}>-</option>
               {vendorGroup.map((i, x) => (
                 <option key={x} value={i.id}>
                   {i.title}

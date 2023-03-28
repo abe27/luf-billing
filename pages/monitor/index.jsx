@@ -1,8 +1,54 @@
-import { MainLayOut, BillingActionTable } from "@/components";
-import { Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react";
-import { Badge, Avatar, Grid } from "@nextui-org/react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { BillingActionTable, MainLayOut } from "@/components";
+import { ColorInt } from "@/hooks";
+import { Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/react";
+import { Badge } from "@nextui-org/react";
+import { useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
 
 const BillingMonitorPage = () => {
+  const { data: session } = useSession();
+  const [statusData, setStatusData] = useState([]);
+  const [vendorGroup, setVendorGroup] = useState([]);
+
+  const fetchStatus = async () => {
+    if (session?.user) {
+      // let url = `${process.env.API_HOST}/status?seq=0`;
+      const res = await fetch(`${process.env.API_HOST}/status?seq=0`, {
+        method: "GET",
+        headers: {
+          Authorization: session?.user.accessToken,
+        },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setStatusData(data.data);
+      }
+    }
+  };
+
+  const fetchVendorGroup = async () => {
+    if (session?.user) {
+      // let url = `${process.env.API_HOST}/status?seq=0`;
+      const res = await fetch(`${process.env.API_HOST}/vendor/group`, {
+        method: "GET",
+        headers: {
+          Authorization: session?.user.accessToken,
+        },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setVendorGroup(data.data);
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (session?.user) {
+      fetchStatus();
+      fetchVendorGroup();
+    }
+  }, [session]);
   return (
     <>
       <MainLayOut title="Billing Monitor">
@@ -10,48 +56,32 @@ const BillingMonitorPage = () => {
         <div className="mt-2">
           <Tabs>
             <TabList>
-              <Tab>
-                <Badge color="primary" content={5} placement="bottom-right">
-                  On Process
-                </Badge>
-              </Tab>
-              <Tab>
-                <Badge color="success" content={10} placement="bottom-right">
-                  Verify
-                </Badge>
-              </Tab>
-              <Tab>
-                <Badge color="error" content={3} placement="bottom-right">
-                  Rejected
-                </Badge>
-              </Tab>
-              <Tab>
-                <Badge color="secondary" content={2} placement="bottom-right">
-                  Approved
-                </Badge>
-              </Tab>
+              {statusData.map((i, x) => (
+                <Tab key={i.id}>
+                  <Badge
+                    color={ColorInt(i.seq)}
+                    content={i.billing.length > 0 ? i.billing.length : null}
+                    placement="bottom-right"
+                  >
+                    {i.title}
+                  </Badge>
+                </Tab>
+              ))}
             </TabList>
             <TabPanels>
-              <TabPanel>
-                <div className="rounded-lg shadow">
-                  <BillingActionTable status={`Verify`} limitPage={5} />
-                </div>
-              </TabPanel>
-              <TabPanel>
-                <div className="rounded-lg shadow">
-                  <BillingActionTable status={`Approve`} limitPage={10}/>
-                </div>
-              </TabPanel>
-              <TabPanel>
-                <div className="rounded-lg shadow">
-                  <BillingActionTable status={`View`} limitPage={3} />
-                </div>
-              </TabPanel>
-              <TabPanel>
-                <div className="rounded-lg shadow">
-                  <BillingActionTable status={`Approved`} limitPage={2}/>
-                </div>
-              </TabPanel>
+              {statusData.map((i, x) => (
+                <TabPanel key={i.id}>
+                  <div className="rounded-lg shadow">
+                    <BillingActionTable
+                      status={i.seq}
+                      limitPage={i.billing.length}
+                      statusData={statusData}
+                      vendorGroup={vendorGroup}
+                      data={i.billing}
+                    />
+                  </div>
+                </TabPanel>
+              ))}
             </TabPanels>
           </Tabs>
         </div>

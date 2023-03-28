@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { RandomAmount, RandomDateString } from "@/hooks";
 import { useEffect, useState } from "react";
 const AvatarDetail = ({
+  user = {},
   id = 1,
   isShowBilling = false,
   fullName = "First Last",
@@ -32,11 +33,11 @@ const AvatarDetail = ({
             <Avatar src="/emp.png" size={"xl"} css={{ size: "$20" }} />
           </div>
           <div className="text-center">
-            <span className="text-4xm font-bold">{fullName}</span>
+            <span className="text-4xm font-bold">{user.fullName}</span>
           </div>
           <div className="text-center">
             <span className="text-4xm text-gray-500">
-              {process.env.APP_NAME}
+              {user.company ? user.company : process.env.APP_NAME}
             </span>
           </div>
         </div>
@@ -128,16 +129,21 @@ const AvatarDetail = ({
             <>
               <span className="text-sm text-bold">Detail</span>
             </>
-            <Badge color="secondary" variant="bordered">
+            {/* <Badge color="secondary" variant="bordered">
               Vendor
-            </Badge>
+            </Badge> */}
+            <span className="text-xs bg-gray-100 p-2 w-auto rounded shadow">
+              {user.role}
+            </span>
           </div>
           <div className="mt-4 grid grid-rows-1">
             <>
               <span className="text-sm text-bold">Username</span>
             </>
             <>
-              <span className="text-xs">USER-XXXXXX</span>
+              <span className="text-xs bg-gray-100 p-2 w-auto rounded shadow">
+                {user.userName}
+              </span>
             </>
           </div>
           <div className="mt-4 grid grid-rows-1">
@@ -145,7 +151,9 @@ const AvatarDetail = ({
               <span className="text-sm text-bold">E-Mail</span>
             </>
             <>
-              <span className="text-xs">E-Mail Address</span>
+              <div className="text-xs bg-gray-100 p-2 w-auto rounded shadow">
+                {user.email}
+              </div>
             </>
           </div>
         </div>

@@ -1,3 +1,4 @@
+import { ColorInt, DateString } from "@/hooks";
 import { Button, Input, Loading, Pagination } from "@nextui-org/react";
 
 const BillingReportTable = ({
@@ -28,17 +29,22 @@ const BillingReportTable = ({
             <tbody>
               {data.map((i, x) => (
                 <tr key={i.id}>
-                  <td>{i.id}</td>
+                  <td>{x + 1}</td>
                   <td>{i.billing_no}</td>
-                  <td>{i.billing_date}</td>
-                  <td>{i.due_date}</td>
+                  <td>{DateString(i.billing_date)}</td>
+                  <td>{DateString(i.due_date)}</td>
                   <td>{i.amount.toLocaleString()}</td>
                   <td>{i.vendor_code}</td>
-                  <td>{i.vender_name}</td>
-                  <td>{i.vendor_group}</td>
+                  <td>{i.vendor_name}</td>
+                  <td>{i.vendor_group.title}</td>
                   <td>
-                    <Button flat color={i.status.color} auto size={"sm"}>
-                      {i.status.name}
+                    <Button
+                      flat
+                      color={ColorInt(i.status.seq)}
+                      auto
+                      size={"xs"}
+                    >
+                      {i.status.title}
                     </Button>
                   </td>
                 </tr>
@@ -60,14 +66,19 @@ const BillingReportTable = ({
             <tbody>
               {data.map((i, x) => (
                 <tr key={i.id}>
-                  <td>{i.id}</td>
+                  <td>{x + 1}</td>
                   <td>{i.billing_no}</td>
-                  <td>{i.billing_date}</td>
-                  <td>{i.due_date}</td>
+                  <td>{DateString(i.billing_date)}</td>
+                  <td>{DateString(i.due_date)}</td>
                   <td>{i.amount.toLocaleString()}</td>
                   <td>
-                    <Button flat color={i.status.color} auto size={"sm"}>
-                      {i.status.name}
+                    <Button
+                      flat
+                      color={ColorInt(i.status.seq)}
+                      auto
+                      size={"xs"}
+                    >
+                      {i.status.title}
                     </Button>
                   </td>
                 </tr>
@@ -90,7 +101,7 @@ const BillingReportTable = ({
           </select>
         </div>
         <div className="flex justify-end">
-          <Pagination total={page} initialPage={1} />
+          <Pagination total={1} initialPage={1} />
         </div>
       </div>
     </>
