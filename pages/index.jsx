@@ -1,7 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @next/next/no-img-element */
 import { useEffect, useState, useRef } from "react";
-import { MainLayOut, AddNewBilling, EditBilling } from "@/components";
+import {
+  MainLayOut,
+  AddNewBilling,
+  EditBilling,
+  ConfirmDelete,
+} from "@/components";
 import { Input, Button, Pagination } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
 import { useToast } from "@chakra-ui/react";
@@ -41,6 +46,7 @@ const IndexPage = () => {
       setInvData(doc.data);
       setTotalPage(Math.ceil(doc.data.length / currentLimit));
     }
+    inputRef.current.value = null;
   };
 
   const handleUploadExcelClick = () => {
@@ -123,14 +129,43 @@ const IndexPage = () => {
     }
   };
 
-  useEffect(() => {
-    fetchData();
-  }, [currentLimit, billing_no, billing_date, selectVendorGroup]);
+  const confirmDelete = async (id) => {
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", session?.user.accessToken);
+
+    var requestOptions = {
+      method: "DELETE",
+      headers: myHeaders,
+      redirect: "follow",
+    };
+
+    const res = await fetch(
+      `${process.env.API_HOST}/billing/list/${id}`,
+      requestOptions
+    );
+
+    if (res.ok) {
+      Swal.fire({
+        text: "Delete successfully",
+        icon: "success",
+        confirmButtonText: "OK",
+        confirmButtonColor: "#19B5FE",
+      }).then((r) => fetchData());
+    }
+  };
 
   useEffect(() => {
-    fetchVendorGroup();
-    fetchData();
-  }, [session]);
+    if (session?.user) {
+      fetchVendorGroup();
+      fetchData();
+    }
+  }, [
+    session?.user,
+    currentLimit,
+    billing_no,
+    billing_date,
+    selectVendorGroup,
+  ]);
 
   return (
     <>
@@ -268,16 +303,22 @@ const IndexPage = () => {
                         <td>{i.vendor_name}</td>
                         <td>{i.vendor_group.title}</td>
                         <td>
-                          <AddNewBilling
-                            isEdit={true}
-                            title="Edit"
-                            color="warning"
-                            size="xs"
-                            data={i}
-                            vendorGroup={vendorGroup}
-                            token={session?.user.accessToken}
-                            reloadData={fetchData}
-                          />
+                          <div className="flex justify-start space-x-2">
+                            <AddNewBilling
+                              isEdit={true}
+                              title="Edit"
+                              color="warning"
+                              size="xs"
+                              data={i}
+                              vendorGroup={vendorGroup}
+                              token={session?.user.accessToken}
+                              reloadData={fetchData}
+                            />
+                            <ConfirmDelete
+                              id={i.id}
+                              isConfirm={confirmDelete}
+                            />
+                          </div>
                         </td>
                       </tr>
                     ))}
