@@ -144,7 +144,7 @@ const FetchPart = (limit = 15) => {
   return p;
 };
 
-const RandomDateString = () => {
+const DateString = (txt) => {
   const monthNames = [
     "January",
     "February",
@@ -160,13 +160,7 @@ const RandomDateString = () => {
     "December",
   ];
 
-  let d = new Date(
-    DateTime(
-      faker.date
-        .between("2023-01-01T00:00:00.000Z", new Date().toISOString())
-        .toISOString()
-    )
-  );
+  let d = new Date(txt);
   return `${("0" + d.getDate()).slice(-2)} ${
     monthNames[d.getMonth()]
   } ${d.getFullYear()}`;
@@ -226,26 +220,28 @@ const RandomDocumentName = () =>
   ("00000000" + faker.datatype.number({ min: 0, max: 9999999 })).slice(-8);
 
 const RandomUserName = () => {
-  let s = ["User", "Admin", "Vendor"]
+  let s = ["User", "Admin", "Vendor"];
   return {
     avatar: faker.internet.avatar(),
-    user_id: ("00000000" + faker.datatype.number({ min: 0, max: 9999999})).slice(-8),
+    user_id: (
+      "00000000" + faker.datatype.number({ min: 0, max: 9999999 })
+    ).slice(-8),
     user_name: faker.internet.userName(),
     email: faker.internet.email(),
-    role: s[faker.datatype.number({min: 0, max: s.length - 1})],
+    role: s[faker.datatype.number({ min: 0, max: s.length - 1 })],
     company: faker.internet.domainName(),
     created_at: RandomDateString(),
     status: RandomStatus(),
-  }
-}
+  };
+};
 
 const RandomPermision = () => {
   return {
     name: faker.lorem.word(),
     detail: faker.lorem.slug(),
     created_at: RandomDateString(),
-  }
-}
+  };
+};
 
 export {
   DateTime,
@@ -257,7 +253,7 @@ export {
   FetchWhs,
   FetchPart,
   RandomLastUpdate,
-  RandomDateString,
+  DateString,
   RandomAmount,
   RandomVendorcode,
   RandomName,
@@ -266,5 +262,5 @@ export {
   RandomDocumentName,
   RandomStatus,
   RandomUserName,
-  RandomPermision
+  RandomPermision,
 };

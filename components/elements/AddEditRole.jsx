@@ -43,7 +43,18 @@ const AddEditRole = ({
       redirect: "follow",
     };
 
-    const res = await fetch(`${process.env.API_HOST}/role`, requestOptions);
+    let url = `${process.env.API_HOST}/role`;
+    if (isEdit) {
+      url = `${process.env.API_HOST}/role/${role_id}`;
+      requestOptions = {
+        method: "PUT",
+        headers: myHeaders,
+        body: raw,
+        redirect: "follow",
+      };
+    }
+
+    const res = await fetch(url, requestOptions);
     if (res.ok) {
       Swal.fire({
         text: "Save Success!",

@@ -3,32 +3,42 @@
 import { useEffect, useState, useRef } from "react";
 import { MainLayOut, AddNewBilling, EditBilling } from "@/components";
 import { Input, Button, Pagination } from "@nextui-org/react";
-import { RandomDateString, RandomAmount, RandomVendorcode } from "@/hooks";
 import { useSession } from "next-auth/react";
 import { useToast } from "@chakra-ui/react";
+import { DateString } from "@/hooks";
 
 const IndexPage = () => {
   const inputRef = useRef();
   const { data: session } = useSession();
   const toast = useToast();
   const [currentLimit, setCurrentLimit] = useState(5);
+  const [totalPage, setTotalPage] = useState(2);
+  const [vendorGroup, setVendorGroup] = useState([]);
+  const [selectVendorGroup, setSelectVendorGroup] = useState(null);
   const [invData, setInvData] = useState([]);
+  const [billing_no, setBillingNo] = useState(null);
+  const [billing_date, setBillingDate] = useState(null);
 
   const fetchData = async () => {
-    let doc = [];
-    for (let i = 0; i < currentLimit; i++) {
-      doc.push({
-        id: i + 1,
-        billing_no: ("0000000" + (i + 1)).slice(-8), // Billing No.
-        billing_date: RandomDateString(), // Billing Date
-        due_date: RandomDateString(), // Due Date
-        amount: RandomAmount(), // Amount
-        vendor_code: RandomVendorcode(), // Vendor Code
-        vender_name: "XXXXXXX", // Vendor Name
-        vendor_group: "G" + ("000" + (i + 1)).slice(-3), // Vendor Group
-      });
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", session?.user.accessToken);
+
+    var requestOptions = {
+      method: "GET",
+      headers: myHeaders,
+      redirect: "follow",
+    };
+
+    const res = await fetch(
+      `${process.env.API_HOST}/billing/list?billing_no=${billing_no}&billing_date=${billing_date}&vendor_group=${selectVendorGroup}`,
+      requestOptions
+    );
+
+    if (res.ok) {
+      let doc = await res.json();
+      setInvData(doc.data);
+      setTotalPage(Math.ceil(doc.data.length / currentLimit));
     }
-    setInvData(doc);
   };
 
   const handleUploadExcelClick = () => {
@@ -62,15 +72,21 @@ const IndexPage = () => {
         position: "top-right",
       });
     }
+
+    if (res.ok) {
+      const data = await res.json();
+      setVendorGroup(data.data);
+    }
   };
 
   useEffect(() => {
     fetchData();
-  }, [currentLimit]);
+  }, [currentLimit, billing_no, billing_date, selectVendorGroup]);
 
   useEffect(() => {
     fetchVendorGroup();
-  }, []);
+    fetchData();
+  }, [session]);
 
   return (
     <>
@@ -86,13 +102,32 @@ const IndexPage = () => {
         <div className="mt-4 rounded-lg shadow p-4">
           <div className="flex justify-between">
             <div className="flex justify-start space-x-4">
-              <Input clearable placeholder="Billing No." />
-              <Input width="186px" type="date" placeholder="Billing Date" />
-              <select className="select select-ghostv max-w-xs bg-gray-100">
-                <option disabled>Vendor Group</option>
-                <option>Grp. A</option>
-                <option>Grp. B</option>
-                <option>Grp. C</option>
+              <Input
+                clearable
+                placeholder="Billing No."
+                value={billing_no}
+                onChange={(e) => setBillingNo(e.target.value)}
+              />
+              <Input
+                width="186px"
+                type="date"
+                placeholder="Billing Date"
+                value={billing_date}
+                onChange={(e) => setBillingDate(e.target.value)}
+              />
+              <select
+                className="select select-ghostv max-w-xs bg-gray-100"
+                defaultValue={selectVendorGroup}
+                onchange={(e) => setSelectVendorGroup(e.target.value)}
+              >
+                <option disabled value={"-"}>
+                  Vendor Group
+                </option>
+                {vendorGroup.map((i) => (
+                  <option key={i.id} value={i.id}>
+                    {i.title}
+                  </option>
+                ))}
               </select>
             </div>
             <div className="flex justify-end z-0">
@@ -121,7 +156,11 @@ const IndexPage = () => {
                 >
                   Search
                 </Button>
-                <AddNewBilling />
+                <AddNewBilling
+                  token={session?.user.accessToken}
+                  vendorGroup={vendorGroup}
+                  reloadData={fetchData}
+                />
                 <Button
                   flat
                   color="success"
@@ -173,42 +212,54 @@ const IndexPage = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {invData.map((i) => (
+                    {invData.map((i, x) => (
                       <tr key={i.id}>
-                        <td>{i.id}</td>
+                        <td>{x + 1}</td>
                         <td>{i.billing_no}</td>
-                        <td>{i.billing_date}</td>
-                        <td>{i.due_date}</td>
+                        <td>{DateString(i.billing_date)}</td>
+                        <td>{DateString(i.due_date)}</td>
                         <td>{i.amount.toLocaleString()}</td>
                         <td>{i.vendor_code}</td>
-                        <td>{i.vender_name}</td>
-                        <td>{i.vendor_group}</td>
+                        <td>{i.vendor_name}</td>
+                        <td>{i.vendor_group.title}</td>
                         <td>
-                          <EditBilling />
+                          <AddNewBilling
+                            isEdit={true}
+                            title="Edit"
+                            color="warning"
+                            size="xs"
+                            data={i}
+                            vendorGroup={vendorGroup}
+                            token={session?.user.accessToken}
+                            reloadData={fetchData}
+                          />
                         </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
-
-              <div className="mt-4 flex justify-between">
-                <div className="flex justify-start">
-                  <select
-                    className="select select-bordered select-sm w-full max-w-xs"
-                    value={currentLimit}
-                    onChange={(e) => setCurrentLimit(e.target.value)}
-                  >
-                    <option value={5}>5</option>
-                    <option value={10}>10</option>
-                    <option value={15}>15</option>
-                    <option value={20}>20</option>
-                  </select>
+              {totalPage > 2 ? (
+                <div className="mt-4 flex justify-between">
+                  <div className="flex justify-start">
+                    <select
+                      className="select select-bordered select-sm w-full max-w-xs"
+                      value={currentLimit}
+                      onChange={(e) => setCurrentLimit(e.target.value)}
+                    >
+                      <option value={5}>5</option>
+                      <option value={10}>10</option>
+                      <option value={15}>15</option>
+                      <option value={20}>20</option>
+                    </select>
+                  </div>
+                  <div className="flex justify-end">
+                    <Pagination total={totalPage} initialPage={1} />
+                  </div>
                 </div>
-                <div className="flex justify-end">
-                  <Pagination total={2} initialPage={1} />
-                </div>
-              </div>
+              ) : (
+                <></>
+              )}
             </>
           )}
         </div>
