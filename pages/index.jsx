@@ -6,6 +6,7 @@ import { Input, Button, Pagination } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
 import { useToast } from "@chakra-ui/react";
 import { DateString } from "@/hooks";
+import Swal from "sweetalert2/dist/sweetalert2.js";
 
 const IndexPage = () => {
   const inputRef = useRef();
@@ -20,6 +21,7 @@ const IndexPage = () => {
   const [billing_date, setBillingDate] = useState(null);
 
   const fetchData = async () => {
+    setInvData([]);
     var myHeaders = new Headers();
     myHeaders.append("Authorization", session?.user.accessToken);
 
@@ -45,7 +47,49 @@ const IndexPage = () => {
     inputRef.current.click();
   };
 
-  const handleFileChange = (e) => {};
+  const handleFileChange = async (e) => {
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", session?.user.accessToken);
+
+    var formdata = new FormData();
+    formdata.append(
+      "filename",
+      inputRef.current.files[0],
+      inputRef.current.value
+    );
+
+    var requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: formdata,
+      redirect: "follow",
+    };
+
+    const res = await fetch(
+      `${process.env.API_HOST}/billing/import`,
+      requestOptions
+    );
+
+    if (res.ok) {
+      Swal.fire({
+        text: "Upload successfully",
+        icon: "success",
+        confirmButtonText: "OK",
+        confirmButtonColor: "#19B5FE",
+      });
+      fetchData();
+    }
+
+    if (!res.ok) {
+      Swal.fire({
+        text: "Upload failed",
+        icon: "error",
+        confirmButtonText: "OK",
+        confirmButtonColor: "#19B5FE",
+      });
+      fetchData();
+    }
+  };
 
   const fetchVendorGroup = async () => {
     var myHeaders = new Headers();
@@ -153,6 +197,7 @@ const IndexPage = () => {
                       />
                     </svg>
                   }
+                  onPress={fetchData}
                 >
                   Search
                 </Button>

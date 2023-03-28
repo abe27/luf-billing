@@ -144,6 +144,34 @@ const FetchPart = (limit = 15) => {
   return p;
 };
 
+const RandomDateString = () => {
+  const monthNames = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
+  let d = new Date(
+    DateTime(
+      faker.date
+        .between("2023-01-01T00:00:00.000Z", new Date().toISOString())
+        .toISOString()
+    )
+  );
+  return `${("0" + d.getDate()).slice(-2)} ${
+    monthNames[d.getMonth()]
+  } ${d.getFullYear()}`;
+};
+
 const DateString = (txt) => {
   const monthNames = [
     "January",
@@ -253,7 +281,7 @@ export {
   FetchWhs,
   FetchPart,
   RandomLastUpdate,
-  DateString,
+  RandomDateString,
   RandomAmount,
   RandomVendorcode,
   RandomName,
@@ -263,4 +291,5 @@ export {
   RandomStatus,
   RandomUserName,
   RandomPermision,
+  DateString,
 };
