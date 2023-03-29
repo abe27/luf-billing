@@ -15,17 +15,17 @@ import Swal from "sweetalert2/dist/sweetalert2.js";
 import { useRouter } from "next/router";
 
 const IndexPage = () => {
+  const { data: session } = useSession();
   const router = useRouter();
   const inputRef = useRef();
-  const { data: session } = useSession();
   const toast = useToast();
   const [currentLimit, setCurrentLimit] = useState(5);
   const [totalPage, setTotalPage] = useState(2);
   const [vendorGroup, setVendorGroup] = useState([]);
-  const [selectVendorGroup, setSelectVendorGroup] = useState(null);
+  const [selectVendorGroup, setSelectVendorGroup] = useState("");
   const [invData, setInvData] = useState([]);
-  const [billing_no, setBillingNo] = useState(null);
-  const [billing_date, setBillingDate] = useState(null);
+  const [billing_no, setBillingNo] = useState("");
+  const [billing_date, setBillingDate] = useState("");
 
   const fetchData = async () => {
     setInvData([]);
@@ -38,10 +38,9 @@ const IndexPage = () => {
       redirect: "follow",
     };
 
-    const res = await fetch(
-      `${process.env.API_HOST}/billing/list?billing_no=${billing_no}&billing_date=${billing_date}&vendor_group=${selectVendorGroup}`,
-      requestOptions
-    );
+    let url = `${process.env.API_HOST}/billing/list?billing_no=${billing_no}&billing_date=${billing_date}&vendor_group=${selectVendorGroup}`;
+    console.log(url);
+    const res = await fetch(url, requestOptions);
 
     if (res.ok) {
       let doc = await res.json();
@@ -157,19 +156,9 @@ const IndexPage = () => {
   };
 
   useEffect(() => {
-    if (!session?.user.isAdmin) {
-      router.push("/overdue");
-    } else {
-      fetchVendorGroup();
-      fetchData();
-    }
-  }, [
-    session?.user,
-    currentLimit,
-    billing_no,
-    billing_date,
-    selectVendorGroup,
-  ]);
+    fetchVendorGroup();
+    fetchData();
+  }, [session, currentLimit, billing_no, billing_date, selectVendorGroup]);
 
   return (
     <>
@@ -201,7 +190,7 @@ const IndexPage = () => {
               <select
                 className="select select-ghostv max-w-xs bg-gray-100"
                 defaultValue={selectVendorGroup}
-                onchange={(e) => setSelectVendorGroup(e.target.value)}
+                onChange={(e) => setSelectVendorGroup(e.target.value)}
               >
                 <option disabled value={"-"}>
                   Vendor Group

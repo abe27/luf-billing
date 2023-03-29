@@ -1,12 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from "react";
 import { Button, Pagination } from "@nextui-org/react";
-import { RandomDateString, RandomDocumentName } from "@/hooks";
-import VerifyBillingAlert from "./VerifyBillingAlert"
+import { DateTime, RandomDateString, RandomDocumentName } from "@/hooks";
+import VerifyBillingAlert from "./VerifyBillingAlert";
 import RejectBillingAlert from "./RejectBillingAlert";
 import ViewBillingPDF from "./ViewBillingPDF";
 
-const BillingActionDetailTable = () => {
+const BillingActionDetailTable = ({ documents = [] }) => {
   const [docData, setDocData] = useState([]);
   const [currentLimit, setCurrentLimit] = useState(5);
 
@@ -50,21 +50,23 @@ const BillingActionDetailTable = () => {
             </tr>
           </thead>
           <tbody>
-            {docData.map((i, x) => (
+            {documents.map((i, x) => (
               <tr key={i.id}>
-                <td>{i.id}</td>
-                <td>{i.name}</td>
-                <td>{i.type}</td>
-                <td>{i.date}</td>
+                <td>{x + 1}</td>
+                <td>{i.file_name}</td>
+                <td>{i.file_type}</td>
+                <td>{DateTime(i.created_at)}</td>
                 <td>
-                  <ViewBillingPDF />
+                  <ViewBillingPDF
+                    filename={`${process.env.API_PUBLIC}${i.file_path}`}
+                  />
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-      <div className="mt-4 flex justify-between">
+      {/* <div className="mt-4 flex justify-between">
         <div className="flex justify-start">
           <select
             className="select select-bordered select-sm w-full max-w-xs"
@@ -80,7 +82,7 @@ const BillingActionDetailTable = () => {
         <div className="flex justify-end">
           <Pagination total={2} initialPage={1} />
         </div>
-      </div>
+      </div> */}
     </>
   );
 };

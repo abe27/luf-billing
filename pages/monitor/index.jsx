@@ -14,7 +14,7 @@ const BillingMonitorPage = () => {
   const fetchStatus = async () => {
     if (session?.user) {
       // let url = `${process.env.API_HOST}/status?seq=0`;
-      const res = await fetch(`${process.env.API_HOST}/status?seq=0`, {
+      const res = await fetch(`${process.env.API_HOST}/status`, {
         method: "GET",
         headers: {
           Authorization: session?.user.accessToken,
@@ -73,7 +73,7 @@ const BillingMonitorPage = () => {
                 <TabPanel key={i.id}>
                   <div className="rounded-lg shadow">
                     <BillingActionTable
-                      status={i.seq}
+                      status={i}
                       limitPage={i.billing.length}
                       statusData={statusData}
                       vendorGroup={vendorGroup}

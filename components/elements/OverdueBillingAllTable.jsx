@@ -6,7 +6,7 @@ import { AiFillFileExcel } from "react-icons/ai";
 
 let status = ["Open", "On process", "Rejected", "Approved"];
 
-const OverdueBillingAllTable = () => {
+const OverdueBillingAllTable = ({ token }) => {
   const [currentLimit, setCurrentLimit] = useState(5);
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);

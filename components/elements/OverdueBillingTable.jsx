@@ -1,43 +1,44 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from "react";
-import { Input, Button, Loading, Pagination } from "@nextui-org/react";
-import { RandomAmount, RandomDateString } from "@/hooks";
+import { Input, Button, Loading, Pagination, Text } from "@nextui-org/react";
+import { DateString, RandomAmount, RandomDateString } from "@/hooks";
 import { IconStatus } from "..";
 import Link from "next/link";
 
-const OverdueBillingTable = ({ status = "Open" }) => {
+const OverdueBillingTable = ({ status, token }) => {
   const [loading, setLoading] = useState(false);
   const [currentLimit, setCurrentLimit] = useState(5);
   const [data, setData] = useState([]);
+  const [billingNo, setBillingNo] = useState("");
+  const [billingDate, setBillingDate] = useState("");
 
   const fetchData = async () => {
     let doc = [];
     setData([]);
     setLoading(true);
-    for (let i = 0; i < currentLimit; i++) {
-      doc.push({
-        id: i + 1,
-        billing_no: ("00000000" + (i + 1)).slice(-8),
-        billing_date: RandomDateString(),
-        due_date: RandomDateString(),
-        amount: parseFloat(RandomAmount()),
-      });
-    }
-    const t = setTimeout(() => {
-      setLoading(false);
-      setData(doc);
-    }, 1000);
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", token);
 
-    return () => clearTimeout(t);
+    var requestOptions = {
+      method: "GET",
+      headers: myHeaders,
+      redirect: "follow",
+    };
+
+    let url = `${process.env.API_HOST}/billing/list?status_id=${status.id}&billing_no=${billingNo}&billing_date=${billingDate}`;
+    const res = await fetch(url, requestOptions);
+
+    if (res.ok) {
+      const data = await res.json();
+      setLoading(false);
+      setData(data.data);
+      console.dir(data.data);
+    }
   };
 
   useEffect(() => {
     fetchData();
-  }, []);
-
-  useEffect(() => {
-    fetchData();
-  }, [currentLimit]);
+  }, [status, billingNo, billingDate]);
 
   return (
     <>
@@ -49,11 +50,15 @@ const OverdueBillingTable = ({ status = "Open" }) => {
               <Input
                 contentRight={loading ? <Loading size="sm" /> : null}
                 placeholder="Billing No."
+                value={billingNo}
+                onChange={(e) => setBillingNo(e.target.value)}
               />
               <Input
                 contentRight={loading ? <Loading size="sm" /> : null}
                 type={"date"}
                 placeholder="Billing Date"
+                value={billingDate}
+                onChange={(e) => setBillingDate(e.target.value)}
               />
             </div>
             <div className="flex justify-end">
@@ -94,7 +99,7 @@ const OverdueBillingTable = ({ status = "Open" }) => {
           </div>
           <>
             <div className="overflow-x-auto mt-4">
-              <table className="table w-full table-compact table-zebra">
+              <table className="table w-full table-compact">
                 <thead>
                   <tr>
                     <th className="normal-case">No.</th>
@@ -102,41 +107,57 @@ const OverdueBillingTable = ({ status = "Open" }) => {
                     <th className="normal-case">Billing Date</th>
                     <th className="normal-case">Due Date</th>
                     <th className="normal-case">Amount</th>
+                    <th className="normal-case">Status</th>
                     <th className="normal-case flex justify-center">Action</th>
                   </tr>
                 </thead>
                 <tbody>
                   {data?.map((i, x) => (
                     <tr key={x}>
-                      <th>{i.id}</th>
+                      <th>{x + 1}</th>
                       <td>{i.billing_no}</td>
-                      <td>{i.billing_date}</td>
-                      <td>{i.due_date}</td>
+                      <td>{DateString(i.billing_date)}</td>
+                      <td>{DateString(i.due_date)}</td>
                       <td>{i.amount.toLocaleString()}</td>
+                      <td>
+                        <Text
+                          color={
+                            i.status.title === "Open"
+                              ? "primary"
+                              : i.status.title === "On Process"
+                              ? "warning"
+                              : i.status.title === "Rejected"
+                              ? "error"
+                              : "success"
+                          }
+                        >
+                          {i.status.title}
+                        </Text>
+                      </td>
                       <td className="flex justify-end">
                         <Link
-                          href={`/overdue/detail?id=${i.id}&status=${status}`}
+                          href={`/overdue/detail?id=${i.id}&status=${i.status.title}`}
                         >
                           <Button
                             flat
                             auto
                             size={"xs"}
                             color={
-                              status === "Open"
+                              i.status.title === "Open"
                                 ? "primary"
-                                : status === "On Process"
+                                : i.status.title === "On Process"
                                 ? "warning"
-                                : status === "Rejected"
+                                : i.status.title === "Rejected"
                                 ? "error"
                                 : "success"
                             }
-                            icon={<IconStatus status={status} />}
+                            icon={<IconStatus status={i.status.title} />}
                           >
-                            {status === "Open"
+                            {i.status.title === "Open"
                               ? "Upload File"
-                              : status === "On Process"
+                              : i.status.title === "On Process"
                               ? "Check Status"
-                              : status === "Rejected"
+                              : i.status.title === "Rejected"
                               ? "Resend File"
                               : "View Detail"}
                           </Button>

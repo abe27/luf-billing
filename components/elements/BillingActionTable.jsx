@@ -1,7 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from "react";
 import { Pagination, Input, Button, Tooltip } from "@nextui-org/react";
-import { RandomDateString, RandomAmount, RandomVendorcode } from "@/hooks";
+import {
+  RandomDateString,
+  RandomAmount,
+  RandomVendorcode,
+  DateString,
+} from "@/hooks";
 import Link from "next/link";
 import BillingApproveAlert from "./BillingApproveAlert";
 import { ViewRejectDetail } from "..";
@@ -29,8 +34,8 @@ const BillingActionTable = ({
 
   const checkStatus = (txt) => {
     classStatus.map((item, index) => {
-      console.log(item.status === txt);
-      if (item.status === txt) {
+      console.log(item.status.seq === txt);
+      if (item.status.seq === txt) {
         return item.name;
       }
     });
@@ -150,16 +155,16 @@ const BillingActionTable = ({
                     <tr key={i.id}>
                       <td>{x + 1}</td>
                       <td>{i.billing_no}</td>
-                      <td>{i.billing_date}</td>
-                      <td>{i.due_date}</td>
+                      <td>{DateString(i.billing_date)}</td>
+                      <td>{DateString(i.due_date)}</td>
                       <td>{i.amount.toLocaleString()}</td>
                       <td>{i.vendor_code}</td>
                       <td>{i.vendor_name}</td>
                       <td>{i.vendor_group.title}</td>
                       <td>
-                        {status === 2 ? (
+                        {status.seq === 1 ? (
                           <Link
-                            href={`/monitor/detail?id=${i.billing_no}&action=${status}`}
+                            href={`/monitor/detail?id=${i.id}&action=${status.title}`}
                           >
                             <Button
                               flat
@@ -186,12 +191,12 @@ const BillingActionTable = ({
                               Verify
                             </Button>
                           </Link>
-                        ) : status === 4 ? (
+                        ) : status.seq === 4 ? (
                           <BillingApproveAlert />
-                        ) : status === 3 ? (
+                        ) : status.seq === 3 ? (
                           <ViewRejectDetail />
                         ) : (
-                          <Link href={`/monitor/approve?id=${i.billing_no}`}>
+                          <Link href={`/monitor/approve?id=${i.id}`}>
                             <Button
                               flat
                               color="secondary"

@@ -1,30 +1,17 @@
-import { Avatar, Badge } from "@nextui-org/react";
-import { useRouter } from "next/router";
-import { RandomAmount, RandomDateString } from "@/hooks";
-import { useEffect, useState } from "react";
+import { DateString } from "@/hooks";
+import { Avatar } from "@nextui-org/react";
+import { useEffect } from "react";
 const AvatarDetail = ({
   user = {},
+  billing = {},
   id = 1,
   isShowBilling = false,
-  fullName = "First Last",
-  totalOpen = 10,
-  totalProcess = 20,
-  totalApprove = 1,
-  totalReject = 35,
+  totalOpen = 0,
+  totalProcess = 0,
+  totalApprove = 0,
+  totalReject = 0,
 }) => {
-  const [billDate, setBillDate] = useState("");
-  const [dueDate, setDueDate] = useState("");
-  const [amount, setAmount] = useState(0);
-
-  useEffect(() => {
-    let b = RandomDateString();
-    let d = RandomDateString();
-    let a = RandomAmount();
-
-    setBillDate(b);
-    setDueDate(d);
-    setAmount(a);
-  }, []);
+  useEffect(() => {}, []);
   return (
     <>
       <div className="justify-center bg-white rounded-lg">
@@ -50,7 +37,7 @@ const AvatarDetail = ({
                 </>
                 <>
                   <div className="text-gray-600 bg-gray-50 rounded p-2 w-auto text-sm">
-                    {("00000000" + id).slice(-8)}
+                    {billing.billing_no}
                   </div>
                 </>
               </div>
@@ -60,7 +47,7 @@ const AvatarDetail = ({
                 </>
                 <>
                   <div className="text-gray-600 bg-gray-50 rounded p-2 w-auto text-sm">
-                    {billDate}
+                    {DateString(billing.billing_date)}
                   </div>
                 </>
               </div>
@@ -70,7 +57,7 @@ const AvatarDetail = ({
                 </>
                 <>
                   <div className="text-gray-600 bg-gray-50 rounded p-2 w-auto text-sm">
-                    {dueDate}
+                    {DateString(billing.due_date)}
                   </div>
                 </>
               </div>
@@ -80,7 +67,7 @@ const AvatarDetail = ({
                 </>
                 <>
                   <div className="text-gray-600 bg-gray-50 rounded p-2 w-auto text-sm">
-                    {amount.toLocaleString()}
+                    {billing?.amount ? billing?.amount.toLocaleString() : 0}
                   </div>
                 </>
               </div>

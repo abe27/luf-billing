@@ -22,10 +22,15 @@ const BillingReportingPage = () => {
       redirect: "follow",
     };
 
-    const res = await fetch(
-      `${process.env.API_HOST}/billing/list?billing_no=null&billing_date=null&vendor_group=null`,
-      requestOptions
-    );
+    let url =
+      `${process.env.API_HOST}/billing/list?billing_no=null&billing_date=null&vendor_group=null`.replace(
+        "null",
+        ""
+      );
+
+    console.log(url);
+
+    const res = await fetch(url, requestOptions);
 
     if (res.ok) {
       const data = await res.json();

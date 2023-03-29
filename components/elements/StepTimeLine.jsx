@@ -3,40 +3,26 @@ import { RandomDateString } from "@/hooks";
 import { MdUploadFile, MdEditDocument } from "react-icons/md";
 import { TbFileCheck, TbChecks } from "react-icons/tb";
 
-let doc = [
-  "Send File",
-  "Wait for Verify Billing Account",
-  "Wait For Success",
-  "Payment Date Set",
-];
-const StepTimeLine = ({isComplete=true}) => {
-  const [data, setData] = useState([]);
-
-  const fetchData = async () => {
-    let a = [];
-    for (let i = 0; i < doc.length; i++) {
-      a.push({
-        id: i,
-        title: doc[i],
-        date: RandomDateString(),
-      });
+const StepTimeLine = ({ data = [], stepComplete = [] }) => {
+  const checkComplete = (i) => {
+    let com = stepComplete.filter(
+      (x) => x.step_title_id === i.id && x.is_complete === true
+    );
+    if (com[0]) {
+      return "complete";
     }
-    setData(a);
+    return "not-complete";
   };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
   return (
     <>
       <div className="flex justify-between mt-4">
         {data?.map((i, x) => (
-          <div key={x} className={`step-item ${isComplete ? "complete" : "not-complete"}`}>
+          <div key={x} className={`step-item ${checkComplete(i)}`}>
             <div className="step">
-              {i.id === 0 && <MdUploadFile size={26} />}
-              {i.id === 1 && <MdEditDocument size={26} />}
-              {i.id === 2 && <TbFileCheck size={26} />}
-              {i.id === 3 && <TbChecks size={26} />}
+              {x === 0 && <MdUploadFile size={26} />}
+              {x === 1 && <MdEditDocument size={26} />}
+              {x === 2 && <TbFileCheck size={26} />}
+              {x === 3 && <TbChecks size={26} />}
             </div>
             <div className="text-xs">{i.title}</div>
             <div className="text-xs">{i.date}</div>

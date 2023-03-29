@@ -28,7 +28,10 @@ const BillingReportingUserPage = () => {
     };
 
     const res = await fetch(
-      `${process.env.API_HOST}/billing/list?billing_no=null&billing_date=null&vendor_group=null`,
+      `${process.env.API_HOST}/billing/list?billing_no=null&billing_date=null&vendor_group=null`.replace(
+        "null",
+        ""
+      ),
       requestOptions
     );
 

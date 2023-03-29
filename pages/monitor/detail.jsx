@@ -1,28 +1,66 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { MainLayOut, BillingActionDetailTable } from "@/components";
+import {
+  MainLayOut,
+  BillingActionDetailTable,
+  AvatarDetail,
+} from "@/components";
 import { Avatar, Input, Badge } from "@nextui-org/react";
 import { RandomTotalStatus, RandomName } from "@/hooks";
 import { useEffect } from "react";
+import { useSession } from "next-auth/react";
 
 const BillingMonitorDetailPage = () => {
   const router = useRouter();
+  const { data: session } = useSession();
+  const [billing, setBilling] = useState({});
   const [fullName, setFullName] = useState("");
   const [totalOpen, setTotalOpen] = useState(0);
   const [totalProcess, setTotalProcess] = useState(0);
   const [totalApprove, setTotalApprove] = useState(0);
   const [totalReject, setTotalReject] = useState(0);
 
+  const fetchData = async (id) => {
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", session?.user.accessToken);
+
+    var requestOptions = {
+      method: "GET",
+      headers: myHeaders,
+      redirect: "follow",
+    };
+
+    const res = await fetch(
+      `${process.env.API_HOST}/billing/list?id=${id}`,
+      requestOptions
+    );
+
+    if (res.ok) {
+      const data = await res.json();
+      console.dir(data.data);
+      setBilling(data.data);
+      // setTotalOpen(data.totalOpen);
+      // setTotalProcess(data.totalProcess);
+      // setTotalApprove(data.totalApprove);
+      // setTotalReject(data.totalReject);
+    }
+  };
+
   useEffect(() => {
-    let n = RandomName();
-    setFullName(n);
-    let p = RandomTotalStatus();
-    setTotalOpen(p[0]);
-    setTotalProcess(p[1]);
-    setTotalApprove(p[2]);
-    setTotalReject(p[3]);
-  }, []);
+    if (session) {
+      // let n = RandomName();
+      // setFullName(n);
+      // let p = RandomTotalStatus();
+      // setTotalOpen(p[0]);
+      // setTotalProcess(p[1]);
+      // setTotalApprove(p[2]);
+      // setTotalReject(p[3]);
+      let id = router.query["id"];
+      fetchData(id);
+    }
+  }, [session]);
   return (
     <>
       <MainLayOut
@@ -41,99 +79,14 @@ const BillingMonitorDetailPage = () => {
         <div className="mt-4">
           <div className="flex justify-between space-x-2">
             <div className="flex justify-start w-fit">
-              <div className="justify-center bg-white rounded-lg">
-                <div className="grid justify-center items-center m-10">
-                  <div className="flex justify-center">
-                    <Avatar src="/emp.png" css={{ size: "$20" }} />
-                  </div>
-                  <div className="text-center">
-                    <span className="text-4xm font-bold">{fullName}</span>
-                  </div>
-                  <div className="text-center">
-                    <span className="text-4xm text-gray-500">
-                      {process.env.APP_NAME}
-                    </span>
-                  </div>
-                </div>
-                <div className="p-4">
-                  <div className="mt-4 grid grid-rows-1">
-                    <>
-                      <span className="text-4xm text-bold">Billing No.</span>
-                    </>
-                    <>
-                      <div className="text-gray-600 bg-gray-200 rounded p-2 w-auto">
-                        {router.query["id"]}
-                      </div>
-                    </>
-                  </div>
-                  <div className="mt-4 grid">
-                    <>
-                      <span className="text-4xm text-bold">Billing Total</span>
-                    </>
-                    <div className="flex items-center justify-between text-center space-x-4 mt-4">
-                      <>
-                        <div className="grid grid-rows-2 rounded-lg bg-gray-100 p-2 shadow">
-                          <span className="text-xs">
-                            {totalOpen.toLocaleString()}
-                          </span>
-                          <span className="text-xs">Open</span>
-                        </div>
-                      </>
-                      <div className="w-20">
-                        <div className="grid grid-rows-2 rounded-lg bg-gray-100 p-2 shadow">
-                          <span className="text-xs">
-                            {totalProcess.toLocaleString()}
-                          </span>
-                          <span className="text-xs">On Process</span>
-                        </div>
-                      </div>
-                      <>
-                        <div className="grid grid-rows-2 rounded-lg bg-gray-100 p-2 shadow">
-                          <span className="text-xs">
-                            {totalApprove.toLocaleString()}
-                          </span>
-                          <span className="text-xs">Approved</span>
-                        </div>
-                      </>
-                      <>
-                        <div className="grid grid-rows-2 rounded-lg bg-gray-100 p-2 shadow">
-                          <span className="text-xs">
-                            {totalReject.toLocaleString()}
-                          </span>
-                          <span className="text-xs">Rejected</span>
-                        </div>
-                      </>
-                    </div>
-                  </div>
-                  <div className="mt-4 grid grid-rows-1">
-                    <>
-                      <span className="text-4xm text-bold">Detail</span>
-                    </>
-                    <Badge color="secondary" variant="bordered">
-                      Vendor
-                    </Badge>
-                  </div>
-                  <div className="mt-4 grid grid-rows-1">
-                    <>
-                      <span className="text-4xm text-bold">Username</span>
-                    </>
-                    <>
-                      <span className="text-xs">USER-XXXXXX</span>
-                    </>
-                  </div>
-                  <div className="mt-4 grid grid-rows-1">
-                    <>
-                      <span className="text-4xm text-bold">E-Mail</span>
-                    </>
-                    <>
-                      <span className="text-xs">E-Mail Address</span>
-                    </>
-                  </div>
-                </div>
-              </div>
+              <AvatarDetail
+                isShowBilling={true}
+                billing={billing}
+                user={session?.user}
+              />
             </div>
             <div className=" bg-white rounded-lg p-4 w-full">
-              <BillingActionDetailTable />
+              <BillingActionDetailTable documents={billing?.document_list} />
             </div>
           </div>
         </div>

@@ -1,5 +1,39 @@
 import { faker } from "@faker-js/faker";
 
+const GetHeader = (token) => {
+  var myHeaders = new Headers();
+  myHeaders.append("Authorization", token);
+  return {
+    method: "GET",
+    headers: myHeaders,
+    redirect: "follow",
+  };
+};
+
+const PostHeader = (token, urlencoded) => {
+  var myHeaders = new Headers();
+  myHeaders.append("Authorization", token);
+  myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
+
+  return {
+    method: "POST",
+    headers: myHeaders,
+    body: urlencoded,
+    redirect: "follow",
+  };
+};
+
+const UploadHeader = (token, urlencoded) => {
+  var myHeaders = new Headers();
+  myHeaders.append("Authorization", token);
+  return {
+    method: "POST",
+    headers: myHeaders,
+    body: urlencoded,
+    redirect: "follow",
+  };
+};
+
 const DateTime = (dte) => {
   let d = new Date(dte);
   return `${d.getFullYear()}-${("0" + (d.getMonth() + 1)).slice(-2)}-${(
@@ -298,4 +332,7 @@ export {
   RandomPermision,
   DateString,
   ColorInt,
+  GetHeader,
+  PostHeader,
+  UploadHeader,
 };

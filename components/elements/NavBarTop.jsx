@@ -10,7 +10,6 @@ const NavBarTop = () => {
   const [profile, setProfile] = useState(false);
 
   useEffect(() => {
-    console.dir(session?.error);
     if (session?.error === "RefreshAccessTokenError") {
       router.push("/login");
     }
