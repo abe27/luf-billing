@@ -9,15 +9,14 @@ import {
 } from "@nextui-org/react";
 import Swal from "sweetalert2/dist/sweetalert2.js";
 
-let doc = ["Purchase Order", "Text Invoioce/Delivery Order", "Receipt", "Bill"];
-
-const RejectBillingAlert = () => {
+const RejectBillingAlert = ({ id, docs = [] }) => {
   const [visible, setVisible] = useState(false);
-  const handler = () => setVisible(true);
+  const [selectRequire, setSelectRequire] = useState([]);
+  const [remark, setRemark] = useState([]);
 
   const closeHandler = () => {
     setVisible(false);
-    console.log("closed");
+    console.dir(selectRequire);
   };
 
   const handleSuccess = () => {
@@ -40,6 +39,11 @@ const RejectBillingAlert = () => {
       confirmButtonColor: "#19B5FE",
       preConfirm: () => handleSuccess(),
     });
+  };
+
+  const selectDocument = (id, e) => {
+    let doc = { id: id, check: e };
+    setSelectRequire([doc, ...selectRequire]);
   };
   return (
     <>
@@ -64,7 +68,7 @@ const RejectBillingAlert = () => {
             />
           </svg>
         }
-        onPress={handler}
+        onPress={() => setVisible(true)}
       >
         Reject
       </Button>
@@ -76,10 +80,10 @@ const RejectBillingAlert = () => {
         </Modal.Header>
         <Modal.Body>
           <span className="text-4xm text-bold">Required Documents</span>
-          {doc.map((i, x) => (
+          {docs.map((i, x) => (
             <Row key={x}>
-              <Checkbox>
-                <Text size={14}>{i}</Text>
+              <Checkbox value={i.id} onChange={(e) => selectDocument(i.id, e)}>
+                <Text size={14}>{i.title}</Text>
               </Checkbox>
             </Row>
           ))}
@@ -88,6 +92,8 @@ const RejectBillingAlert = () => {
               label="Comment"
               placeholder="Enter your comment here"
               fullWidth={true}
+              value={remark}
+              onChange={(e) => setRemark(e.target.value)}
             />
           </Row>
         </Modal.Body>

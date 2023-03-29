@@ -16,11 +16,7 @@ const BillingMonitorDetailPage = () => {
   const router = useRouter();
   const { data: session } = useSession();
   const [billing, setBilling] = useState({});
-  const [fullName, setFullName] = useState("");
-  const [totalOpen, setTotalOpen] = useState(0);
-  const [totalProcess, setTotalProcess] = useState(0);
-  const [totalApprove, setTotalApprove] = useState(0);
-  const [totalReject, setTotalReject] = useState(0);
+  const [documentList, setDocumentList] = useState([]);
 
   const fetchData = async (id) => {
     var myHeaders = new Headers();
@@ -41,24 +37,36 @@ const BillingMonitorDetailPage = () => {
       const data = await res.json();
       console.dir(data.data);
       setBilling(data.data);
-      // setTotalOpen(data.totalOpen);
-      // setTotalProcess(data.totalProcess);
-      // setTotalApprove(data.totalApprove);
-      // setTotalReject(data.totalReject);
+    }
+  };
+
+  const fetchDocumentListData = async () => {
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", session?.user.accessToken);
+
+    var requestOptions = {
+      method: "GET",
+      headers: myHeaders,
+      redirect: "follow",
+    };
+
+    const res = await fetch(
+      `${process.env.API_HOST}/document/list`,
+      requestOptions
+    );
+
+    if (res.ok) {
+      const data = await res.json();
+      console.dir(data.data);
+      setDocumentList(data.data);
     }
   };
 
   useEffect(() => {
     if (session) {
-      // let n = RandomName();
-      // setFullName(n);
-      // let p = RandomTotalStatus();
-      // setTotalOpen(p[0]);
-      // setTotalProcess(p[1]);
-      // setTotalApprove(p[2]);
-      // setTotalReject(p[3]);
       let id = router.query["id"];
       fetchData(id);
+      fetchDocumentListData();
     }
   }, [session]);
   return (
@@ -86,7 +94,12 @@ const BillingMonitorDetailPage = () => {
               />
             </div>
             <div className=" bg-white rounded-lg p-4 w-full">
-              <BillingActionDetailTable documents={billing?.document_list} />
+              <BillingActionDetailTable
+                billing_id={billing?.id}
+                documents={billing?.document_list}
+                token={session?.user.accessToken}
+                documentList={documentList}
+              />
             </div>
           </div>
         </div>

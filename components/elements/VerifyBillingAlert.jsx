@@ -1,8 +1,8 @@
 import { Button } from "@nextui-org/react";
-import Swal from 'sweetalert2/dist/sweetalert2.js'
-import 'sweetalert2/src/sweetalert2.scss'
+import Swal from "sweetalert2/dist/sweetalert2.js";
+import "sweetalert2/src/sweetalert2.scss";
 
-const VerifyBillingAlert = () => {
+const VerifyBillingAlert = ({ id }) => {
   const handleSuccess = () => {
     Swal.fire({
       text: "Success Verification!",
@@ -10,7 +10,7 @@ const VerifyBillingAlert = () => {
       confirmButtonText: "OK",
       confirmButtonColor: "#19B5FE",
     });
-  }
+  };
 
   const handleClick = () => {
     Swal.fire({
@@ -22,7 +22,7 @@ const VerifyBillingAlert = () => {
       confirmButtonColor: "#19B5FE",
       preConfirm: () => handleSuccess(),
     });
-  }
+  };
   return (
     <>
       <Button

@@ -6,36 +6,20 @@ import VerifyBillingAlert from "./VerifyBillingAlert";
 import RejectBillingAlert from "./RejectBillingAlert";
 import ViewBillingPDF from "./ViewBillingPDF";
 
-const BillingActionDetailTable = ({ documents = [] }) => {
-  const [docData, setDocData] = useState([]);
-  const [currentLimit, setCurrentLimit] = useState(5);
-
-  const fetchData = async () => {
-    let doc = [];
-    for (let i = 0; i < currentLimit; i++) {
-      doc.push({
-        id: i + 1,
-        name: RandomDocumentName(),
-        type: "pdf",
-        date: RandomDateString(),
-      });
-    }
-
-    setDocData(doc);
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, [currentLimit]);
-
+const BillingActionDetailTable = ({
+  billing_id = null,
+  documents = [],
+  token = null,
+  documentList = [],
+}) => {
   return (
     <>
       <div className="flex justify-end space-x-4">
         <div className="z-0">
-          <RejectBillingAlert />
+          <RejectBillingAlert docs={documentList} id={billing_id} />
         </div>
         <div className="z-0">
-          <VerifyBillingAlert />
+          <VerifyBillingAlert id={billing_id} />
         </div>
       </div>
       <div className="mt-4">
