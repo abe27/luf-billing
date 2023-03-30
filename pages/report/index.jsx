@@ -3,40 +3,32 @@ import { BillingReportTable, MainLayOut } from "@/components";
 import { Button, Input, Loading } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
+import { getData } from "@/hooks/handler";
 
 const BillingReportingPage = () => {
   const { data: session } = useSession();
   const [loading, setLoading] = useState(false);
   const [currentLimit, setCurrentLimit] = useState(0);
   const [totalPage, setTotalPage] = useState(0);
+  const [statusData, setStatusData] = useState([]);
+  const [vendorGroup, setVendorData] = useState([]);
   const [data, setData] = useState([]);
 
-  const fetchData = async () => {
+  const [billingNo, setBillingNo] = useState(null);
+  const [billingDate, setBillingDate] = useState(null);
+  const [dueDate, setDueDate] = useState(null);
+  const [vendorCode, setVendorCode] = useState(null);
+  const [vendorName, setVendorName] = useState(null);
+  const [vendorID, setVendorID] = useState(null);
+  const [statusID, setStatusID] = useState(null);
+
+  const fetchData = async (url) => {
     setLoading(true);
-    var myHeaders = new Headers();
-    myHeaders.append("Authorization", session?.user.accessToken);
-
-    var requestOptions = {
-      method: "GET",
-      headers: myHeaders,
-      redirect: "follow",
-    };
-
-    let url =
-      `${process.env.API_HOST}/billing/list?billing_no=null&billing_date=null&vendor_group=null`.replace(
-        "null",
-        ""
-      );
-
-    console.log(url);
-
-    const res = await fetch(url, requestOptions);
-
-    if (res.ok) {
-      const data = await res.json();
-      console.dir(data.data);
-      setData(data.data);
-      setTotalPage(Math.ceil(data.data.length / currentLimit));
+    const data = await getData(url, session?.user.accessToken);
+    if (data) {
+      console.dir(data);
+      setData(data);
+      setTotalPage(Math.ceil(data.length / currentLimit));
       setLoading(false);
     }
   };
@@ -46,13 +38,94 @@ const BillingReportingPage = () => {
   };
   const handleExportExcelClick = () => {};
 
+  const fetchStatusData = async () => {
+    const data = await getData(
+      `${process.env.API_HOST}/status`,
+      session?.user.accessToken
+    );
+
+    setStatusData(data);
+  };
+
+  const fetchVendorGroup = async () => {
+    const data = await getData(
+      `${process.env.API_HOST}/vendor/group`,
+      session?.user.accessToken
+    );
+
+    setVendorData(data);
+  };
+
   useEffect(() => {
-    if (session?.user) fetchData();
+    if (session?.user) {
+      let url = `${process.env.API_HOST}/billing/list?`;
+      fetchData(url);
+      fetchStatusData();
+      fetchVendorGroup();
+    }
   }, [session]);
 
   useEffect(() => {
-    fetchData();
+    let url = `${process.env.API_HOST}/billing/list`;
+    fetchData(url);
   }, [currentLimit]);
+
+  useEffect(() => {
+    let url = `${process.env.API_HOST}/billing/list`;
+    if (billingNo) {
+      url = `${process.env.API_HOST}/billing/list?billing_no=${billingNo}`;
+      fetchData(url);
+    }
+  }, [billingNo]);
+
+  useEffect(() => {
+    let url = `${process.env.API_HOST}/billing/list`;
+    if (billingDate) {
+      url = `${process.env.API_HOST}/billing/list?billing_date=${billingDate}`;
+      fetchData(url);
+    }
+  }, [billingDate]);
+
+  useEffect(() => {
+    let url = `${process.env.API_HOST}/billing/list`;
+    if (dueDate) {
+      url = `${process.env.API_HOST}/billing/list?due_date=${dueDate}`;
+      fetchData(url);
+    }
+  }, [dueDate]);
+
+  useEffect(() => {
+    let url = `${process.env.API_HOST}/billing/list`;
+    if (vendorCode) {
+      url = `${process.env.API_HOST}/billing/list?vendor_code=${vendorCode}`;
+      fetchData(url);
+    }
+  }, [vendorCode]);
+
+  useEffect(() => {
+    let url = `${process.env.API_HOST}/billing/list`;
+    if (vendorName) {
+      url = `${process.env.API_HOST}/billing/list?vendor_name=${vendorName}`;
+      fetchData(url);
+    }
+  }, [vendorName]);
+
+  useEffect(() => {
+    let url = `${process.env.API_HOST}/billing/list`;
+    if (vendorID) {
+      url = `${process.env.API_HOST}/billing/list?vendor_group=${vendorID}`;
+      fetchData(url);
+    }
+  }, [vendorID]);
+
+  useEffect(() => {
+    let url = `${process.env.API_HOST}/billing/list`;
+    if (statusID) {
+      url = `${process.env.API_HOST}/billing/list?status_id=${statusID}`;
+      fetchData(url);
+    }
+  }, [statusID]);
+
   return (
     <>
       <MainLayOut title="Billing Reporting">
@@ -63,54 +136,74 @@ const BillingReportingPage = () => {
               <div className="grid grid-rows-1">
                 <div className="flex flex-wrap justify-start space-x-24">
                   <Input
-                    size="xs"
+                    size="sm"
                     clearable
-                    contentRight={loading && <Loading size="xs" />}
+                    contentRight={loading && <Loading size="sm" />}
                     placeholder="Billing No."
+                    value={billingNo}
+                    onChange={(e) => setBillingNo(e.target.value)}
                   />
                   <Input
-                    size="xs"
+                    size="sm"
                     clearable
-                    contentRight={loading && <Loading size="xs" />}
+                    contentRight={loading && <Loading size="sm" />}
                     type={"date"}
                     placeholder="Billing Start Date"
+                    value={billingDate}
+                    onChange={(e) => setBillingDate(e.target.value)}
                   />
-                  <Input
-                    size="xs"
+                  {/* <Input
+                    size="sm"
                     clearable
-                    contentRight={loading && <Loading size="xs" />}
+                    contentRight={loading && <Loading size="sm" />}
                     type={"date"}
                     placeholder="Billing End Date"
-                  />
+                    value={dueDate}
+                    onChange={(e) => setDueDate(e.target.value)}
+                  /> */}
                 </div>
                 <div className="flex flex-wrap justify-start space-x-24 mt-4">
                   <Input
-                    size="xs"
+                    size="sm"
                     clearable
-                    contentRight={loading && <Loading size="xs" />}
+                    contentRight={loading && <Loading size="sm" />}
                     placeholder="Vendor code"
+                    value={vendorCode}
+                    onChange={(e) => setVendorCode(e.target.value)}
                   />
                   <Input
-                    size="xs"
+                    size="sm"
                     clearable
-                    contentRight={loading && <Loading size="xs" />}
+                    contentRight={loading && <Loading size="sm" />}
                     placeholder="Vendor name"
+                    value={vendorName}
+                    onChange={(e) => setVendorName(e.target.value)}
                   />
-                  <select className="select select-ghost select-sm max-w-xs select-xs">
-                    <option disabled>Vendor Group</option>
-                    <option>Group A</option>
-                    <option>Group B</option>
-                    <option>Group C</option>
+                  <select
+                    className="select select-ghost select-sm max-w-xs select-xs"
+                    value={vendorID}
+                    onChange={(e) => setVendorID(e.target.value)}
+                  >
+                    <option>Vendor Group</option>
+                    {vendorGroup.map((i) => (
+                      <option value={i.id} key={i.id}>
+                        {i.title}
+                      </option>
+                    ))}
                   </select>
                   {/* </div>
                 <div className="flex flex-wrap justify-start space-x-24 mt-4"> */}
-                  <select className="select select-ghost select-sm max-w-xs select-xs">
-                    <option disabled>Status</option>
-                    <option>Open</option>
-                    <option>On Process</option>
-                    <option>Verify</option>
-                    <option>Rejected</option>
-                    <option>Approved</option>
+                  <select
+                    className="select select-ghost select-sm max-w-xs select-xs"
+                    value={statusID}
+                    onChange={(e) => setStatusID(e.target.value)}
+                  >
+                    <option>Status</option>
+                    {statusData.map((i) => (
+                      <option value={i.id} key={i.id}>
+                        {i.title}
+                      </option>
+                    ))}
                   </select>
                 </div>
               </div>

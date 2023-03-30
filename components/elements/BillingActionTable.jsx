@@ -1,50 +1,61 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { DateString } from "@/hooks";
-import { Button, Input, Pagination } from "@nextui-org/react";
+import { Button, Input, Pagination, Loading } from "@nextui-org/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ViewRejectDetail } from "..";
 import BillingApproveAlert from "./BillingApproveAlert";
-
-const classStatus = [
-  { status: "In Process", name: "bg-blue-500" },
-  { status: "Verify", name: "bg-green-500" },
-  { status: "Rejected", name: "bg-rose-500" },
-  { status: "Approved", name: "bg-indigo-500" },
-];
 
 const BillingActionTable = ({
   status,
   limitPage = 5,
   statusData = [],
   vendorGroup = [],
-  invData = [],
   token = {},
   reloadData = false,
+  searchData = false,
+  invData = [],
 }) => {
+  const [loading, setLoading] = useState(false);
   const [currentLimit, setCurrentLimit] = useState(0);
-  // const [invData, setInvData] = useState([]);
+  const [billingNo, setBillingNo] = useState(null);
+  const [billingDate, setBillingDate] = useState(null);
+  const [selectVendor, setSelectVendor] = useState(null);
 
-  // const fetchData = async () => {
-  //   setInvData(data);
-  // };
-
-  // useEffect(() => {
-  //   fetchData();
-  // }, [currentLimit]);
-
-  // useEffect(() => {
-  //   setCurrentLimit(limitPage);
-  // }, [limitPage]);
+  useEffect(() => {
+    searchData({
+      status: status.id,
+      vendorGroup: selectVendor,
+      billingNo: billingNo,
+      billingDate: billingDate,
+    });
+  }, [selectVendor, billingNo, billingDate]);
 
   return (
     <>
       <div className="mt-4 rounded-lg shadow p-4">
         <div className="flex justify-between">
           <div className="flex justify-start space-x-4">
-            <Input clearable placeholder="Billing No." />
-            <Input width="186px" type="date" placeholder="Billing Date" />
-            <select className="select select-ghost max-w-xs">
+            <Input
+              contentRight={loading ? <Loading size="sm" /> : null}
+              clearable
+              placeholder="Billing No."
+              value={billingNo}
+              onChange={(e) => setBillingNo(e.target.value)}
+            />
+            <Input
+              contentRight={loading ? <Loading size="sm" /> : null}
+              width="186px"
+              type="date"
+              placeholder="Billing Date"
+              value={billingDate}
+              onChange={(e) => setBillingDate(e.target.value)}
+            />
+            <select
+              className="select select-ghost max-w-xs"
+              value={selectVendor}
+              onChange={(e) => setSelectVendor(e.target.value)}
+            >
               <option disabled selected>
                 Vendor Group
               </option>
@@ -52,14 +63,6 @@ const BillingActionTable = ({
                 <option key={i.id} value={i.id}>
                   {i.title}
                 </option>
-              ))}
-            </select>
-            <select className="select select-ghost max-w-xs">
-              <option disabled selected>
-                Status
-              </option>
-              {statusData.map((i) => (
-                <option key={i.id}>{i.title}</option>
               ))}
             </select>
           </div>
@@ -85,6 +88,14 @@ const BillingActionTable = ({
                       d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
                     />
                   </svg>
+                }
+                onPress={() =>
+                  searchData({
+                    status: selectStatus,
+                    vendorGroup: selectVendor,
+                    billingNo: billingNo,
+                    billingDate: billingDate,
+                  })
                 }
               >
                 Search
@@ -222,7 +233,7 @@ const BillingActionTable = ({
               </table>
             </div>
 
-            <div className="mt-4 flex justify-between">
+            {/* <div className="mt-4 flex justify-between">
               <div className="flex justify-start">
                 <select
                   className="select select-bordered select-sm w-full max-w-xs"
@@ -238,7 +249,7 @@ const BillingActionTable = ({
               <div className="flex justify-end">
                 <Pagination total={2} initialPage={1} />
               </div>
-            </div>
+            </div> */}
           </>
         )}
       </div>

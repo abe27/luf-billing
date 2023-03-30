@@ -87,7 +87,7 @@ const BillingReportTable = ({
           </table>
         )}
       </div>
-      <div className="mt-4 flex justify-between">
+      {/* <div className="mt-4 flex justify-between">
         <div className="flex justify-start">
           <select
             className="select select-bordered select-sm w-full max-w-xs"
@@ -103,7 +103,7 @@ const BillingReportTable = ({
         <div className="flex justify-end">
           <Pagination total={1} initialPage={1} />
         </div>
-      </div>
+      </div> */}
     </>
   );
 };

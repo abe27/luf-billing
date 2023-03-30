@@ -8,13 +8,17 @@ import { useEffect, useState } from "react";
 
 const BillingMonitorPage = () => {
   const { data: session } = useSession();
+  const [invData, setInvData] = useState([]);
   const [statusData, setStatusData] = useState([]);
   const [vendorGroup, setVendorGroup] = useState([]);
 
-  const fetchStatus = async () => {
+  const fetchStatus = async (status_id) => {
     if (session?.user) {
-      // let url = `${process.env.API_HOST}/status?seq=0`;
-      const res = await fetch(`${process.env.API_HOST}/status`, {
+      let url = `${process.env.API_HOST}/status`;
+      if (status_id) {
+        url = `${process.env.API_HOST}/status?id=${status_id}`;
+      }
+      const res = await fetch(url, {
         method: "GET",
         headers: {
           Authorization: session?.user.accessToken,
@@ -43,8 +47,33 @@ const BillingMonitorPage = () => {
     }
   };
 
+  const fetchData = async (obj) => {
+    setInvData([]);
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", session?.user.accessToken);
+
+    var requestOptions = {
+      method: "GET",
+      headers: myHeaders,
+      redirect: "follow",
+    };
+    let url = `${process.env.API_HOST}/billing/list`;
+    if (obj) {
+      url = `${process.env.API_HOST}/billing/list?status_id=${obj.status}&billing_no=${obj.billingNo}&billing_date=${obj.billingDate}`;
+    }
+    // console.dir(url);
+    const res = await fetch(url, requestOptions);
+
+    if (res.ok) {
+      const data = await res.json();
+      setInvData(data.data);
+      console.dir(data.data);
+    }
+  };
+
   useEffect(() => {
-    if (session?.user) {
+    if (session) {
+      fetchData();
       fetchStatus();
       fetchVendorGroup();
     }
@@ -80,6 +109,7 @@ const BillingMonitorPage = () => {
                       invData={i.billing}
                       token={session?.user.accessToken}
                       reloadData={() => fetchStatus()}
+                      searchData={fetchData}
                     />
                   </div>
                 </TabPanel>
