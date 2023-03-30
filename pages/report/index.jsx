@@ -43,7 +43,6 @@ const BillingReportingPage = () => {
       `${process.env.API_HOST}/status`,
       session?.user.accessToken
     );
-
     setStatusData(data);
   };
 
