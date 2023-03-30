@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Modal,
   Button,
@@ -9,7 +9,12 @@ import {
 } from "@nextui-org/react";
 import Swal from "sweetalert2/dist/sweetalert2.js";
 
-const RejectBillingAlert = ({ id, docs = [] }) => {
+const RejectBillingAlert = ({
+  id,
+  docs = [],
+  token = null,
+  reloadData = false,
+}) => {
   const [visible, setVisible] = useState(false);
   const [selectRequire, setSelectRequire] = useState([]);
   const [remark, setRemark] = useState([]);
@@ -19,17 +24,61 @@ const RejectBillingAlert = ({ id, docs = [] }) => {
     console.dir(selectRequire);
   };
 
-  const handleSuccess = () => {
-    Swal.fire({
-      text: "Reject Success!",
-      icon: "success",
-      confirmButtonText: "OK",
-      confirmButtonColor: "#19B5FE",
+  const handleSuccess = async () => {
+    console.dir(selectRequire);
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", token);
+    myHeaders.append("Content-Type", "application/json");
+
+    var raw = JSON.stringify({
+      remark: remark,
+      reason: selectRequire,
     });
+
+    var requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw,
+      redirect: "follow",
+    };
+
+    const res = await fetch(
+      `${process.env.API_HOST}/billing/require/${id}`,
+      requestOptions
+    );
+
+    if (res.ok) {
+      Swal.fire({
+        text: "Reject Success!",
+        icon: "success",
+        confirmButtonText: "OK",
+        confirmButtonColor: "#19B5FE",
+      }).then((r) => reloadData());
+    }
   };
 
   const handlerReject = () => {
     setVisible(false);
+    if (selectRequire.length <= 0) {
+      Swal.fire({
+        text: "Please Select Document Requirements!",
+        icon: "warning",
+        confirmButtonText: "OK",
+        confirmButtonColor: "#19B5FE",
+      }).then((r) => setVisible(true));
+      return;
+    }
+
+    if (remark.length <= 0) {
+      Swal.fire({
+        text: "Please Enter your comment!",
+        icon: "warning",
+        confirmButtonText: "OK",
+        confirmButtonColor: "#19B5FE",
+      }).then((r) => setVisible(true));
+      return;
+    }
+
     Swal.fire({
       text: "Would you like to Confirm?",
       icon: "warning",
@@ -43,8 +92,33 @@ const RejectBillingAlert = ({ id, docs = [] }) => {
 
   const selectDocument = (id, e) => {
     let doc = { id: id, check: e };
-    setSelectRequire([doc, ...selectRequire]);
+    if (selectRequire.length > 0) {
+      let check = selectRequire.filter((x) => x.id === id);
+      if (check[0]) {
+        setSelectRequire((prevState) => {
+          const newItems = [...prevState];
+          newItems.map((item) => {
+            if (item.id === id) {
+              item.check = e;
+            }
+            return item;
+          });
+          return newItems;
+        });
+      } else {
+        setSelectRequire([doc, ...selectRequire]);
+      }
+    } else {
+      setSelectRequire([doc]);
+    }
   };
+
+  useEffect(() => {
+    if (visible) {
+      setSelectRequire([]);
+      setRemark("");
+    }
+  }, [visible]);
   return (
     <>
       <Button

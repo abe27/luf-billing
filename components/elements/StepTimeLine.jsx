@@ -1,23 +1,21 @@
-import { useEffect, useState } from "react";
-import { RandomDateString } from "@/hooks";
-import { MdUploadFile, MdEditDocument } from "react-icons/md";
-import { TbFileCheck, TbChecks } from "react-icons/tb";
+import { MdEditDocument, MdUploadFile } from "react-icons/md";
+import { TbChecks, TbFileCheck } from "react-icons/tb";
 
-const StepTimeLine = ({ data = [], stepComplete = [] }) => {
-  const checkComplete = (i) => {
-    let com = stepComplete.filter(
-      (x) => x.step_title_id === i.id && x.is_complete === true
-    );
-    if (com[0]) {
-      return "complete";
-    }
-    return "not-complete";
-  };
+const StepTimeLine = ({ step = {}, data = [] }) => {
   return (
     <>
       <div className="flex justify-between mt-4">
         {data?.map((i, x) => (
-          <div key={x} className={`step-item ${checkComplete(i)}`}>
+          <div
+            key={x}
+            className={`step-item ${
+              step.seq + 1 === 4
+                ? "not-complete"
+                : x + 1 <= step.seq
+                ? "complete"
+                : "not-complete"
+            }`}
+          >
             <div className="step">
               {x === 0 && <MdUploadFile size={26} />}
               {x === 1 && <MdEditDocument size={26} />}

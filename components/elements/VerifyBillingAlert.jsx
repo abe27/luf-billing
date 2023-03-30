@@ -2,14 +2,36 @@ import { Button } from "@nextui-org/react";
 import Swal from "sweetalert2/dist/sweetalert2.js";
 import "sweetalert2/src/sweetalert2.scss";
 
-const VerifyBillingAlert = ({ id }) => {
-  const handleSuccess = () => {
-    Swal.fire({
-      text: "Success Verification!",
-      icon: "success",
-      confirmButtonText: "OK",
-      confirmButtonColor: "#19B5FE",
-    });
+const VerifyBillingAlert = ({ id, token, reloadData }) => {
+  const handleSuccess = async () => {
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", token);
+    myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
+
+    var urlencoded = new URLSearchParams();
+    urlencoded.append("title", "Verify");
+    urlencoded.append("is_active", "true");
+
+    var requestOptions = {
+      method: "PUT",
+      headers: myHeaders,
+      body: urlencoded,
+      redirect: "follow",
+    };
+
+    const res = await fetch(
+      `${process.env.API_HOST}/billing/require/${id}`,
+      requestOptions
+    );
+
+    if (res.ok) {
+      Swal.fire({
+        text: "Success Verification!",
+        icon: "success",
+        confirmButtonText: "OK",
+        confirmButtonColor: "#19B5FE",
+      }).then((r) => reloadData());
+    }
   };
 
   const handleClick = () => {

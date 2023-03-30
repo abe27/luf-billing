@@ -1,26 +1,71 @@
-import { useState } from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useEffect, useState } from "react";
 import Swal from "sweetalert2/dist/sweetalert2.js";
 import { Modal, Input, Row, Textarea, Button, Text } from "@nextui-org/react";
 
-const BillingApproveAlert = () => {
+const BillingApproveAlert = ({ id, token, reloadData = false }) => {
   const [visible, setVisible] = useState(false);
-  const handler = () => setVisible(true);
-  const closeHandler = () => {
-    setVisible(false);
-    console.log("closed");
-  };
+  const [paymentDate, setPaymentDate] = useState(null);
+  const [details, setDetails] = useState(null);
 
-  const handleSuccess = () => {
-    Swal.fire({
-      text: "Approved Success!",
-      icon: "success",
-      confirmButtonText: "OK",
-      confirmButtonColor: "#19B5FE",
-    });
+  const handleSuccess = async () => {
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", token);
+    myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
+
+    var urlencoded = new URLSearchParams();
+    urlencoded.append("payment_date", `${paymentDate}T00:00:00.000Z`);
+    urlencoded.append("detail", details.replace("null", "-"));
+    urlencoded.append("status_id", "Approved");
+
+    var requestOptions = {
+      method: "PUT",
+      headers: myHeaders,
+      body: urlencoded,
+      redirect: "follow",
+    };
+
+    const res = await fetch(
+      `${process.env.API_HOST}/billing/approve/${id}`,
+      requestOptions
+    );
+
+    if (res.ok) {
+      Swal.fire({
+        text: "Approved Success!",
+        icon: "success",
+        confirmButtonText: "OK",
+        confirmButtonColor: "#19B5FE",
+      }).then((r) => {
+        setVisible(false);
+        reloadData();
+      });
+    }
+
+    if (!res.ok) {
+      Swal.fire({
+        text: res.statusText,
+        icon: "error",
+        confirmButtonText: "OK",
+        confirmButtonColor: "#19B5FE",
+      }).then((r) => {
+        setVisible(false);
+      });
+    }
   };
 
   const handlerApprove = () => {
     setVisible(false);
+    if (!paymentDate) {
+      Swal.fire({
+        text: "Please select payment date!",
+        icon: "error",
+        confirmButtonText: "OK",
+        confirmButtonColor: "#19B5FE",
+      }).then((r) => setVisible(true));
+      return;
+    }
+
     Swal.fire({
       text: "Would you like to Confirm?",
       icon: "warning",
@@ -31,6 +76,13 @@ const BillingApproveAlert = () => {
       preConfirm: () => handleSuccess(),
     });
   };
+
+  useEffect(() => {
+    if (visible) {
+      setPaymentDate("");
+      setDetails("-");
+    }
+  }, [visible]);
 
   return (
     <>
@@ -55,11 +107,11 @@ const BillingApproveAlert = () => {
             />
           </svg>
         }
-        onPress={handler}
+        onPress={() => setVisible(true)}
       >
         Approve
       </Button>
-      <Modal closeButton blur open={visible} onClose={closeHandler}>
+      <Modal closeButton blur open={visible} onClose={() => setVisible(false)}>
         <Modal.Header>
           <Text id="modal-title" size={18}>
             Approve Detail
@@ -74,6 +126,8 @@ const BillingApproveAlert = () => {
               label="Payment Date"
               placeholder="Payment Date"
               type="date"
+              value={paymentDate}
+              onChange={(e) => setPaymentDate(e.target.value)}
             />
           </Row>
           <Row>
@@ -81,6 +135,8 @@ const BillingApproveAlert = () => {
               label="Comment"
               placeholder="Enter your comment here"
               fullWidth={true}
+              value={details}
+              onChange={(e) => setDetails(e.target.value)}
             />
           </Row>
         </Modal.Body>
@@ -128,7 +184,7 @@ const BillingApproveAlert = () => {
                 />
               </svg>
             }
-            onPress={closeHandler}
+            onPress={() => setVisible(false)}
           >
             Cancel
           </Button>

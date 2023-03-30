@@ -1,44 +1,67 @@
-import { useEffect, useState } from "react";
-import { useRouter } from "next/router";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { AvatarDetail, MainLayOut, StepTimeLine } from "@/components";
+import { DateString } from "@/hooks";
+import { Row, Spacer, Textarea } from "@nextui-org/react";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { MainLayOut, Stepper, StepTimeLine } from "@/components";
-import { Badge, Avatar, Row, Textarea, Input, Spacer } from "@nextui-org/react";
-import { RandomName, RandomTotalStatus } from "@/hooks";
-
-let doc = [
-  {
-    id: 0,
-    label: "1.Purchase Order",
-    filename: "PurchaseOrder.pdf",
-    size: 100,
-  },
-  {
-    id: 0,
-    label: "2.Text Invoioce/Delivery Order",
-    filename: "Invoice.pdf",
-    size: 100,
-  },
-  { id: 0, label: "3.Receipt", filename: "Receipt.pdf", size: 100 },
-  { id: 0, label: "4.Bill", filename: "bill.pdf", size: 100 },
-];
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 
 const BillingApprovePage = () => {
   const router = useRouter();
-  const [fullName, setFullName] = useState("");
-  const [totalOpen, setTotalOpen] = useState(0);
-  const [totalProcess, setTotalProcess] = useState(0);
-  const [totalApprove, setTotalApprove] = useState(0);
-  const [totalReject, setTotalReject] = useState(0);
+  const { data: session } = useSession();
+  const [billing, setBilling] = useState([]);
+  const [stepData, setStepData] = useState([]);
+  const [paymentDate, setPaymentDate] = useState(null);
+  const [comment, setComment] = useState(null);
+
+  const fetchData = async () => {
+    let id = router.query["id"];
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", session?.user.accessToken);
+
+    var requestOptions = {
+      method: "GET",
+      headers: myHeaders,
+      redirect: "follow",
+    };
+
+    const res = await fetch(
+      `${process.env.API_HOST}/billing/list?id=${id}`,
+      requestOptions
+    );
+
+    if (res.ok) {
+      const data = await res.json();
+      setComment(data.data.detail);
+      setBilling(data.data);
+      console.dir(data.data);
+    }
+  };
+
+  const fetchStep = async () => {
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", session?.user.accessToken);
+
+    var requestOptions = {
+      method: "GET",
+      headers: myHeaders,
+      redirect: "follow",
+    };
+
+    const res = await fetch(`${process.env.API_HOST}/step`, requestOptions);
+    if (res.ok) {
+      const data = await res.json();
+      setStepData(data.data);
+    }
+  };
 
   useEffect(() => {
-    let n = RandomName();
-    setFullName(n);
-    let p = RandomTotalStatus();
-    setTotalOpen(p[0]);
-    setTotalProcess(p[1]);
-    setTotalApprove(p[2]);
-    setTotalReject(p[3]);
-  }, []);
+    if (session) {
+      fetchStep();
+      fetchData();
+    }
+  }, [session, router]);
   return (
     <>
       <MainLayOut
@@ -54,103 +77,17 @@ const BillingApprovePage = () => {
         </div>
         <div className="mt-4 flex justify-between space-x-2">
           <div className="flex justify-start w-fit">
-            <div className="justify-center bg-white rounded-lg">
-              <div className="grid justify-center items-center m-10">
-                <Avatar
-                  src="/emp.png"
-                  css={{ size: "$150" }}
-                />
-                <div className="text-center">
-                  <span className="text-4xm font-bold">{fullName}</span>
-                </div>
-                <div className="text-center">
-                  <span className="text-4xm text-gray-500">
-                    {process.env.APP_NAME}
-                  </span>
-                </div>
-              </div>
-              <div className="p-4">
-                <div className="mt-4 grid grid-rows-1">
-                  <>
-                    <span className="text-4xm text-bold">Billing No.</span>
-                  </>
-                  <>
-                    <div className="text-gray-600 bg-gray-200 rounded p-2 w-auto">
-                      {router.query["id"]}
-                    </div>
-                  </>
-                </div>
-                <div className="mt-4 grid">
-                  <>
-                    <span className="text-4xm text-bold">Billing Total</span>
-                  </>
-                  <div className="flex items-center justify-between text-center space-x-4 mt-4">
-                    <>
-                      <div className="grid grid-rows-2 rounded-lg bg-gray-100 p-2 shadow">
-                        <span className="text-xs">
-                          {totalOpen.toLocaleString()}
-                        </span>
-                        <span className="text-xs">Open</span>
-                      </div>
-                    </>
-                    <div className="w-20">
-                      <div className="grid grid-rows-2 rounded-lg bg-gray-100 p-2 shadow">
-                        <span className="text-xs">
-                          {totalProcess.toLocaleString()}
-                        </span>
-                        <span className="text-xs">On Process</span>
-                      </div>
-                    </div>
-                    <>
-                      <div className="grid grid-rows-2 rounded-lg bg-gray-100 p-2 shadow">
-                        <span className="text-xs">
-                          {totalApprove.toLocaleString()}
-                        </span>
-                        <span className="text-xs">Approved</span>
-                      </div>
-                    </>
-                    <>
-                      <div className="grid grid-rows-2 rounded-lg bg-gray-100 p-2 shadow">
-                        <span className="text-xs">
-                          {totalReject.toLocaleString()}
-                        </span>
-                        <span className="text-xs">Rejected</span>
-                      </div>
-                    </>
-                  </div>
-                </div>
-                <div className="mt-4 grid grid-rows-1">
-                  <>
-                    <span className="text-4xm text-bold">Detail</span>
-                  </>
-                  <Badge color="secondary" variant="bordered">
-                    Vendor
-                  </Badge>
-                </div>
-                <div className="mt-4 grid grid-rows-1">
-                  <>
-                    <span className="text-4xm text-bold">Username</span>
-                  </>
-                  <>
-                    <span className="text-xs">USER-XXXXXX</span>
-                  </>
-                </div>
-                <div className="mt-4 grid grid-rows-1">
-                  <>
-                    <span className="text-4xm text-bold">E-Mail</span>
-                  </>
-                  <>
-                    <span className="text-xs">E-Mail Address</span>
-                  </>
-                </div>
-              </div>
-            </div>
+            <AvatarDetail
+              isShowBilling={true}
+              billing={billing}
+              user={session?.user}
+            />
           </div>
           <div className="p-4 w-full">
             <div className="bg-white rounded p-4">
               <span className="text-4xm text-bold">Status</span>
               <>
-                <StepTimeLine />
+                <StepTimeLine step={billing?.status} data={stepData} />
               </>
             </div>
             <div className="bg-white rounded p-4 mt-4 grid">
@@ -158,34 +95,18 @@ const BillingApprovePage = () => {
                 <span className="text-4xm text-bold">Payment due date</span>
               </div>
               <Row>
-                <Input
-                  readOnly
-                  fullWidth
-                  type="date"
-                  contentLeft={
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth="1.5"
-                      stroke="currentColor"
-                      className="w-4 h-4"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"
-                      />
-                    </svg>
-                  }
-                />
+                <span className="text-sm bg-gray-100 p-2 w-full rounded shadow">
+                  {DateString(billing?.payment_date)}
+                </span>
               </Row>
               <Spacer y={1} />
               <Row>
                 <Textarea
+                  readOnly
                   label="Comment"
                   placeholder="Enter your comment here"
                   fullWidth={true}
+                  value={comment}
                 />
               </Row>
             </div>
@@ -194,12 +115,12 @@ const BillingApprovePage = () => {
                 <span className="text-4xm text-bold">Required Documents</span>
               </>
               <div className="mt-4">
-                {doc.map((i, index) => (
+                {billing?.document_list?.map((i, index) => (
                   <div key={index}>
                     {/* <Input readOnly fullWidth label={i.label} /> */}
                     <div>
                       <span className="text-4xm text-bold">
-                        {i.label}
+                        {i.document.title}
                         <span className="text-rose-500">*</span>
                       </span>
                     </div>
@@ -207,12 +128,12 @@ const BillingApprovePage = () => {
                       <div className="flex justify-between w-full rounded bg-gray-100 p-2">
                         <div className="flex justify-start">
                           <span className="text-4xm text-bold">
-                            {i.filename}
+                            {i.file_name}
                           </span>
                         </div>
                         <div className="flex justify-end">
                           <span className="text-4xm text-bold">
-                            {i.size.toLocaleString()}kb
+                            {i.file_size.toLocaleString()}kb
                           </span>
                         </div>
                       </div>

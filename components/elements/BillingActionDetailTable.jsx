@@ -1,9 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useState } from "react";
-import { Button, Pagination } from "@nextui-org/react";
-import { DateTime, RandomDateString, RandomDocumentName } from "@/hooks";
-import VerifyBillingAlert from "./VerifyBillingAlert";
+import { DateTime } from "@/hooks";
 import RejectBillingAlert from "./RejectBillingAlert";
+import VerifyBillingAlert from "./VerifyBillingAlert";
 import ViewBillingPDF from "./ViewBillingPDF";
 
 const BillingActionDetailTable = ({
@@ -11,15 +9,26 @@ const BillingActionDetailTable = ({
   documents = [],
   token = null,
   documentList = [],
+  reloadData = false,
 }) => {
+  const RefreshData = () => reloadData();
   return (
     <>
       <div className="flex justify-end space-x-4">
         <div className="z-0">
-          <RejectBillingAlert docs={documentList} id={billing_id} />
+          <RejectBillingAlert
+            docs={documentList}
+            id={billing_id}
+            token={token}
+            reloadData={RefreshData}
+          />
         </div>
         <div className="z-0">
-          <VerifyBillingAlert id={billing_id} />
+          <VerifyBillingAlert
+            id={billing_id}
+            token={token}
+            reloadData={RefreshData}
+          />
         </div>
       </div>
       <div className="mt-4">

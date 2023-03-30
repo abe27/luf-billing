@@ -1,15 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useState, useEffect } from "react";
-import { Pagination, Input, Button, Tooltip } from "@nextui-org/react";
-import {
-  RandomDateString,
-  RandomAmount,
-  RandomVendorcode,
-  DateString,
-} from "@/hooks";
+import { DateString } from "@/hooks";
+import { Button, Input, Pagination } from "@nextui-org/react";
 import Link from "next/link";
-import BillingApproveAlert from "./BillingApproveAlert";
+import { useEffect, useState } from "react";
 import { ViewRejectDetail } from "..";
+import BillingApproveAlert from "./BillingApproveAlert";
 
 const classStatus = [
   { status: "In Process", name: "bg-blue-500" },
@@ -23,31 +18,24 @@ const BillingActionTable = ({
   limitPage = 5,
   statusData = [],
   vendorGroup = [],
-  data = [],
+  invData = [],
+  token = {},
+  reloadData = false,
 }) => {
   const [currentLimit, setCurrentLimit] = useState(0);
-  const [invData, setInvData] = useState([]);
+  // const [invData, setInvData] = useState([]);
 
-  const fetchData = async () => {
-    setInvData(data);
-  };
+  // const fetchData = async () => {
+  //   setInvData(data);
+  // };
 
-  const checkStatus = (txt) => {
-    classStatus.map((item, index) => {
-      console.log(item.status.seq === txt);
-      if (item.status.seq === txt) {
-        return item.name;
-      }
-    });
-  };
+  // useEffect(() => {
+  //   fetchData();
+  // }, [currentLimit]);
 
-  useEffect(() => {
-    fetchData();
-  }, [currentLimit]);
-
-  useEffect(() => {
-    setCurrentLimit(limitPage);
-  }, [limitPage]);
+  // useEffect(() => {
+  //   setCurrentLimit(limitPage);
+  // }, [limitPage]);
 
   return (
     <>
@@ -191,8 +179,12 @@ const BillingActionTable = ({
                               Verify
                             </Button>
                           </Link>
-                        ) : status.seq === 4 ? (
-                          <BillingApproveAlert />
+                        ) : status.seq === 2 ? (
+                          <BillingApproveAlert
+                            id={i.id}
+                            reloadData={() => reloadData()}
+                            token={token}
+                          />
                         ) : status.seq === 3 ? (
                           <ViewRejectDetail />
                         ) : (

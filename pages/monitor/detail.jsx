@@ -1,16 +1,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useState } from "react";
+import {
+  AvatarDetail,
+  BillingActionDetailTable,
+  MainLayOut,
+} from "@/components";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import {
-  MainLayOut,
-  BillingActionDetailTable,
-  AvatarDetail,
-} from "@/components";
-import { Avatar, Input, Badge } from "@nextui-org/react";
-import { RandomTotalStatus, RandomName } from "@/hooks";
-import { useEffect } from "react";
-import { useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
 
 const BillingMonitorDetailPage = () => {
   const router = useRouter();
@@ -18,7 +15,8 @@ const BillingMonitorDetailPage = () => {
   const [billing, setBilling] = useState({});
   const [documentList, setDocumentList] = useState([]);
 
-  const fetchData = async (id) => {
+  const fetchData = async () => {
+    let id = router.query["id"];
     var myHeaders = new Headers();
     myHeaders.append("Authorization", session?.user.accessToken);
 
@@ -64,11 +62,10 @@ const BillingMonitorDetailPage = () => {
 
   useEffect(() => {
     if (session) {
-      let id = router.query["id"];
-      fetchData(id);
+      fetchData();
       fetchDocumentListData();
     }
-  }, [session]);
+  }, [session, router]);
   return (
     <>
       <MainLayOut
@@ -99,6 +96,7 @@ const BillingMonitorDetailPage = () => {
                 documents={billing?.document_list}
                 token={session?.user.accessToken}
                 documentList={documentList}
+                reloadData={() => router.push("/overdue")}
               />
             </div>
           </div>

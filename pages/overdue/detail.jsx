@@ -115,6 +115,7 @@ const OverdueBillingDetailPage = () => {
             <div className="grid rounded shadow p-4 bg-white">
               <span className="text-4xm">Status</span>
               <StepTimeLine
+                step={billing?.status}
                 data={stepData}
                 stepComplete={billing?.billing_step}
               />

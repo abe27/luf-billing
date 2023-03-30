@@ -77,7 +77,9 @@ const BillingMonitorPage = () => {
                       limitPage={i.billing.length}
                       statusData={statusData}
                       vendorGroup={vendorGroup}
-                      data={i.billing}
+                      invData={i.billing}
+                      token={session?.user.accessToken}
+                      reloadData={() => fetchStatus()}
                     />
                   </div>
                 </TabPanel>
