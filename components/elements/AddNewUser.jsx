@@ -17,6 +17,7 @@ const AddNewUser = ({
   const [roleData, setRoleData] = useState([]);
   const [imageUrl, setImageUrl] = useState(null);
   const [username, setUsername] = useState(null);
+  const [password, setPassword] = useState(null);
   const [fullName, setFullName] = useState(null);
   const [email, setEmail] = useState(null);
   const [company, setCompany] = useState(null);
@@ -37,7 +38,7 @@ const AddNewUser = ({
     }
   };
 
-  console.dir(process.env.DEFAULT_PASSWORD);
+  // console.dir(process.env.DEFAULT_PASSWORD);
 
   const handleSuccess = async () => {
     var formdata = new FormData();
@@ -45,7 +46,7 @@ const AddNewUser = ({
     formdata.append("full_name", fullName);
     formdata.append("email", email);
     formdata.append("company", company);
-    formdata.append("password", process.env.DEFAULT_PASSWORD);
+    formdata.append("password", password);
     formdata.append("role_id", role);
     if (inputRef.current.value) {
       formdata.append(
@@ -110,6 +111,19 @@ const AddNewUser = ({
       toast({
         title: "Alert Message",
         description: "Please enter your Username?",
+        status: "error",
+        duration: 1500,
+        isClosable: true,
+        position: "top",
+        onCloseComplete: () => setVisible(true),
+      });
+      return;
+    }
+
+    if (!password) {
+      toast({
+        title: "Alert Message",
+        description: "Please enter your Password?",
         status: "error",
         duration: 1500,
         isClosable: true,
@@ -293,6 +307,7 @@ const AddNewUser = ({
         </Button>
       )}
       <Modal
+        width="600px"
         preventClose
         blur
         closeButton
@@ -312,7 +327,7 @@ const AddNewUser = ({
                 onClick={handleUploadExcelClick}
               >
                 {/* <Avatar size="2xl" src="https://placehold.co/600x600" /> */}
-                <Avatar size="2xl" src={imageUrl} />
+                <Avatar size="xl" src={imageUrl} />
               </div>
               <div className="flex justify-center mt-2">
                 {/* {inputRef?.current?.value ? (
@@ -333,13 +348,24 @@ const AddNewUser = ({
               <Input
                 fullWidth
                 clearable
+                label="Password"
+                placeholder="Password"
+                type={"paassword"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+            <div className="mt-4">
+              <Input
+                fullWidth
+                clearable
                 label="Full Name"
                 placeholder="Full Name"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
               />
             </div>
-            <div className="mt-4">
+            <div className="mt-4 flex justify-between space-x-4">
               <Input
                 fullWidth
                 clearable
@@ -348,8 +374,6 @@ const AddNewUser = ({
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
-            </div>
-            <div className="mt-4">
               <Input
                 fullWidth
                 clearable
@@ -364,7 +388,7 @@ const AddNewUser = ({
                 {roleData?.map((i, x) => (
                   <Radio value={i.title} key={x}>
                     <div className="grid grid-rows-2">
-                      <span className="text-sm font-bold">{i.title}</span>
+                      <span className="text-sm">{i.title}</span>
                       <span className="text-xs">{i.description}</span>
                     </div>
                   </Radio>
