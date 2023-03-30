@@ -2,10 +2,13 @@
 import { BillingReportTable, MainLayOut } from "@/components";
 import { Button, Input, Loading } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getData } from "@/hooks/handler";
+import { ColorInt, DateString } from "@/hooks";
+import { useDownloadExcel } from "react-export-table-to-excel";
 
 const BillingReportingUserPage = () => {
+  const tableRef = useRef();
   const { data: session } = useSession();
   const [loading, setLoading] = useState(false);
   const [currentLimit, setCurrentLimit] = useState(5);
@@ -14,6 +17,12 @@ const BillingReportingUserPage = () => {
   const [billingDate, setBillingDate] = useState(null);
   const [statusID, setStatusID] = useState(null);
   const [data, setData] = useState([]);
+
+  const { onDownload } = useDownloadExcel({
+    currentTableRef: tableRef.current,
+    filename: `ExportBillingReport`,
+    sheet: "Billing Report",
+  });
 
   const fetchData = async (url) => {
     setLoading(true);
@@ -171,21 +180,57 @@ const BillingReportingUserPage = () => {
                     />
                   </svg>
                 }
-                onClick={handleExportExcelClick}
+                onClick={onDownload}
               >
                 Export Excel
               </Button>
             </div>
           </div>
-          <>
-            <BillingReportTable
+          <div className="mt-4">
+            <table
+              className="table table-hover table-compact w-full"
+              ref={tableRef}
+            >
+              <thead>
+                <tr>
+                  <th className="normal-case">No.</th>
+                  <th className="normal-case">Billing No.</th>
+                  <th className="normal-case">Billing Date</th>
+                  <th className="normal-case">Due Date</th>
+                  <th className="normal-case">Amount</th>
+                  <th className="normal-case">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {data.map((i, x) => (
+                  <tr key={i.id}>
+                    <td>{x + 1}</td>
+                    <td>{i.billing_no}</td>
+                    <td>{DateString(i.billing_date)}</td>
+                    <td>{DateString(i.due_date)}</td>
+                    <td>{i.amount.toLocaleString()}</td>
+                    <td>
+                      <Button
+                        flat
+                        color={ColorInt(i.status.seq)}
+                        auto
+                        size={"xs"}
+                      >
+                        {i.status.title}
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            {/* <BillingReportTable
               data={data}
               limit={currentLimit}
               page={2}
               changeLimit={handlerChangeLimit}
               isAdmin={false}
-            />
-          </>
+            /> */}
+          </div>
         </div>
       </MainLayOut>
     </>

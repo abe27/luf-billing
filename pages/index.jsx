@@ -13,8 +13,10 @@ import { useToast } from "@chakra-ui/react";
 import { DateString } from "@/hooks";
 import Swal from "sweetalert2/dist/sweetalert2.js";
 import { useRouter } from "next/router";
+import { useDownloadExcel } from "react-export-table-to-excel";
 
 const IndexPage = () => {
+  const tableRef = useRef();
   const { data: session } = useSession();
   const router = useRouter();
   const inputRef = useRef();
@@ -26,6 +28,12 @@ const IndexPage = () => {
   const [invData, setInvData] = useState([]);
   const [billing_no, setBillingNo] = useState("");
   const [billing_date, setBillingDate] = useState("");
+
+  const { onDownload } = useDownloadExcel({
+    currentTableRef: tableRef.current,
+    filename: `ExportBilling`,
+    sheet: "Billing Report",
+  });
 
   const fetchData = async () => {
     setInvData([]);
@@ -260,7 +268,7 @@ const IndexPage = () => {
                       <path d="M11 11v7"></path>
                     </svg>
                   }
-                  onClick={handleUploadExcelClick}
+                  onClick={onDownload}
                 >
                   Import Excel
                 </Button>
@@ -270,7 +278,10 @@ const IndexPage = () => {
           {invData.length > 0 && (
             <>
               <div className="mt-4">
-                <table className="table table-hover table-compact w-full">
+                <table
+                  className="table table-hover table-compact w-full"
+                  ref={tableRef}
+                >
                   <thead>
                     <tr>
                       <th className="normal-case">No.</th>

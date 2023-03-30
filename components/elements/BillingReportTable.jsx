@@ -2,6 +2,7 @@ import { ColorInt, DateString } from "@/hooks";
 import { Button, Input, Loading, Pagination } from "@nextui-org/react";
 
 const BillingReportTable = ({
+  refName = null,
   data,
   limit = 10,
   page = 3,
@@ -12,7 +13,10 @@ const BillingReportTable = ({
     <>
       <div className="mt-4">
         {isAdmin ? (
-          <table className="table table-hover table-compact w-full">
+          <table
+            className="table table-hover table-compact w-full"
+            ref={refName}
+          >
             <thead>
               <tr>
                 <th className="normal-case">No.</th>

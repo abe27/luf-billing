@@ -2,9 +2,10 @@
 import { DateString } from "@/hooks";
 import { Button, Input, Pagination, Loading } from "@nextui-org/react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { ViewRejectDetail } from "..";
 import BillingApproveAlert from "./BillingApproveAlert";
+import { useDownloadExcel } from "react-export-table-to-excel";
 
 const BillingActionTable = ({
   status,
@@ -16,11 +17,18 @@ const BillingActionTable = ({
   searchData = false,
   invData = [],
 }) => {
+  const tableRef = useRef();
   const [loading, setLoading] = useState(false);
   const [currentLimit, setCurrentLimit] = useState(0);
   const [billingNo, setBillingNo] = useState(null);
   const [billingDate, setBillingDate] = useState(null);
   const [selectVendor, setSelectVendor] = useState(null);
+
+  const { onDownload } = useDownloadExcel({
+    currentTableRef: tableRef.current,
+    filename: `ExportBilling${status.title}`,
+    sheet: "Billing Monitor Report",
+  });
 
   useEffect(() => {
     searchData({
@@ -126,6 +134,7 @@ const BillingActionTable = ({
                     <path d="M11 11v7"></path>
                   </svg>
                 }
+                onPress={onDownload}
               >
                 Export Excel
               </Button>
@@ -135,7 +144,10 @@ const BillingActionTable = ({
         {invData.length > 0 && (
           <>
             <div className="mt-4">
-              <table className="table table-hover table-compact w-full">
+              <table
+                className="table table-hover table-compact w-full"
+                ref={tableRef}
+              >
                 <thead>
                   <tr>
                     <th className="normal-case">No.</th>
