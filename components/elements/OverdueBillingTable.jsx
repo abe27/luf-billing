@@ -168,7 +168,7 @@ const OverdueBillingTable = ({ status, token }) => {
                 </tbody>
               </table>
             </div>
-            {data?.length > 0 ? (
+            {/* {data?.length > 0 ? (
               <div className="mt-4 flex justify-between">
                 <div className="flex justify-start">
                   <select
@@ -188,7 +188,7 @@ const OverdueBillingTable = ({ status, token }) => {
               </div>
             ) : (
               <></>
-            )}
+            )} */}
           </>
         </div>
       </div>

@@ -19,7 +19,7 @@ const NavBarTop = () => {
     <>
       {/* Navigation starts */}
       <nav className="w-full mx-auto bg-white shadow">
-        <div className="justify-between h-16 flex items-stretch mx-auto">
+        <div className="justify-between h-16 flex items-stretch mx-auto pl-4 pr-4">
           <div className="h-full flex items-center ">
             <div className="pl-2 mr-2 flex items-center">
               <svg
