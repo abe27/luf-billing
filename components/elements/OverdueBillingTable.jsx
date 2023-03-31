@@ -26,7 +26,6 @@ const OverdueBillingTable = ({ vendor_group, status, token }) => {
     };
 
     let url = `${process.env.API_HOST}/billing/list?vendor_group=${vendor_group}&status_id=${status.id}&billing_no=${billingNo}&billing_date=${billingDate}`;
-    console.dir(url);
     const res = await fetch(url, requestOptions);
 
     if (res.ok) {

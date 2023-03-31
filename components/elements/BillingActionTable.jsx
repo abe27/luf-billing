@@ -99,7 +99,7 @@ const BillingActionTable = ({
                 }
                 onPress={() =>
                   searchData({
-                    status: selectStatus,
+                    status: status.id,
                     vendorGroup: selectVendor,
                     billingNo: billingNo,
                     billingDate: billingDate,

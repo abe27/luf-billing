@@ -9,6 +9,11 @@ const NavBarTop = () => {
   const { data: session } = useSession();
   const [profile, setProfile] = useState(false);
 
+  const logout = () => {
+    sessionStorage.clear();
+    signOut();
+  };
+
   useEffect(() => {
     if (session?.error === "RefreshAccessTokenError") {
       router.push("/login");
@@ -121,7 +126,7 @@ const NavBarTop = () => {
                       </li>
                       <li
                         className="cursor-pointer text-gray-600 text-sm leading-3 tracking-normal mt-2 py-2 hover:text-indigo-700 flex items-center focus:text-indigo-700 focus:outline-none"
-                        onClick={(e) => signOut()}
+                        onClick={logout}
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
