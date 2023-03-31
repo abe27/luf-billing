@@ -63,6 +63,7 @@ export const authOptions = {
           email: user.data.user.email,
           company: user.data.user.company,
           role: user.data.user.role.title,
+          vendor_group: user.data.user.vendor_group_id,
           isAdmin: user.data.user.role.title === "Administrator",
           avatar_url: user.data.user.avatar_url,
           accessToken: `${user.data.type} ${user.data.token}`,
@@ -78,6 +79,7 @@ export const authOptions = {
       session.user.fullName = token.fullName;
       session.user.email = token.email;
       session.user.role = token.role;
+      session.user.vendor_group = token.vendor_group;
       session.user.isAdmin = token.isAdmin;
       session.user.company = token.company;
       session.user.avatar_url = token.avatar_url;

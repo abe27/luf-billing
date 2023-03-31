@@ -26,6 +26,7 @@ const UserActionTable = ({
               <th className="normal-case">Name</th>
               <th className="normal-case">E-Mail</th>
               <th className="normal-case">Role</th>
+              <th className="normal-case">Vendor</th>
               <th className="normal-case">Company</th>
               <th className="normal-case">Create Date</th>
               <th className="normal-case">Action</th>
@@ -52,6 +53,7 @@ const UserActionTable = ({
                       {i.role.title}
                     </span>
                   </td>
+                  <td>{i.vendor_group.title}</td>
                   <td>{i.company}</td>
                   <td>{DateTime(i.created_at)}</td>
                   <td>

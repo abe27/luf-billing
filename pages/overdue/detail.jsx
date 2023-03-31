@@ -127,6 +127,7 @@ const OverdueBillingDetailPage = () => {
               </div>
             ) : null}
             <RequiredDocuments
+              isAdmin={session?.user.isAdmin}
               billing_id={billing.id}
               fileType={documentList}
               status={statusTitle}

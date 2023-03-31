@@ -96,7 +96,11 @@ const BillingMonitorDetailPage = () => {
                 documents={billing?.document_list}
                 token={session?.user.accessToken}
                 documentList={documentList}
-                reloadData={() => router.push("/overdue")}
+                reloadData={() =>
+                  session?.user.isAdmin
+                    ? router.push("/monitor")
+                    : router.push("/overdue")
+                }
               />
             </div>
           </div>

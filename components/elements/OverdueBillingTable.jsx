@@ -5,7 +5,7 @@ import { DateString, RandomAmount, RandomDateString } from "@/hooks";
 import { IconStatus } from "..";
 import Link from "next/link";
 
-const OverdueBillingTable = ({ status, token }) => {
+const OverdueBillingTable = ({ vendor_group, status, token }) => {
   const [loading, setLoading] = useState(false);
   const [currentLimit, setCurrentLimit] = useState(5);
   const [data, setData] = useState([]);
@@ -25,7 +25,8 @@ const OverdueBillingTable = ({ status, token }) => {
       redirect: "follow",
     };
 
-    let url = `${process.env.API_HOST}/billing/list?status_id=${status.id}&billing_no=${billingNo}&billing_date=${billingDate}`;
+    let url = `${process.env.API_HOST}/billing/list?vendor_group=${vendor_group}&status_id=${status.id}&billing_no=${billingNo}&billing_date=${billingDate}`;
+    console.dir(url);
     const res = await fetch(url, requestOptions);
 
     if (res.ok) {

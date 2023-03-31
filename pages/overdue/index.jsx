@@ -19,22 +19,24 @@ const OverdueBillingPage = () => {
   const [statusData, setStatusData] = useState([]);
 
   const fetchStatusData = async () => {
-    const response = await fetch(`${process.env.API_HOST}/status`, {
+    setStatusData([]);
+    let url = `${process.env.API_HOST}/status?vendor_group=${session?.user.vendor_group}`;
+    if (session?.user.isAdmin) {
+      url = `${process.env.API_HOST}/status`;
+    }
+
+    const response = await fetch(url, {
       method: "GET",
       headers: {
         Authorization: session?.user.accessToken,
       },
     });
     const data = await response.json();
-    console.dir(data.data);
     setStatusData(data.data);
   };
 
   useEffect(() => {
-    if (session) {
-      // if (session?.user.isAdmin) {
-      //   router.push("/");
-      // }
+    if (session?.user) {
       fetchStatusData();
     }
   }, [session]);
@@ -72,6 +74,7 @@ const OverdueBillingPage = () => {
                     <TabPanel key={i.id}>
                       <div className="mt-4">
                         <OverdueBillingTable
+                          vendor_group={session?.user.vendor_group}
                           status={i}
                           token={session?.user.accessToken}
                         />

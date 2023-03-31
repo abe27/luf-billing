@@ -15,6 +15,7 @@ const AddNewUser = ({
   const toast = useToast();
   const [visible, setVisible] = useState(false);
   const [roleData, setRoleData] = useState([]);
+  const [vendorData, setVendorData] = useState([]);
   const [imageUrl, setImageUrl] = useState(null);
   const [username, setUsername] = useState(null);
   const [password, setPassword] = useState(null);
@@ -22,6 +23,7 @@ const AddNewUser = ({
   const [email, setEmail] = useState(null);
   const [company, setCompany] = useState(null);
   const [role, setRole] = useState(null);
+  const [vendorgroupid, setVendorgroupid] = useState(null);
 
   const handleUploadExcelClick = () => {
     inputRef.current.click();
@@ -48,6 +50,11 @@ const AddNewUser = ({
     formdata.append("company", company);
     formdata.append("password", password);
     formdata.append("role_id", role);
+    if (role === "Administrator") {
+      formdata.append("vendor_group_id", "-");
+    } else {
+      formdata.append("vendor_group_id", vendorgroupid);
+    }
     if (inputRef.current.value) {
       formdata.append(
         "avatar",
@@ -185,6 +192,21 @@ const AddNewUser = ({
       return;
     }
 
+    if (role !== "Administrator") {
+      if (!vendorgroupid) {
+        toast({
+          title: "Alert Message",
+          description: "Please Select Vendor Group?",
+          status: "error",
+          duration: 1500,
+          isClosable: true,
+          position: "top",
+          onCloseComplete: () => setVisible(true),
+        });
+        return;
+      }
+    }
+
     Swal.fire({
       text: "Would you like to Confirm?",
       icon: "warning",
@@ -214,8 +236,31 @@ const AddNewUser = ({
     }
   };
 
+  const fetchVendorGroup = async () => {
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", session?.user.accessToken);
+
+    var requestOptions = {
+      method: "GET",
+      headers: myHeaders,
+      redirect: "follow",
+    };
+
+    const res = await fetch(
+      `${process.env.API_HOST}/vendor/group`,
+      requestOptions
+    );
+
+    if (res.ok) {
+      const data = await res.json();
+      setVendorData(data.data);
+    }
+  };
+
   useEffect(() => {
     if (visible) {
+      fetchPermission();
+      fetchVendorGroup();
       document.body.style.overflow = "hidden";
       setImageUrl(null);
       setUsername(null);
@@ -223,7 +268,8 @@ const AddNewUser = ({
       setEmail(null);
       setCompany(null);
       setRole(null);
-      fetchPermission();
+      setVendorgroupid(null);
+
       if (userData) {
         setImageUrl(`${process.env.API_PUBLIC}${userData.avatar_url}`);
         setUsername(userData.username);
@@ -231,6 +277,7 @@ const AddNewUser = ({
         setEmail(userData.email);
         setCompany(userData.company);
         setRole(userData.role.title);
+        setVendorgroupid(userData.vendor_group.title);
       }
     } else {
       document.body.style.overflow = "unset";
@@ -384,7 +431,12 @@ const AddNewUser = ({
               />
             </div>
             <div className="mt-4">
-              <Radio.Group label="Role" value={role} onChange={setRole}>
+              <Radio.Group
+                orientation="horizontal"
+                label="Role"
+                value={role}
+                onChange={setRole}
+              >
                 {roleData?.map((i, x) => (
                   <Radio value={i.title} key={x}>
                     <div className="grid grid-rows-2">
@@ -395,6 +447,24 @@ const AddNewUser = ({
                 ))}
               </Radio.Group>
             </div>
+            {role === "Vendor" ? (
+              <div className="mt-4">
+                <Radio.Group
+                  orientation="horizontal"
+                  label="Select Vendor"
+                  value={vendorgroupid}
+                  onChange={setVendorgroupid}
+                >
+                  {vendorData?.map((i, x) => (
+                    <Radio size="xs" value={i.title} key={x}>
+                      {i.title}
+                    </Radio>
+                  ))}
+                </Radio.Group>
+              </div>
+            ) : (
+              <></>
+            )}
           </div>
         </Modal.Body>
         <Modal.Footer>

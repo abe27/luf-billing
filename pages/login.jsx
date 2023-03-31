@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable @next/next/no-img-element */
 import { useToast } from "@chakra-ui/react";
@@ -5,7 +6,7 @@ import { signIn, useSession } from "next-auth/react";
 import Head from "next/head";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const LoginPage = () => {
   const { data: session } = useSession();
@@ -50,16 +51,20 @@ const LoginPage = () => {
         duration: 2000,
         isClosable: true,
         position: "top",
-        onCloseComplete: () => {
-          if (session?.user.isAdmin) {
-            router.push("/");
-          } else {
-            router.push("/overdue");
-          }
-        },
+        onCloseComplete: () => {},
       });
     }
   };
+
+  useEffect(() => {
+    if (session?.user) {
+      if (session?.user.isAdmin) {
+        router.push("/");
+      } else {
+        router.push("/overdue");
+      }
+    }
+  }, [session]);
 
   return (
     <>

@@ -329,7 +329,7 @@ const IndexPage = () => {
                   </tbody>
                 </table>
               </div>
-              {totalPage > 2 ? (
+              {/* {totalPage > 2 ? (
                 <div className="mt-4 flex justify-between">
                   <div className="flex justify-start">
                     <select
@@ -349,7 +349,7 @@ const IndexPage = () => {
                 </div>
               ) : (
                 <></>
-              )}
+              )} */}
             </>
           )}
         </div>

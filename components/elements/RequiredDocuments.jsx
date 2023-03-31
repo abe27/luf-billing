@@ -3,6 +3,7 @@ import { Button } from "@nextui-org/react";
 import { useRouter } from "next/router";
 import Swal from "sweetalert2/dist/sweetalert2.js";
 import { useEffect, useRef, useState } from "react";
+import { useSession } from "next-auth/react";
 
 const ShowDocument = ({ step = false, data, id, token, removeAt = null }) => {
   const [doc, setDoc] = useState({});
@@ -85,7 +86,9 @@ const RequiredDocuments = ({
   status = "Open",
   reloadData = null,
   token = null,
+  isAdmin = false,
 }) => {
+  const { data: session } = useSession();
   const inputRef = useRef();
   const router = useRouter();
   const [selectDoc, setSelectDoc] = useState({});
@@ -121,7 +124,11 @@ const RequiredDocuments = ({
         confirmButtonColor: "#19B5FE",
       }).then((r) => {
         reloadData();
-        router.back();
+        if (isAdmin) {
+          router.push("/monitor");
+        } else {
+          router.push("/overdue");
+        }
       });
     }
   };
