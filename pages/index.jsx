@@ -47,7 +47,6 @@ const IndexPage = () => {
     };
 
     let url = `${process.env.API_HOST}/billing/list?billing_no=${billing_no}&billing_date=${billing_date}&vendor_group=${selectVendorGroup}`;
-    console.log(url);
     const res = await fetch(url, requestOptions);
 
     if (res.ok) {
@@ -124,7 +123,7 @@ const IndexPage = () => {
     if (!res.ok) {
       toast({
         title: "Error!",
-        description: res.error,
+        description: res.statusText,
         status: "error",
         duration: 1500,
         isClosable: true,
@@ -164,9 +163,19 @@ const IndexPage = () => {
   };
 
   useEffect(() => {
-    fetchVendorGroup();
-    fetchData();
+    if (session?.user) {
+      fetchVendorGroup();
+      fetchData();
+    }
   }, [session, currentLimit, billing_no, billing_date, selectVendorGroup]);
+
+  useEffect(() => {
+    if (session?.user) {
+      if (!session?.user.isAdmin) {
+        router.push("/overdue");
+      }
+    }
+  }, [session]);
 
   return (
     <>

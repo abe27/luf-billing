@@ -32,7 +32,7 @@ const OverdueBillingTable = ({ vendor_group, status, token }) => {
       const data = await res.json();
       setLoading(false);
       setData(data.data);
-      console.dir(data.data);
+      // console.dir(data.data);
     }
   };
 

@@ -1,57 +1,95 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Input, Loading, Button, Pagination } from "@nextui-org/react";
-import { useEffect, useState } from "react";
-import { RandomDateString, RandomAmount, RandomStatus } from "@/hooks";
+import { ColorInt, DateString } from "@/hooks";
+import { getData } from "@/hooks/handler";
+import { Button, Input, Loading } from "@nextui-org/react";
+import { useEffect, useRef, useState } from "react";
+import { useDownloadExcel } from "react-export-table-to-excel";
 import { AiFillFileExcel } from "react-icons/ai";
 
-let status = ["Open", "On process", "Rejected", "Approved"];
-
-const OverdueBillingAllTable = ({ token }) => {
+const OverdueBillingAllTable = ({ user, statusData }) => {
+  const tableRef = useRef();
   const [currentLimit, setCurrentLimit] = useState(5);
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
-  const [statusData, setStatusData] = useState([]);
+  const [billing, setBilling] = useState([]);
+  const [billingNo, setBillingNo] = useState(null);
+  const [billingDate, setBillingDate] = useState(null);
+  const [billingStatus, setBillingStatus] = useState(null);
+
+  const { onDownload } = useDownloadExcel({
+    currentTableRef: tableRef.current,
+    filename: `ExportBillingStatus`,
+    sheet: "Billing Report",
+  });
 
   const fetchData = async () => {
-    let s = [];
-    let doc = [];
     setLoading(true);
-    setData([]);
-    setStatusData([]);
-    for (let i = 0; i < currentLimit; i++) {
-      doc.push({
-        id: i + 1,
-        billing_no: ("00000000" + (i + 1)).slice(-8),
-        billing_date: RandomDateString(),
-        due_date: RandomDateString(),
-        amount: parseFloat(RandomAmount()),
-        status: RandomStatus(),
-      });
-    }
+    const data = await getData(
+      `${process.env.API_HOST}/billing/history?vendor_group=${user.vendor_group}`,
+      user.accessToken
+    );
 
-    for (let i = 0; i < status.length; i++) {
-      s.push({
-        id: i,
-        amount: RandomAmount(),
-        description: status[i],
-      });
-    }
-
-    const t = setTimeout(() => {
+    if (!data) {
       setLoading(false);
-      setData(doc);
-      setStatusData(s);
-    }, 1000);
+    }
 
-    return () => clearTimeout(t);
+    if (data) {
+      console.dir(data);
+      setLoading(false);
+      setData(data);
+    }
+  };
+
+  const fetchBilling = async (url) => {
+    setBilling([]);
+    const data = await getData(url, user.accessToken);
+    if (!data) {
+      setLoading(false);
+    }
+
+    if (data) {
+      console.dir(data);
+      setLoading(false);
+      setBilling(data);
+    }
   };
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    if (user.accessToken) fetchData();
+  }, [user]);
 
   useEffect(() => {
-    fetchData();
+    let url = `${process.env.API_HOST}/billing/list?vendor_group=${user.vendor_group}`;
+    if (billingNo) {
+      url = `${process.env.API_HOST}/billing/list?vendor_group=${
+        user.vendor_group
+      }&billing_no=${billingNo.toUpperCase()}`;
+      fetchBilling(url);
+    }
+  }, [billingNo]);
+
+  useEffect(() => {
+    let url = `${process.env.API_HOST}/billing/list`;
+    if (billingDate) {
+      url = `${process.env.API_HOST}/billing/list?vendor_group=${user.vendor_group}&billing_date=${billingDate}`;
+      fetchBilling(url);
+    }
+  }, [billingDate]);
+
+  useEffect(() => {
+    let url = `${process.env.API_HOST}/billing/list`;
+    if (billingStatus) {
+      url = `${process.env.API_HOST}/billing/list?vendor_group=${user.vendor_group}&status_id=${billingStatus}`;
+      fetchBilling(url);
+    }
+  }, [billingStatus]);
+
+  useEffect(() => {
+    if (user.accessToken) {
+      let url = `${process.env.API_HOST}/billing/list?vendor_group=${user.vendor_group}&`;
+      fetchBilling(url);
+      fetchData();
+    }
   }, [currentLimit]);
   return (
     <>
@@ -63,18 +101,28 @@ const OverdueBillingAllTable = ({ token }) => {
               <Input
                 contentRight={loading ? <Loading size="sm" /> : null}
                 placeholder="Billing No."
+                value={billingNo}
+                onChange={(e) => setBillingNo(e.target.value)}
               />
               <Input
                 contentRight={loading ? <Loading size="sm" /> : null}
                 type={"date"}
                 placeholder="Billing Date"
+                value={billingDate}
+                onChange={(e) => setBillingDate(e.target.value)}
               />
-              <select className="select select-ghost max-w-xs">
+              <select
+                className="select select-ghost max-w-xs"
+                value={billingStatus}
+                onChange={(e) => setBillingStatus(e.target.value)}
+              >
                 <option disabled className="text-gray-200">
                   Status
                 </option>
-                {status.map((i, x) => (
-                  <option key={x}>{i}</option>
+                {statusData.map((i, x) => (
+                  <option key={x} value={i.id}>
+                    {i.title}
+                  </option>
                 ))}
               </select>
             </div>
@@ -114,22 +162,20 @@ const OverdueBillingAllTable = ({ token }) => {
               </Button>
             </div>
           </div>
-          <div className="flex justify-start mt-4 space-x-2">
-            {statusData?.map((i, x) => (
+          <div className="flex justify-between mt-4">
+            {data?.map((i, x) => (
               <div
                 className="flex justify-center rounded shadow p-4 items-center w-auto"
                 key={x}
               >
-                <div className="grid">
-                  <div className="flex justify-center">
+                <div className="items-center">
+                  <div className="">
                     <span className="text-4xm font-bold">
-                      {i.amount.toLocaleString()}
+                      {i.sum.toLocaleString()}&nbsp;<span>Bath</span>
                     </span>
-                    &nbsp; Bath
                   </div>
                   <div className="text-xs">
-                    Billing <span className="lowercase">{i.description}</span>{" "}
-                    amount total.
+                    <span className="">{i.title}</span> total.
                   </div>
                 </div>
               </div>
@@ -141,13 +187,14 @@ const OverdueBillingAllTable = ({ token }) => {
               color={"success"}
               size={"sm"}
               icon={<AiFillFileExcel size={20} />}
+              onPress={onDownload}
             >
               Export Excel
             </Button>
           </div>
           <>
             <div className="overflow-x-auto mt-4">
-              <table className="table w-full table-compact table-zebra">
+              <table className="table w-full table-compact" ref={tableRef}>
                 <thead>
                   <tr>
                     <th className="normal-case">No.</th>
@@ -159,16 +206,21 @@ const OverdueBillingAllTable = ({ token }) => {
                   </tr>
                 </thead>
                 <tbody>
-                  {data?.map((i, x) => (
+                  {billing?.map((i, x) => (
                     <tr key={x}>
-                      <th>{i.id}</th>
+                      <th>{x + 1}</th>
                       <td>{i.billing_no}</td>
-                      <td>{i.billing_date}</td>
-                      <td>{i.due_date}</td>
+                      <td>{DateString(i.billing_date)}</td>
+                      <td>{DateString(i.due_date)}</td>
                       <td>{i.amount.toLocaleString()}</td>
                       <td>
-                        <Button flat size={"xs"} auto color={i.status.color}>
-                          {i.status.name}
+                        <Button
+                          flat
+                          size={"xs"}
+                          auto
+                          color={ColorInt(i.status.seq)}
+                        >
+                          {i.status.title}
                         </Button>
                       </td>
                     </tr>
@@ -176,7 +228,7 @@ const OverdueBillingAllTable = ({ token }) => {
                 </tbody>
               </table>
             </div>
-            {data?.length > 0 ? (
+            {/* {data?.length > 0 ? (
               <div className="mt-4 flex justify-between">
                 <div className="flex justify-start">
                   <select
@@ -196,7 +248,7 @@ const OverdueBillingAllTable = ({ token }) => {
               </div>
             ) : (
               <></>
-            )}
+            )} */}
           </>
         </div>
       </div>

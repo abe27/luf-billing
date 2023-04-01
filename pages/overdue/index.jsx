@@ -1,17 +1,17 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import Link from "next/link";
-import { Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react";
-import { Badge } from "@nextui-org/react";
 import {
   AvatarDetail,
   MainLayOut,
   OverdueBillingTable,
   OverdueBillingAllTable,
 } from "@/components";
-import { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
 import { ColorInt } from "@/hooks";
+import { Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/react";
+import { Badge } from "@nextui-org/react";
+import { useSession } from "next-auth/react";
+import Link from "next/link";
 import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 
 const OverdueBillingPage = () => {
   const router = useRouter();
@@ -37,6 +37,9 @@ const OverdueBillingPage = () => {
 
   useEffect(() => {
     if (session?.user) {
+      if (session?.user.isAdmin) {
+        router.push("/");
+      }
       fetchStatusData();
     }
   }, [session]);
@@ -79,11 +82,12 @@ const OverdueBillingPage = () => {
                           token={session?.user.accessToken}
                         />
                       </div>
-                      {/* <div className="mt-4">
+                      <div className="mt-4">
                         <OverdueBillingAllTable
-                          token={session?.user.accessToken}
+                          user={session?.user}
+                          statusData={statusData}
                         />
-                      </div> */}
+                      </div>
                     </TabPanel>
                   ))}
                 </TabPanels>
