@@ -38,6 +38,7 @@ const ShowDocument = ({ step = false, data, id, token, removeAt = null }) => {
     }
     // console.dir(data);
   }, [data]);
+
   return (
     <>
       {doc ? (
@@ -232,6 +233,10 @@ const RequiredDocuments = ({
     setSelectedFile(obj);
   };
 
+  useEffect(() => {
+    console.dir(docs);
+  }, []);
+
   return (
     <>
       <input
@@ -299,71 +304,75 @@ const RequiredDocuments = ({
           ))
         ) : (
           <>
-            {fileType?.map((i, x) => (
+            {docs?.map((i, x) => (
               <div className="grid mt-2 mb-4" key={x}>
-                <span className="text-sm">{i}</span>
+                <span className="text-sm">{i.document.title}</span>
                 <div className="flex justify-between bg-gray-50 p-2">
-                  <div>File xxx.pdf</div>
-                  <div>123kb</div>
+                  <div>{i.file_name}</div>
+                  <div>{i.file_size.toLocaleString()}kb</div>
                 </div>
               </div>
             ))}
           </>
         )}
-        <div className="flex justify-center space-x-4 mb-4 mt-4">
-          <Button
-            size={"sm"}
-            auto
-            flat
-            color="error"
-            icon={
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth="1.5"
-                stroke="currentColor"
-                className="w-4 h-4"
-              >
-                <path
+        {status !== "Approved" ? (
+          <div className="flex justify-center space-x-4 mb-4 mt-4">
+            <Button
+              size={"sm"}
+              auto
+              flat
+              color="error"
+              icon={
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="1.5"
+                  stroke="currentColor"
+                  className="w-4 h-4"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              }
+              onPress={() => router.back()}
+            >
+              Cancel
+            </Button>
+            <Button
+              size={"sm"}
+              auto
+              color="primary"
+              icon={
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="icon icon-tabler icon-tabler-device-floppy"
+                  width={24}
+                  height={24}
+                  viewBox="0 0 24 24"
+                  strokeWidth="2"
+                  stroke="currentColor"
+                  fill="none"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            }
-            onPress={() => router.back()}
-          >
-            Cancel
-          </Button>
-          <Button
-            size={"sm"}
-            auto
-            color="primary"
-            icon={
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="icon icon-tabler icon-tabler-device-floppy"
-                width={24}
-                height={24}
-                viewBox="0 0 24 24"
-                strokeWidth="2"
-                stroke="currentColor"
-                fill="none"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                <path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2"></path>
-                <path d="M12 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"></path>
-                <path d="M14 4l0 4l-6 0l0 -4"></path>
-              </svg>
-            }
-            onPress={handlerConfirm}
-          >
-            {status === "Open" ? "Save" : "Resend"}
-          </Button>
-        </div>
+                >
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                  <path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2"></path>
+                  <path d="M12 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"></path>
+                  <path d="M14 4l0 4l-6 0l0 -4"></path>
+                </svg>
+              }
+              onPress={handlerConfirm}
+            >
+              {status === "Open" ? "Save" : "Resend"}
+            </Button>
+          </div>
+        ) : (
+          <div className="mt-4"></div>
+        )}
       </div>
     </>
   );

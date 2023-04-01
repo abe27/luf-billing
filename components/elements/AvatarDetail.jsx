@@ -34,7 +34,6 @@ const AvatarDetail = ({
 
     if (res.ok) {
       const data = await res.json();
-      console.dir(data.data);
       setBillingData(data.data);
     }
 
@@ -48,7 +47,6 @@ const AvatarDetail = ({
     let url = `${process.env.API_HOST}/billing/history?vendor_group=${user.vendor_group}`;
     var data = await getData(url, user.accessToken);
     if (data) {
-      console.dir(data);
       setTotalData(data);
       setTotalLoading(false);
     }

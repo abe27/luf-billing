@@ -35,7 +35,7 @@ const OverdueBillingDetailPage = () => {
 
     if (res.ok) {
       const data = await res.json();
-      console.dir(data.data);
+      // console.dir(data.data);
       setBilling(data.data);
     }
   };
@@ -57,12 +57,13 @@ const OverdueBillingDetailPage = () => {
 
     if (res.ok) {
       const data = await res.json();
+      // console.dir(data.data);
       setDocumentList(data.data);
     }
   };
 
   const reload = () => {
-    fetchData(router.query["id"]);
+    if (router.query["id"]) fetchData(router.query["id"]);
   };
 
   const fetchStep = async () => {
@@ -83,11 +84,13 @@ const OverdueBillingDetailPage = () => {
   };
 
   useEffect(() => {
-    setStatusTitle(router.query["status"]);
-    if (session) {
-      reload();
-      fetchDocumentList();
-      fetchStep();
+    if (router) {
+      setStatusTitle(router.query["status"]);
+      if (session) {
+        reload();
+        fetchDocumentList();
+        fetchStep();
+      }
     }
   }, [router, session]);
 
