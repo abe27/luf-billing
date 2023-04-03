@@ -3,20 +3,26 @@ import { getToken } from "next-auth/jwt";
 
 const middleware = async (req) => {
   const session = await getToken({ req, secret: process.env.JWT_SECRET });
+  console.dir(session);
   if (!session) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
-  // console.dir(session)
+
   return NextResponse.next();
 };
 
 export const config = {
   matcher: [
     "/",
+    "/billing",
     "/billing/:path*",
+    "/member",
     "/member/:path*",
+    "/monitor",
     "/monitor/:path*",
+    "/overdue",
     "/overdue/:path*",
+    "/report",
     "/report/:path*",
   ],
 };

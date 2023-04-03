@@ -14,9 +14,27 @@ const NavBarTop = () => {
     signOut();
   };
 
+  // const verifyToken = async () => {
+  //   var myHeaders = new Headers();
+  //   myHeaders.append("Authorization", session?.user.accessToken);
+
+  //   var requestOptions = {
+  //     method: "GET",
+  //     headers: myHeaders,
+  //     redirect: "follow",
+  //   };
+
+  //   const res = await fetch(`${process.env.API_HOST}/verify`, requestOptions);
+  //   if (!res.ok) {
+  //     if (router.pathname !== "/login") {
+  //       router.push("/login");
+  //     }
+  //   }
+  // };
+
   useEffect(() => {
-    if (session?.error === "RefreshAccessTokenError") {
-      router.push("/login");
+    if (session?.user) {
+      // verifyToken();
     }
   }, [session]);
 
