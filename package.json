@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "pm": "pm2 start npm --name 'next' -- start"
   },
   "dependencies": {
     "@chakra-ui/react": "latest",
@@ -24,7 +25,7 @@
     "eslint-config-next": "13.2.4",
     "framer-motion": "^10.10.0",
     "next": "latest",
-    "next-auth": "^4.20.1",
+    "next-auth": "latest",
     "pdfjs-dist": "^3.4.120",
     "postcss": "^8.4.21",
     "react": "18.2.0",
