@@ -84,6 +84,8 @@ const LoginPage = () => {
                 width={650}
                 height={850}
                 alt={"bg"}
+                loading="lazy"
+                blurDataURL="/bg.jpg"
               />
             </div>
             <div className="flex justify-end">

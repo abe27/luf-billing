@@ -10,9 +10,11 @@ const theme = createTheme({
   type: "light", // it could be "light" or "dark"
   theme: {
     colors: {
-      primary: "#4ADE7B",
-      secondary: "#F9CB80",
-      error: "#FCC5D8",
+      primary: "#22A7F0",
+      secondary: "#8E44AD",
+      error: "#F9690E",
+      warning: "#E08A1E",
+      success: "#2ABB9B",
     },
   },
 });
