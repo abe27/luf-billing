@@ -303,7 +303,8 @@ const AddNewUser = ({
       />
       {!isEdit ? (
         <Button
-          color="secondary"
+          flat
+          color={"secondary"}
           auto
           size={"sm"}
           icon={
