@@ -1,12 +1,39 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @next/next/no-img-element */
-import Head from "next/head";
 import { NavBarTop, SideBar } from "@/components";
+import { signOut, useSession } from "next-auth/react";
+import Head from "next/head";
+import { useEffect } from "react";
 
 const MainLayOut = ({
   children,
   title = process.env.APP_NAME,
   description = process.env.APP_DESCRIPTION,
 }) => {
+  const { data: session } = useSession();
+
+  const verifyToken = async () => {
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", session?.user.accessToken);
+
+    var requestOptions = {
+      method: "GET",
+      headers: myHeaders,
+      redirect: "follow",
+    };
+
+    const res = await fetch(`${process.env.API_HOST}/verify`, requestOptions);
+    if (res.status === 401) {
+      signOut();
+      return;
+    }
+  };
+
+  useEffect(() => {
+    if (session) {
+      verifyToken();
+    }
+  }, [session]);
   return (
     <>
       <Head>

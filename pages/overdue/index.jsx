@@ -8,7 +8,7 @@ import {
 import { ColorInt } from "@/hooks";
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/react";
 import { Badge } from "@nextui-org/react";
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -25,14 +25,22 @@ const OverdueBillingPage = () => {
       url = `${process.env.API_HOST}/status`;
     }
 
-    const response = await fetch(url, {
+    const res = await fetch(url, {
       method: "GET",
       headers: {
         Authorization: session?.user.accessToken,
       },
     });
-    const data = await response.json();
-    setStatusData(data.data);
+
+    // if (res.status === 401) {
+    //   signOut();
+    //   return;
+    // }
+
+    if (res.ok) {
+      const data = await res.json();
+      setStatusData(data.data);
+    }
   };
 
   useEffect(() => {
