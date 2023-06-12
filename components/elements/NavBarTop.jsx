@@ -10,8 +10,11 @@ const NavBarTop = () => {
   const [profile, setProfile] = useState(false);
 
   const logout = () => {
-    sessionStorage.clear();
-    signOut();
+    // sessionStorage.clear();
+    // signOut();
+    signOut({
+      callbackUrl: `${window.location.origin}`,
+    });
   };
 
   // const verifyToken = async () => {
@@ -69,7 +72,7 @@ const NavBarTop = () => {
           </div>
           <div className="h-full xl:flex items-center justify-end">
             <div className="w-full h-full flex items-center">
-              <div className="w-full h-full flex pr-8">
+              <div className="w-full h-full flex pr-14">
                 <div
                   aria-haspopup="true"
                   className="cursor-pointer w-full flex items-center justify-end relative"
@@ -79,7 +82,7 @@ const NavBarTop = () => {
                 >
                   {profile ? (
                     <ul
-                      className="p-2 w-40 border-r bg-white absolute rounded z-50 left-0 shadow mt-64 "
+                      className="p-2 w-40 border-r bg-white absolute rounded z-50 left-0 shadow mt-64"
                       onMouseLeave={() => setProfile(false)}
                     >
                       <li className="cursor-pointer text-gray-600 text-sm leading-3 tracking-normal py-2 hover:text-indigo-700 focus:text-indigo-700 focus:outline-none">
