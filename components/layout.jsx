@@ -22,7 +22,10 @@ const MainLayOut = ({
       redirect: "follow",
     };
 
-    const res = await fetch(`${process.env.API_HOST}/verify`, requestOptions);
+    const res = await fetch(
+      `${process.env.API_HOST}/auth/verify`,
+      requestOptions
+    );
     if (res.status === 401) {
       signOut();
       return;

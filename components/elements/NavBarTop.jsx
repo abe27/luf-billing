@@ -12,9 +12,7 @@ const NavBarTop = () => {
   const logout = () => {
     // sessionStorage.clear();
     // signOut();
-    signOut({
-      callbackUrl: `${window.location.origin}`,
-    });
+    router.push("/logout");
   };
 
   // const verifyToken = async () => {
