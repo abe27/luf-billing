@@ -10,9 +10,8 @@ const NavBarTop = () => {
   const [profile, setProfile] = useState(false);
 
   const logout = () => {
-    // sessionStorage.clear();
-    // signOut();
-    router.push("/logout");
+    sessionStorage.clear();
+    signOut();
   };
 
   // const verifyToken = async () => {
