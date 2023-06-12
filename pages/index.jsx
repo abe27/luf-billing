@@ -277,7 +277,7 @@ const IndexPage = () => {
                       <path d="M11 11v7"></path>
                     </svg>
                   }
-                  onClick={onDownload}
+                  onClick={handleUploadExcelClick}
                 >
                   Import Excel
                 </Button>
