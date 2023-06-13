@@ -4,6 +4,7 @@ import { createTheme, NextUIProvider } from "@nextui-org/react";
 import { ChakraProvider } from "@chakra-ui/react";
 import { Noto_Sans_Thai } from "@next/font/google";
 import { SessionProvider } from "next-auth/react";
+import { Worker } from "@react-pdf-viewer/core";
 const fonts = Noto_Sans_Thai({ subsets: ["thai"] });
 
 const theme = createTheme({
@@ -21,15 +22,17 @@ const theme = createTheme({
 
 const MicroApp = ({ Component, pageProps: { session, ...pageProps } }) => {
   return (
-    <section className={fonts.className}>
-      <SessionProvider session={session}>
-        <NextUIProvider theme={theme}>
-          <ChakraProvider>
-            <Component {...pageProps} />
-          </ChakraProvider>
-        </NextUIProvider>
-      </SessionProvider>
-    </section>
+    <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
+      <section className={fonts.className}>
+        <SessionProvider session={session}>
+          <NextUIProvider theme={theme}>
+            <ChakraProvider>
+              <Component {...pageProps} />
+            </ChakraProvider>
+          </NextUIProvider>
+        </SessionProvider>
+      </section>
+    </Worker>
   );
 };
 
