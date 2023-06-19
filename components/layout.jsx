@@ -1,8 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @next/next/no-img-element */
 import { NavBarTop, SideBar } from "@/components";
-import { signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import Head from "next/head";
+import { useRouter } from "next/router";
 import { useEffect } from "react";
 
 const MainLayOut = ({
@@ -10,6 +11,7 @@ const MainLayOut = ({
   title = process.env.APP_NAME,
   description = process.env.APP_DESCRIPTION,
 }) => {
+  const router = useRouter();
   const { data: session } = useSession();
 
   const verifyToken = async () => {
@@ -26,8 +28,8 @@ const MainLayOut = ({
       `${process.env.API_HOST}/auth/verify`,
       requestOptions
     );
-    if (res.status === 401) {
-      signOut();
+    if (res.status !== 200) {
+      router.push("/login");
       return;
     }
   };
