@@ -32,7 +32,7 @@ const navbarLinkAdmin = [
   },
   {
     id: 3,
-    title: "User Manangement",
+    title: "User Management",
     name: "member",
     href: "/member",
     children: [

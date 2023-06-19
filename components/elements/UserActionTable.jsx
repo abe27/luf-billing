@@ -68,7 +68,7 @@ const UserActionTable = ({
                       <div className="flex justify-start">
                         <ConfirmDialog
                           id={i.id}
-                          reloadData={() => reloadData}
+                          reloadData={() => afterUpdate()}
                         />
                       </div>
                     </div>

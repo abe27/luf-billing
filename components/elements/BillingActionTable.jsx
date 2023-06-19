@@ -9,20 +9,19 @@ import { useDownloadExcel } from "react-export-table-to-excel";
 
 const BillingActionTable = ({
   status,
-  limitPage = 5,
-  statusData = [],
+  onDate = null,
   vendorGroup = [],
-  token = {},
+  token = null,
   reloadData = false,
-  searchData = false,
-  invData = [],
+  statusID = null,
 }) => {
   const tableRef = useRef();
   const [loading, setLoading] = useState(false);
   const [currentLimit, setCurrentLimit] = useState(0);
-  const [billingNo, setBillingNo] = useState(null);
-  const [billingDate, setBillingDate] = useState(null);
-  const [selectVendor, setSelectVendor] = useState(null);
+  const [billingNo, setBillingNo] = useState("");
+  const [billingDate, setBillingDate] = useState(onDate);
+  const [selectVendor, setSelectVendor] = useState("");
+  const [invData, setInvData] = useState([]);
 
   const { onDownload } = useDownloadExcel({
     currentTableRef: tableRef.current,
@@ -30,14 +29,33 @@ const BillingActionTable = ({
     sheet: "Billing Monitor Report",
   });
 
+  const fetchData = async () => {
+    setInvData([]);
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", token);
+
+    var requestOptions = {
+      method: "GET",
+      headers: myHeaders,
+      redirect: "follow",
+    };
+    let url = `${process.env.API_HOST}/billing/list?status_id=${statusID}&billing_no=${billingNo}&billing_date=${billingDate}`;
+    const res = await fetch(url, requestOptions);
+
+    if (res.ok) {
+      const data = await res.json();
+      setInvData(data.data);
+      return;
+    }
+  };
+
   useEffect(() => {
-    searchData({
-      status: status.id,
-      vendorGroup: selectVendor,
-      billingNo: billingNo,
-      billingDate: billingDate,
-    });
-  }, [selectVendor, billingNo, billingDate]);
+    fetchData();
+  }, [statusID]);
+
+  useEffect(() => {
+    fetchData();
+  }, [billingNo, billingDate]);
 
   return (
     <>

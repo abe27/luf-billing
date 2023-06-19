@@ -5,9 +5,11 @@ import { Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/react";
 import { Badge } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
+let d = new Date();
 
 const BillingMonitorPage = () => {
   const { data: session } = useSession();
+  const [onDate, setOnDate] = useState("");
   const [invData, setInvData] = useState([]);
   const [statusData, setStatusData] = useState([]);
   const [vendorGroup, setVendorGroup] = useState([]);
@@ -61,13 +63,13 @@ const BillingMonitorPage = () => {
     if (obj) {
       url = `${process.env.API_HOST}/billing/list?status_id=${obj.status}&billing_no=${obj.billingNo}&billing_date=${obj.billingDate}`;
     }
-    // console.dir(url);
+
     const res = await fetch(url, requestOptions);
 
     if (res.ok) {
       const data = await res.json();
       setInvData(data.data);
-      console.dir(data.data);
+      return;
     }
   };
 
@@ -78,6 +80,7 @@ const BillingMonitorPage = () => {
       fetchVendorGroup();
     }
   }, [session]);
+
   return (
     <>
       <MainLayOut title="Billing Monitor">
@@ -104,12 +107,11 @@ const BillingMonitorPage = () => {
                     <BillingActionTable
                       status={i}
                       limitPage={i.billing.length}
-                      statusData={statusData}
                       vendorGroup={vendorGroup}
-                      invData={i.billing}
+                      onDate={onDate}
                       token={session?.user.accessToken}
                       reloadData={() => fetchStatus()}
-                      searchData={fetchData}
+                      statusID={i.id}
                     />
                   </div>
                 </TabPanel>
